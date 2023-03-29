@@ -52,6 +52,14 @@ task jacocoTestReport(type: JacocoReport, dependsOn: 'testDebugUnitTest') {
     executionData.from = files("${buildDir}/jacoco/testDebugUnitTest.exec")
 }
 
+sonarqube {
+    properties {
+        property "sonar.projectKey", "SE2-Gruppe3_lotti-karotti"
+        property "sonar.organization", "se2-gruppe3"
+        property "sonar.host.url", "https://sonarcloud.io"
+    }
+}
+
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.6.1'
