@@ -42,13 +42,20 @@ io.on('connection', (socket) => {
         console.log('A player connected!\nCurrently ' + playercounter + ' online!');
     }
 
+    socket.on('alive', () => {
+        console.log('[Server] Server is up and running!');
+        io.emit('alive', 1);
+    })
+
     // Listen for requests to get the player count and emit the count to all clients
-    io.on('getlpayers', (socket) => {
+    io.on('getlpayers', () => {
         io.emit('getplayers', playercounter);
     });
 
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
+        playercounter-=1;
         console.log('A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
-})
+});
+
