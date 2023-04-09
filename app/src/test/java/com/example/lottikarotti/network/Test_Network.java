@@ -37,6 +37,16 @@ public class Test_Network {
         testSocket01.on("alive", args -> {aliveFeedback = (Integer) args[0];});
     }
 
+    public void waitFixedTime(){
+        // Wait for the server to respond (MAX TIME IS 2 SECOND; The call is made synchronous on purpose to detect high latency!)
+        // Please Check Internet Connection before testing, the internet connection should not be stressed when testing
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     /**
      * Tests if the server is able to respond with an "alive" event.
      */
@@ -48,13 +58,7 @@ public class Test_Network {
         // Emit "alive" event to the server
         testSocket01.emit("alive");
 
-        // Wait for the server to respond (MAX TIME IS 2 SECOND; The call is made synchronous on purpose to detect high latency!)
-        // Please Check Internet Connection before testing, the internet connection should not be stressed when testing
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        waitFixedTime();
 
         // Check if feedback value is set to 1
         Assertions.assertEquals(1, aliveFeedback);
@@ -86,13 +90,7 @@ public class Test_Network {
         // Emit "alive" event to the server
         testSocket06.emit("alive");
 
-        // Wait for the server to respond (MAX TIME IS 2 SECOND; The call is made synchronous on purpose to detect high latency!)
-        // Please Check Internet Connection before testing, the internet connection should not be stressed when testing
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        waitFixedTime();
 
         // Check if feedback value is set to 1
         Assertions.assertEquals(99, aliveFeedback);
@@ -116,11 +114,9 @@ public class Test_Network {
         });
 
         testSocket02.emit("register", "Erwin");
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
+        waitFixedTime();
+
         Assertions.assertEquals(true, nameTaken);
     }
 
