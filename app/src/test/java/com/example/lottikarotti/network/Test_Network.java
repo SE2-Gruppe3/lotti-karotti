@@ -1,9 +1,8 @@
 package com.example.lottikarotti.network;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
-import java.net.URISyntaxException;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -97,6 +96,32 @@ public class Test_Network {
 
         // Check if feedback value is set to 1
         Assertions.assertEquals(99, aliveFeedback);
+    }
+
+    boolean nameTaken;
+
+    @Test
+    void testRegisterNameOnServer() {
+        nameTaken = false;
+
+        testSocket01.emit("register", "Erwin");
+        Assertions.assertDoesNotThrow(() -> {
+            testSocket02 = IO.socket("http://127.0.0.1:3000");
+            testSocket02.connect();
+        });
+
+        testSocket02.on("error", message -> {
+            System.out.println(message[0]);
+            if ((int) message[0] == 400) nameTaken = true;
+        });
+
+        testSocket02.emit("register", "Erwin");
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertEquals(true, nameTaken);
     }
 
 
