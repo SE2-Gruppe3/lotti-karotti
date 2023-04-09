@@ -1,22 +1,7 @@
-// Print a startup message to the console
-console.log('Lotti Karotti Server\nServer is booting up, please check log for failure!\n');
-
-// Import the 'fs' module and read the contents of the 'settings.json' file
-const fs = require('fs');
-const settingsData = fs.readFileSync('utils/settings.json');
-const settings = JSON.parse(settingsData);
-
-// Import the 'express' and 'socket.io' modules and create a new Express app
-const express = require('express');
-const socket = require('socket.io');
-const app = express();
-
-// Define the port number for the server
-var PORT = process.env.PORT || 3000;
-
-// Start the server and serve static files from the 'public' directory
-const server = app.listen(PORT);
-app.use(express.static('public'));
+const server =require('./utils/server.js');
+const settings = require('./utils/settings.js');
+const socket = require('./utils/socket.js');
+const storeClientInfo = require('./utils/storeClient.js');
 
 // Print a message to the console indicating that the server is running
 console.log('Server is running');
@@ -25,6 +10,7 @@ console.log('Server is running');
 const io = socket(server);
 var count = 0;
 var playercounter = 0;
+var clientsList = [];
 
 // Listen for incoming connections from clients
 io.on('connection', (socket) => {
@@ -36,11 +22,28 @@ io.on('connection', (socket) => {
     if (playercounter > settings.MAX_PLAYERS) {
         socket.disconnect(true);
         playercounter--;
-        console.log('Server refused connection to player, reason: player count too high!\n');
+        console.log('[Server] Refused connection to player, reason: player count too high!\n');
     } else {
         // Otherwise, log a message indicating that a player has connected
-        console.log('A player connected!\nCurrently ' + playercounter + ' online!');
+        console.log('[Server] A player connected!\nCurrently ' + playercounter + ' online!');
     }
+
+    socket.on('register', args => {
+        taken = 0;
+        for(var i=0; i<clientsList.length; i++){
+            if(clientsList[i].name == args) taken = 1
+        }
+        if(taken == 0){
+        clientsList.push(storeClientInfo(socket.id, args));
+        console.log('[Server] New client has registered with the name \''+args+'\'');
+        }else{
+        console.log('[Server] Blocked an ambgigious name registering action!\nNAME ALREADY TAKEN')
+        // Emit errorCode 4001 - Name already taken
+        socket.emit('error', 400);
+        }
+        
+    });
+
 
     socket.on('alive', () => {
         console.log('[Server] Server is up and running!');
@@ -49,13 +52,13 @@ io.on('connection', (socket) => {
 
     // Listen for requests to get the player count and emit the count to all clients
     io.on('getlpayers', () => {
-        io.emit('getplayers', playercounter);
+        io.emit('[Server] getplayers', playercounter);
     });
 
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
         playercounter-=1;
-        console.log('A player disconnected!\nCurrently ' + playercounter + ' online!');
+        console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
 });
 
