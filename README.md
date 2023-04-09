@@ -18,7 +18,7 @@ You need to have a current version of [Node](https://nodejs.org/en/download) run
 Then run the following command inside of the server folder:
 
 ```bash
-npm init
+npm install
 node index.js
 ```
 Please be advised that ``npm init`` only needs to be applied at the first start, otherwise it is used ambigiously.
