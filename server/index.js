@@ -1,4 +1,4 @@
-const server =require('./utils/server.js');
+const server = require('./utils/server.js');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
 const storeClientInfo = require('./utils/storeClient.js');
@@ -30,20 +30,19 @@ io.on('connection', (socket) => {
 
     socket.on('register', args => {
         taken = 0;
-        for(var i=0; i<clientsList.length; i++){
-            if(clientsList[i].name == args) taken = 1
+        for (var i = 0; i < clientsList.length; i++) {
+            if (clientsList[i].name == args) taken = 1
         }
-        if(taken == 0){
-        clientsList.push(storeClientInfo(socket.id, args));
-        console.log('[Server] New client has registered with the name \''+args+'\'');
-        }else{
-        console.log('[Server] Blocked an ambgigious name registering action!\nNAME ALREADY TAKEN')
-        // Emit errorCode 4001 - Name already taken
-        socket.emit('error', 400);
+        if (taken == 0) {
+            clientsList.push(storeClientInfo(socket.id, args));
+            console.log('[Server] New client has registered with the name \'' + args + '\'');
+        } else {
+            console.log('[Server] Blocked an ambgigious name registering action!\nNAME ALREADY TAKEN')
+            // Emit errorCode 400 - Name already taken
+            socket.emit('error', 400);
         }
-        
-    });
 
+    });
 
     socket.on('alive', () => {
         console.log('[Server] Server is up and running!');
@@ -57,7 +56,7 @@ io.on('connection', (socket) => {
 
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
-        playercounter-=1;
+        playercounter -= 1;
         console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
 });
