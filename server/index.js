@@ -22,11 +22,24 @@ io.on('connection', (socket) => {
     if (playercounter > settings.MAX_PLAYERS) {
         socket.disconnect(true);
         playercounter--;
-        console.log('[Server] Refused connection to player, reason: player count too high!\n');
+        console.log('[Server] Refused connection to player, reason: player count too high!');
     } else {
         // Otherwise, log a message indicating that a player has connected
         console.log('[Server] A player connected!\nCurrently ' + playercounter + ' online!');
     }
+    //********************************************************************************************************** */
+    //  CURRENT LISTENERS:
+    //      "alive"         -   serves as a ping to the server, may be used by the client
+    //      "register"      -   registers client on server with a name (lets see how this is going in the future)
+    //      "getplayers"    -   get all the current players
+    //********************************************************************************************************** */
+    //                          ***PLEASE PUT YOUR LISTENERS/EMITTERS BELOW HERE***                              */
+    //********************************************************************************************************** */
+    
+    socket.on('alive', () => {
+        console.log('[Server] Server is up and running!');
+        io.emit('alive', 1);
+    })
 
     socket.on('register', args => {
         taken = 0;
@@ -44,16 +57,14 @@ io.on('connection', (socket) => {
 
     });
 
-    socket.on('alive', () => {
-        console.log('[Server] Server is up and running!');
-        io.emit('alive', 1);
-    })
-
     // Listen for requests to get the player count and emit the count to all clients
     io.on('getlpayers', () => {
         io.emit('[Server] getplayers', playercounter);
     });
 
+    //********************************************************************************************************** */
+    //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE*** */
+    //********************************************************************************************************** */
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
         playercounter -= 1;
