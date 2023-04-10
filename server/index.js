@@ -155,7 +155,7 @@ io.on('connection', (socket) => {
     });
 
     //********************************************************************************************************** */
-    //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE*** */
+    //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
     //********************************************************************************************************** */
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
