@@ -43,7 +43,7 @@ node index.js
 
 ```
 
-Please be advised that ``npm init`` only needs to be applied at the first start, otherwise it is used ambigiously.
+Please be advised that ``npm install`` only needs to be applied at the first start, otherwise it is used ambigiously.
 
 ### How to run it like you know what you are doing
 If you are hosting a server, it is advisable to manage it using a server management tool such as PM2 or other similar modules. With such tools in place, the server is configured to automatically restart in case of any interruption or failure, and log the cause of such interruptions or failures, instead of simply crashing.
