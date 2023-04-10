@@ -2,19 +2,24 @@ const server = require('./utils/server.js');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
 const storeClientInfo = require('./utils/storeClient.js');
+const storeLobbyInfo = require('./utils/storeLobby.js');
+const playerExist = require('./utils/checkPlayerExists.js');
+const lobbyExist = require('./utils/checkLobbyExists.js');
+const fetchClientInstance = require('./utils/fetchClient.js');
+const fetchLobbyInstance = require('./utils/fetchLobby.js');
 
 // Print a message to the console indicating that the server is running
 console.log('Server is running');
 
 // Create a new Socket.IO instance and define variables to track player count
 const io = socket(server);
-var count = 0;
 var playercounter = 0;
 var clientsList = [];
+var lobbies = [];
 
 // Listen for incoming connections from clients
 io.on('connection', (socket) => {
-    // Increment the player counter and log a message to the console
+    // Increment the player counter and log a message to the console (player counter does not indicate registered, just client connected to the server)
     playercounter++;
     console.log("New connection: " + socket.id);
 
@@ -25,7 +30,7 @@ io.on('connection', (socket) => {
         console.log('[Server] Refused connection to player, reason: player count too high!');
     } else {
         // Otherwise, log a message indicating that a player has connected
-        console.log('[Server] A player connected!\nCurrently ' + playercounter + ' online!');
+        console.log('[Server] A player connected!\nCurrently ' + playercounter + '/'+settings.MAX_PLAYERS+' online!');
     }
     //********************************************************************************************************** */
     //  CURRENT LISTENERS:
@@ -35,31 +40,80 @@ io.on('connection', (socket) => {
     //********************************************************************************************************** */
     //                          ***PLEASE PUT YOUR LISTENERS/EMITTERS BELOW HERE***                              */
     //********************************************************************************************************** */
-    
-    socket.on('alive', () => {
+
+    socket.on('alive', async () => {
         console.log('[Server] Server is up and running!');
-        io.emit('alive', 1);
-    })
+        await io.emit('alive', 1);
+    });
+
+    // Listen for requests to get the player count and emit the count to all clients
+    socket.on('getplayers', () => {
+        console.log('[Server] Sending player information!');
+        io.emit('getplayers', playercounter);
+    });
 
     socket.on('register', args => {
-        taken = 0;
+        var taken = 0, loggedin=0;
         for (var i = 0; i < clientsList.length; i++) {
-            if (clientsList[i].name == args) taken = 1
+            if (clientsList[i].name == args) taken = 1;
+            if (clientsList[i].id == socket.id) loggedin = 1;
         }
-        if (taken == 0) {
+        if (taken == 0 && loggedin == 0) {
             clientsList.push(storeClientInfo(socket.id, args));
-            console.log('[Server] New client has registered with the name \'' + args + '\'');
+            console.log('[Server] ALL PLAYERS\n\t'+JSON.stringify(clientsList));
+            socket.to(socket.id).emit("register", 1);
         } else {
-            console.log('[Server] Blocked an ambgigious name registering action!\nNAME ALREADY TAKEN')
+            console.log('[Server] Blocked an ambgigious name registering action! (error 400)');
             // Emit errorCode 400 - Name already taken
-            socket.emit('error', 400);
+            socket.to(socket.id).emit('error', 400);
         }
 
     });
 
-    // Listen for requests to get the player count and emit the count to all clients
-    io.on('getlpayers', () => {
-        io.emit('[Server] getplayers', playercounter);
+    socket.on('createlobby', code => {
+        if (code.length !== 6 || playerExist(clientsList, socket.id) === 0 || lobbyExist(lobbies, code) === 1) {
+            io.to(socket.id).emit('error', 300);
+            console.log("[Server] Error while creating lobby (error 300)");
+        } else {
+            console.log("[Server] Lobby creation");
+            lobbies.push(storeLobbyInfo(code, socket.id));
+            lobbies[lobbies.length-1].players.push(fetchClientInstance(clientsList, socket.id));
+
+            console.log("[Server] Lobby saved!\nALL LOBBIES\n\t"+JSON.stringify(lobbies));
+            socket.join(code);
+
+            io.to(socket.id).emit("createlobby", 1);
+        }
+    });
+
+    socket.on('joinlobby', code=>{
+        if (code.length !== 6 || playerExist(clientsList, socket.id) === 0 || lobbyExist(lobbies, code) === 0){
+            io.to(socket.id).emit('error', 302);
+            console.log("[Server] Error joining lobby (error 302)");
+        }else{
+            console.log("[Server] Player "+socket.id+" joins lobby "+code);
+            var lobby = fetchLobbyInstance(lobbies, code);
+            if(playerExist(lobby.players, socket.id) == 1){
+                console.log("[Server] Very funny... Player is already in the lobby can't join double!\nABORT JOINING");
+                io.to(socket.id).emit('error', 302);
+            }else{
+            lobby.players.push(fetchClientInstance(clientsList, socket.id));
+            console.log(JSON.stringify(lobbies[0]));
+            socket.join(code);
+            }
+        }   
+    });
+
+    socket.on('playonline', code => {
+        if (playerExist(clientsList, socket.id) == 0) {
+            io.emit('error', 401);
+            console.log("[Server] Refused to let a client play online, because no username was registered beforehand (error 401)");
+        }
+        else {
+            console.log("[Server] Granted a player the wish to player online!");
+            io.to(socket.id).emit("playonline", 1);
+
+        }
     });
 
     //********************************************************************************************************** */
@@ -68,6 +122,11 @@ io.on('connection', (socket) => {
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
         playercounter -= 1;
+        const index = clientsList.findIndex(client => client.clientId === socket.id);
+        if (index !== -1) {
+            clientsList.splice(index, 1);
+            console.log('[Server] Player Unregistered, id: '+socket.id);
+        }
         console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
 });
