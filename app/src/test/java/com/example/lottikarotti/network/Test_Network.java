@@ -9,6 +9,7 @@ import io.socket.client.Socket;
 
 public class Test_Network {
 
+    static final String HOST = "http://127.0.0.1:3000";
     static Socket testSocket01;
     static Socket testSocket02;
     static Socket testSocket03;
@@ -26,7 +27,7 @@ public class Test_Network {
 
         // Establish a Socket.IO connection to the server
         try {
-            testSocket01 = IO.socket("http://127.0.0.1:3000");
+            testSocket01 = IO.socket(HOST);
             testSocket01.connect();
             Thread.sleep(100);
         } catch (Exception e) {
@@ -66,19 +67,19 @@ public class Test_Network {
     @Test
     void testAdvancedServerOverflow(){
         Assertions.assertDoesNotThrow(()->{
-            testSocket02 = IO.socket("http://127.0.0.1:3000");
+            testSocket02 = IO.socket(HOST);
             testSocket02.connect();
 
-            testSocket03 = IO.socket("http://127.0.0.1:3000");
+            testSocket03 = IO.socket(HOST);
             testSocket03.connect();
 
-            testSocket04 = IO.socket("http://127.0.0.1:3000");
+            testSocket04 = IO.socket(HOST);
             testSocket04.connect();
 
-            testSocket05 = IO.socket("http://127.0.0.1:3000");
+            testSocket05 = IO.socket(HOST);
             testSocket05.connect();
 
-            testSocket06 = IO.socket("http://127.0.0.1:3000");
+            testSocket06 = IO.socket(HOST);
             testSocket06.connect();
         });
 
@@ -104,7 +105,7 @@ public class Test_Network {
 
         testSocket01.emit("register", "Erwin");
         Assertions.assertDoesNotThrow(() -> {
-            testSocket02 = IO.socket("http://127.0.0.1:3000");
+            testSocket02 = IO.socket(HOST);
             testSocket02.connect();
         });
 
@@ -118,6 +119,22 @@ public class Test_Network {
         waitFixedTime();
 
         Assertions.assertEquals(true, nameTaken);
+    }
+
+    @Test
+    void testPlayOnline(){
+        testSocket01.emit("register", "Erwin");
+        testSocket01.emit("createlobby", 123456);
+
+        Assertions.assertDoesNotThrow(() -> {
+            testSocket02 = IO.socket(HOST);
+            testSocket02.connect();
+        });
+
+        testSocket01.emit("register", "Lisa");
+        testSocket02.emit("createlobby", 123456);
+
+        waitFixedTime();
     }
 
 
