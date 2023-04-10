@@ -11,7 +11,7 @@ import static com.example.lottikarotti.Network.NetworkCodes.UniqueListenType.*;
 
 import io.socket.client.Socket;
 
-public interface INetworkListeners {
+public interface INetworkListener {
 // Error codes
 public static final int UNKNOWN_ERROR_CODE = UNKNOWN_ERROR.getErrorCode();
 public static final int AUTHENTICATION_ERROR_CODE = AUTHENTICATION_ERROR.getErrorCode();
@@ -19,6 +19,7 @@ public static final int NONAME_ERROR_CODE = NONAME_ERROR.getErrorCode();
 public static final int LOBBY_ERROR_CODE = LOBBY_ERROR.getErrorCode();
 public static final int LOBBY_CREATION_ERROR_CODE = LOBBY_CREATION_ERROR.getErrorCode();
 public static final int LOBBY_JOIN_ERROR_CODE = LOBBY_JOIN_ERRROR.getErrorCode();
+public static final int BAD_MOVE_ERROR_CODE = BAD_MOVE_ERROR.getErrorCode();
 
 // Emit codes
 public static final String PING_CODE = PING.getEmitCode();
@@ -48,6 +49,8 @@ public static final String ERROR_CODE = ERROR.getListenCode();
                                 handleLobbyCreationError();
                         } else if (errcode == LOBBY_JOIN_ERROR_CODE) {
                                 handleLobbyJoinError();
+                        } else if (errcode == BAD_MOVE_ERROR_CODE) {
+                                handleBadMoveError();
                         }
                 });
 
@@ -95,4 +98,5 @@ public static final String ERROR_CODE = ERROR.getListenCode();
         void handlePlayOnline();
         void handleCreateLobby();
         void handleLobbyJoinError();
+        void handleBadMoveError();
 }

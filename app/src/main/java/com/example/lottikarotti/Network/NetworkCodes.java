@@ -27,7 +27,10 @@ public class NetworkCodes {
         // Lobby creation error (error code: 301)
         LOBBY_CREATION_ERROR(301),
         // Lobby join error (error code: 302)
-        LOBBY_JOIN_ERRROR(302);
+        LOBBY_JOIN_ERRROR(302),
+
+        BAD_MOVE_ERROR(500);
+
 
         // The error code for this error type
         private final int errorCode;
