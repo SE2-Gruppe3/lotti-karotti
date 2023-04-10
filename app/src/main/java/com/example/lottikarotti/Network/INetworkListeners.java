@@ -11,8 +11,8 @@ import static com.example.lottikarotti.Network.NetworkCodes.UniqueListenType.*;
 
 import io.socket.client.Socket;
 
-public class INetworkListeners {
-    Socket instance; // socket instance for the network connection
+public interface INetworkListeners {
+    Socket instance = null; // socket instance for the network connection
 // Error codes
 public static final int UNKNOWN_ERROR_CODE = UNKNOWN_ERROR.getErrorCode();
 public static final int AUTHENTICATION_ERROR_CODE = AUTHENTICATION_ERROR.getErrorCode();
@@ -31,10 +31,9 @@ public static final String CREATE_LOBBY_CODE = CREATE_LOBBY.getEmitCode();
 public static final String ERROR_CODE = ERROR.getListenCode();
 
 /**
- * Constructor for INetworkListeners.
  * Initializes the socket instance and sets up the event listeners for the client.
  */
-        INetworkListeners() {
+        default void listen() {
         // Set up error listener
         instance.on(ERROR_CODE, code -> {
         int errcode = (int) code[0];
