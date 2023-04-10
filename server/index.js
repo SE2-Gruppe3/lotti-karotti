@@ -1,3 +1,7 @@
+//********************************************************************************************************** */
+//               ***Gerver for Lotti Karotti, please use PM2 if launching Gerver professionally***           */
+//                                   ***Imports section***                                                   */
+//********************************************************************************************************** */
 const server = require('./utils/server.js');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
@@ -17,8 +21,12 @@ var playercounter = 0;
 var clientsList = [];
 var lobbies = [];
 
-// Listen for incoming connections from clients
+//********************************************************************************************************** */
+//                          ***Connection Handling begins here***                                            */
+//********************************************************************************************************** */
 io.on('connection', (socket) => {
+    var lobbycode = 0, registered = 0;
+
     // Increment the player counter and log a message to the console (player counter does not indicate registered, just client connected to the server)
     playercounter++;
     console.log("New connection: " + socket.id);
@@ -27,7 +35,7 @@ io.on('connection', (socket) => {
     if (playercounter > settings.MAX_PLAYERS) {
         socket.disconnect(true);
         playercounter--;
-        console.log('[Server] Refused connection to player, reason: player count too high!');
+        console.error('[Server] Refused connection to player, reason: player count too high!');
     } else {
         // Otherwise, log a message indicating that a player has connected
         console.log('[Server] A player connected!\nCurrently ' + playercounter + '/'+settings.MAX_PLAYERS+' online!');
@@ -41,17 +49,23 @@ io.on('connection', (socket) => {
     //                          ***PLEASE PUT YOUR LISTENERS/EMITTERS BELOW HERE***                              */
     //********************************************************************************************************** */
 
+    //********************************************************************************************************** */
+    //                          ***Basic gerver functions below here***                                          */
+    //********************************************************************************************************** */
+
+    // Ping (Broadcast asynchronous)
     socket.on('alive', async () => {
         console.log('[Server] Server is up and running!');
         await io.emit('alive', 1);
     });
 
-    // Listen for requests to get the player count and emit the count to all clients
+    // Listen for requests to get the player count and emit the count to all clients (Broadcast)
     socket.on('getplayers', () => {
         console.log('[Server] Sending player information!');
         io.emit('getplayers', playercounter);
     });
 
+    // Register with name for identification
     socket.on('register', args => {
         var taken = 0, loggedin=0;
         for (var i = 0; i < clientsList.length; i++) {
@@ -62,18 +76,24 @@ io.on('connection', (socket) => {
             clientsList.push(storeClientInfo(socket.id, args));
             console.log('[Server] ALL PLAYERS\n\t'+JSON.stringify(clientsList));
             socket.to(socket.id).emit("register", 1);
+            registered = 1;
         } else {
-            console.log('[Server] Blocked an ambgigious name registering action! (error 400)');
+            console.error('[Server] Blocked an ambgigious name registering action! (error 400)');
             // Emit errorCode 400 - Name already taken
             socket.to(socket.id).emit('error', 400);
         }
 
     });
 
+    //********************************************************************************************************** */
+    //                          ***Lobby and Online Logic below here***                                          */
+    //********************************************************************************************************** */
+
+    // Create sub lobby on this gerver with a code
     socket.on('createlobby', code => {
         if (code.length !== 6 || playerExist(clientsList, socket.id) === 0 || lobbyExist(lobbies, code) === 1) {
             io.to(socket.id).emit('error', 300);
-            console.log("[Server] Error while creating lobby (error 300)");
+            console.error("[Server] Error while creating lobby (error 300)");
         } else {
             console.log("[Server] Lobby creation");
             lobbies.push(storeLobbyInfo(code, socket.id));
@@ -81,38 +101,56 @@ io.on('connection', (socket) => {
 
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t"+JSON.stringify(lobbies));
             socket.join(code);
-
+            lobbycode = code;
             io.to(socket.id).emit("createlobby", 1);
         }
     });
 
+    // Join a lobby on this gerver with the lobby code
     socket.on('joinlobby', code=>{
-        if (code.length !== 6 || playerExist(clientsList, socket.id) === 0 || lobbyExist(lobbies, code) === 0){
+        if (code.length !== 6 || playerExist(clientsList, socket.id) === 0 || lobbyExist(lobbies, code) === 0) {
             io.to(socket.id).emit('error', 302);
             console.log("[Server] Error joining lobby (error 302)");
-        }else{
-            console.log("[Server] Player "+socket.id+" joins lobby "+code);
-            var lobby = fetchLobbyInstance(lobbies, code);
-            if(playerExist(lobby.players, socket.id) == 1){
-                console.log("[Server] Very funny... Player is already in the lobby can't join double!\nABORT JOINING");
-                io.to(socket.id).emit('error', 302);
-            }else{
-            lobby.players.push(fetchClientInstance(clientsList, socket.id));
-            console.log(JSON.stringify(lobbies[0]));
-            socket.join(code);
-            }
-        }   
+        } else {
+            const lobby = fetchLobbyInstance(lobbies, code);
+            const playerExists = playerExist(lobby.players, socket.id);
+            playerExists ? (
+                io.to(socket.id).emit('error', 302),
+                console.error("[Server] Very funny... Player is already in the lobby can't join double!\nABORT JOINING")
+            ) : (
+                lobby.players.push(fetchClientInstance(clientsList, socket.id)),
+                console.log(JSON.stringify(lobbies[0])),
+                socket.join(code),
+                lobbycode = code,
+                console.log("[Server] Player " + socket.id + " joins lobby " + code)
+            );
+        }
     });
 
+    // Function for clients to press the "Multiplayer" button and get a feedback if its even possible, ofcourse they will get the feedback anyway but this is faster
     socket.on('playonline', code => {
         if (playerExist(clientsList, socket.id) == 0) {
             io.emit('error', 401);
-            console.log("[Server] Refused to let a client play online, because no username was registered beforehand (error 401)");
+            console.error("[Server] Refused to let a client play online, because no username was registered beforehand (error 401)");
         }
         else {
             console.log("[Server] Granted a player the wish to player online!");
             io.to(socket.id).emit("playonline", 1);
+        }
+    });
 
+    //********************************************************************************************************** */
+    //                          ***Game Logic handling below here***                                             */
+    //              From here on out there will be no suffisticated checks if the login and stuff is in order    */
+    //********************************************************************************************************** */
+
+    // Move logic, Client must handle the logic accordingly
+    socket.on('move', steps=>{
+        if(registered === 1 && lobbycode !== 0 && steps < 8){
+            io.to(lobbycode).emit("move", socket.id, steps);
+        }else{
+            console.error("[Server] Invalid move!")
+            io.emit("error", 500);
         }
     });
 
