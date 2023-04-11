@@ -11,12 +11,13 @@
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="411dp"
-        android:layout_height="463dp"
+        android:layout_height="0dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="3dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginBottom="112dp"
+        app:layout_constraintBottom_toTopOf="@+id/endTurn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
@@ -38,14 +39,15 @@
 
     <ImageView
         android:id="@+id/imageViewCard"
-        android:layout_width="95dp"
+        android:layout_width="0dp"
         android:layout_height="136dp"
-        android:layout_marginStart="36dp"
+        android:layout_marginStart="37dp"
         android:layout_marginTop="53dp"
-        android:layout_marginEnd="280dp"
+        android:layout_marginEnd="169dp"
         android:layout_marginBottom="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/endTurn"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
         app:srcCompat="@drawable/deckkarte" />
@@ -58,10 +60,23 @@
         android:text="Draw card"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.538"
+        app:layout_constraintHorizontal_bias="0.583"
         app:layout_constraintStart_toEndOf="@+id/imageViewCard"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.505" />
+        app:layout_constraintVertical_bias="0.344" />
+
+    <Button
+        android:id="@+id/moveTurn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="98dp"
+        android:text="Move"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.267"
+        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
+        app:layout_constraintTop_toBottomOf="@+id/drawCard"
+        app:layout_constraintVertical_bias="0.687" />
 
     <ImageView
         android:id="@+id/hole1"
@@ -88,7 +103,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hole"  />
+        app:srcCompat="@drawable/hole" />
 
     <ImageView
         android:id="@+id/hole7"
@@ -104,6 +119,34 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/hole" />
+
+    <ImageView
+        android:id="@+id/figOne"
+        android:layout_width="85dp"
+        android:layout_height="81dp"
+        android:layout_marginStart="103dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="91dp"
+        android:layout_marginBottom="7dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
+        app:layout_constraintTop_toBottomOf="@+id/moveTurn"
+        app:layout_constraintVertical_bias="0.181"
+        app:srcCompat="@drawable/fig1" />
+
+    <Button
+        android:id="@+id/endTurn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="108dp"
+        android:text="End Turn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
