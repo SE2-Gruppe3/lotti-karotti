@@ -10,18 +10,32 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="411dp"
-        android:layout_height="0dp"
+        android:layout_width="421dp"
+        android:layout_height="451dp"
         android:layout_marginStart="4dp"
         android:layout_marginEnd="3dp"
         android:layout_marginBottom="112dp"
         app:layout_constraintBottom_toTopOf="@+id/endTurn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.271"
         app:srcCompat="@drawable/gameboard" />
+
+    <ImageView
+        android:id="@+id/hole27"
+        android:visibility="invisible"
+        android:layout_width="39dp"
+        android:layout_height="73dp"
+        android:layout_marginTop="212dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.712"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/hole1" />
 
     <Button
         android:id="@+id/carrotButton"
@@ -48,105 +62,247 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/endTurn"
+        app:layout_constraintHorizontal_bias="0.018"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/deckkarte" />
 
     <Button
         android:id="@+id/drawCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="98dp"
+        android:layout_marginStart="17dp"
+        android:layout_marginEnd="272dp"
+        android:layout_marginBottom="199dp"
         android:text="Draw card"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.583"
-        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.344" />
+        app:layout_constraintVertical_bias="0.958" />
 
     <Button
         android:id="@+id/moveTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="98dp"
         android:text="Move"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.267"
-        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
-        app:layout_constraintTop_toBottomOf="@+id/drawCard"
-        app:layout_constraintVertical_bias="0.687" />
+        app:layout_constraintEnd_toStartOf="@+id/endTurn"
+        app:layout_constraintHorizontal_bias="0.474"
+        app:layout_constraintStart_toEndOf="@+id/drawCard"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.196" />
 
     <ImageView
-        android:id="@+id/hole1"
-        android:layout_width="53dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="53dp"
-        android:layout_marginEnd="358dp"
-        android:layout_marginBottom="632dp"
+        android:id="@+id/figOne3"
+        android:layout_width="85dp"
+        android:layout_height="81dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.757"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hole" />
-
-    <ImageView
-        android:id="@+id/hole2"
-        android:layout_width="66dp"
-        android:layout_height="47dp"
-        android:layout_marginStart="51dp"
-        android:layout_marginTop="53dp"
-        android:layout_marginEnd="294dp"
-        android:layout_marginBottom="631dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/hole" />
-
-    <ImageView
-        android:id="@+id/hole7"
-        android:layout_width="126dp"
-        android:layout_height="43dp"
-        android:layout_marginStart="291dp"
-        android:layout_marginTop="57dp"
-        android:layout_marginBottom="631dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0"
-        app:srcCompat="@drawable/hole" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.533"
+        app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/figOne"
         android:layout_width="85dp"
         android:layout_height="81dp"
-        android:layout_marginStart="103dp"
-        android:layout_marginTop="9dp"
-        android:layout_marginEnd="91dp"
-        android:layout_marginBottom="7dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
-        app:layout_constraintTop_toBottomOf="@+id/moveTurn"
-        app:layout_constraintVertical_bias="0.181"
+        app:layout_constraintHorizontal_bias="0.552"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.529"
+        app:srcCompat="@drawable/fig1" />
+
+    <ImageView
+        android:id="@+id/figOne5"
+        android:layout_width="85dp"
+        android:layout_height="81dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.757"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.873"
+        app:srcCompat="@drawable/fig1" />
+
+    <ImageView
+        android:id="@+id/figOne6"
+        android:layout_width="85dp"
+        android:layout_height="81dp"
+        android:layout_marginTop="193dp"
+        android:layout_marginBottom="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.552"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@drawable/fig1" />
 
     <Button
         android:id="@+id/endTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="286dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="108dp"
         android:text="End Turn"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
-        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.701" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="244dp"
+        android:layout_marginTop="673dp"
+        android:layout_marginEnd="109dp"
+        android:layout_marginBottom="199dp"
+        android:text="Available rabbits"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/hole3"
+        android:visibility="invisible"
+        android:layout_width="65dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="108dp"
+        android:layout_marginEnd="248dp"
+        android:layout_marginBottom="364dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.041"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.84"
+        app:srcCompat="@drawable/hole2" />
+
+    <ImageView
+        android:id="@+id/hole22"
+        android:visibility="invisible"
+        android:layout_width="89dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="76dp"
+        android:layout_marginEnd="201dp"
+        android:layout_marginBottom="291dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/hole2" />
+
+    <ImageView
+        android:id="@+id/hole5"
+        android:visibility="invisible"
+        android:layout_width="65dp"
+        android:layout_height="41dp"
+        android:layout_marginStart="226dp"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="128dp"
+        android:layout_marginBottom="368dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/hole2" />
+
+    <ImageView
+        android:id="@+id/hole25"
+        android:visibility="invisible"
+        android:layout_width="49dp"
+        android:layout_height="55dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.704"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.139"
+        app:srcCompat="@drawable/hole" />
+
+    <ImageView
+        android:id="@+id/hole17"
+        android:visibility="invisible"
+        android:layout_width="49dp"
+        android:layout_height="51dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.102"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.885"
+        app:srcCompat="@drawable/hole" />
+
+    <ImageView
+        android:id="@+id/hole12"
+        android:visibility="invisible"
+        android:layout_width="51dp"
+        android:layout_height="57dp"
+        android:layout_marginStart="337dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.882"
+        app:srcCompat="@drawable/hole" />
+
+    <ImageView
+        android:id="@+id/hole7"
+        android:visibility="invisible"
+        android:layout_width="49dp"
+        android:layout_height="51dp"
+        android:layout_marginBottom="358dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.917"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/hole" />
+
+    <ImageView
+        android:id="@+id/hole9"
+        android:visibility="invisible"
+        android:layout_width="42dp"
+        android:layout_height="77dp"
+        android:layout_marginStart="344dp"
+        android:layout_marginBottom="222dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/hole1" />
+
+    <ImageView
+        android:id="@+id/hole19"
+        android:visibility="invisible"
+        android:layout_width="46dp"
+        android:layout_height="74dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.101"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.532"
+        app:srcCompat="@drawable/hole1" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

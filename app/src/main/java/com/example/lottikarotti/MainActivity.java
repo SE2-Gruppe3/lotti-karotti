@@ -2,15 +2,13 @@ package com.example.lottikarotti;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
-import android.annotation.SuppressLint;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -19,26 +17,22 @@ public class MainActivity extends AppCompatActivity {
 
     private Button carrotButton;
     private Button drawButton;
-    private Button moveTurn;
+    private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
     private ImageView hole;
-    private boolean myTurn;
-    private int touchcounter;
-    private int touchCntLimit;
-
-    private ImageView gameboard;
+    private ImageView gameBoard;
     private ImageView figOne;
-
     private float corX, corY, radius;
-
+    private boolean myTurn;
+    private int touchCounter;
+    private int touchCntLimit;
     final int[] cards = {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
             R.drawable.card4 };
     final int[] holes = {
-            R.id.hole1, R.id.hole2, R.id.hole7 };
-
-    @SuppressLint({"ClickableViewAccessibility", "MissingInflatedId"})
+       R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
+            R.id.hole22,R.id.hole25,R.id.hole27};
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,14 +40,15 @@ public class MainActivity extends AppCompatActivity {
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         drawButton = (Button) findViewById(R.id.drawCard);
-        moveTurn = (Button) findViewById(R.id.moveTurn);
-        moveTurn.setEnabled(false);
-        gameboard = (ImageView) findViewById(R.id.imageView);
+        startTurn = (Button) findViewById(R.id.moveTurn);
+        startTurn.setEnabled(false);
+
+        gameBoard = (ImageView) findViewById(R.id.imageView);
         figOne = (ImageView) findViewById(R.id.figOne);
         endTurn = (Button) findViewById(R.id.endTurn);
         endTurn.setEnabled(false);
         myTurn = false;
-        touchcounter = 0;
+        touchCounter = 0;
         touchCntLimit = -1;
         corX = -1; corY = -1;
         radius = 180;
@@ -65,9 +60,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int idx = ThreadLocalRandom.current().nextInt(0, 3);
-                hole = (ImageView) findViewById(holes[idx]);
-                hole.setImageResource(R.drawable.hole);
+                Random rand = new Random();
+                int random = rand.nextInt(10);
+                ImageView img=(ImageView)findViewById(holes[random]);
+                img.setVisibility(View.VISIBLE);
                 boolean carrotClicked = false;
                 carrotButton.setEnabled(carrotClicked);
 
@@ -78,19 +74,17 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                int random = ThreadLocalRandom.current().nextInt(0, 4);
+                Random rand = new Random();
+                int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
                 switch(random) {
-                    case 0: touchCntLimit = 3; moveTurn.setEnabled(true); break;
+                    case 0: touchCntLimit = 3; startTurn.setEnabled(true); break;
                     case 1: boolean pressCarrot = true; break;
-                    case 2: touchCntLimit = 1; moveTurn.setEnabled(true); break;
-                    case 3: touchCntLimit = 2; moveTurn.setEnabled(true); break;
+                    case 2: touchCntLimit = 1; startTurn.setEnabled(true); break;
+                    case 3: touchCntLimit = 2; startTurn.setEnabled(true); break;
                 }
 
-                /*if(random == 1){
-                    boolean pressCarrot = true;
-                    carrotButton.setEnabled(pressCarrot);
-                }*/
+
 
             }
         });
@@ -98,28 +92,29 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        moveTurn.setOnClickListener(new View.OnClickListener() {
+        startTurn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 myTurn = true;
-                moveTurn.setEnabled(false);
+                startTurn.setEnabled(false);
                 endTurn.setEnabled(false);
                 drawButton.setEnabled(false);
-                touchcounter = 0;
-                gameboard.setOnTouchListener(new View.OnTouchListener() {
+                touchCounter = 0;
+                gameBoard.setOnTouchListener(new View.OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_DOWN && myTurn && touchcounter < touchCntLimit) {
+                        if (event.getAction() == MotionEvent.ACTION_DOWN && myTurn && touchCounter < touchCntLimit) {
                             float x = event.getX();
                             float y = event.getY();
                             if (corX == -1 && corY == -1 || isWithinRadius(x, y)) {
                                 animateFigure(x, y);
-                                touchcounter++;
+                                touchCounter++;
                                 corX = x;
                                 corY = y;
                             }
 
-                        } else if (touchcounter >= touchCntLimit) {
+                        } else if (touchCounter >= touchCntLimit) {
                             endTurn.setEnabled(true);
                             drawButton.setEnabled(false);
                         }
