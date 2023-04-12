@@ -3,6 +3,7 @@ package com.example.lottikarotti;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.view.MotionEvent;
@@ -20,7 +21,11 @@ public class MainActivity extends AppCompatActivity {
     private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
-    private ImageView hole;
+   private ImageView rabbit1;
+    private ImageView rabbit2;
+    private ImageView rabbit3;
+    private ImageView rabbit4;
+
     private ImageView gameBoard;
     private ImageView figOne;
     private float corX, corY, radius;
@@ -37,6 +42,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        rabbit1 = (ImageView) findViewById(R.id.rabbit1);
+        rabbit2 = (ImageView) findViewById(R.id.rabbit2);
+        rabbit3 = (ImageView) findViewById(R.id.rabbit3);
+        rabbit4 = (ImageView) findViewById(R.id.rabbit4);
+        User user = new User("testuserl", new Rabbit(rabbit1.getLeft(),rabbit1.getRight()), new Rabbit(rabbit2.getLeft(),rabbit2.getRight()),new Rabbit(rabbit3.getLeft(),rabbit3.getRight()), new Rabbit(rabbit4.getLeft(),rabbit4.getRight()));
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         drawButton = (Button) findViewById(R.id.drawCard);
@@ -44,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         startTurn.setEnabled(false);
 
         gameBoard = (ImageView) findViewById(R.id.imageView);
-        figOne = (ImageView) findViewById(R.id.figOne);
+        figOne = (ImageView) findViewById(R.id.rabbit1);
         endTurn = (Button) findViewById(R.id.endTurn);
         endTurn.setEnabled(false);
         myTurn = false;
@@ -56,6 +67,34 @@ public class MainActivity extends AppCompatActivity {
         actionBar.hide();
 
 
+        rabbit1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.setCurrentRabbit(user.getRabbit1());
+                user.getRabbit1().setInUse(true);
+            }
+        });
+        rabbit4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.setCurrentRabbit(user.getRabbit4());
+                user.getRabbit4().setInUse(true);
+            }
+        });
+        rabbit3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.setCurrentRabbit(user.getRabbit3());
+                user.getRabbit3().setInUse(true);
+            }
+        });
+        rabbit2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                user.setCurrentRabbit(user.getRabbit2());
+                user.getRabbit2().setInUse(true);
+            }
+        });
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -83,9 +122,6 @@ public class MainActivity extends AppCompatActivity {
                     case 2: touchCntLimit = 1; startTurn.setEnabled(true); break;
                     case 3: touchCntLimit = 2; startTurn.setEnabled(true); break;
                 }
-
-
-
             }
         });
 
@@ -93,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         startTurn.setOnClickListener(new View.OnClickListener() {
+            @SuppressLint("ClickableViewAccessibility")
             @Override
             public void onClick(View view) {
 
@@ -136,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
+    private void onStepAllowed( User u){
+
+    }
     private void animateFigure(float x, float y) {
         figOne.animate()
                 .x(x - (figOne.getWidth() / 2))
