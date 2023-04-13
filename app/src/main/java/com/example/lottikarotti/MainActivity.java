@@ -175,7 +175,10 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void onStepAllowed( User u){
+        Rabbit currRabbit = u.getCurrentRabbit();
+        if(currRabbit.getField() == 0){
 
+        }
     }
     private void animateFigure(float x, float y) {
         figOne.animate()
