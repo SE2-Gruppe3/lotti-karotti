@@ -39,15 +39,15 @@
 
     <Button
         android:id="@+id/carrotButton"
-        android:text="Test"
+
         android:layout_width="103dp"
-        android:visibility="invisible"
         android:layout_height="104dp"
         android:layout_marginStart="132dp"
         android:layout_marginTop="221dp"
         android:layout_marginEnd="201dp"
         android:layout_marginBottom="206dp"
         android:background="@android:color/transparent"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -84,42 +84,42 @@
         android:id="@+id/moveTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="175dp"
+        android:layout_marginEnd="148dp"
+        android:layout_marginBottom="202dp"
         android:text="Move"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/endTurn"
-        app:layout_constraintHorizontal_bias="0.474"
-        app:layout_constraintStart_toEndOf="@+id/drawCard"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.196" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/rabbit3"
-        android:layout_width="85dp"
-        android:layout_height="81dp"
+        android:layout_width="74dp"
+        android:layout_height="63dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.757"
+        app:layout_constraintHorizontal_bias="0.756"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.533"
+        app:layout_constraintVertical_bias="0.635"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/rabbit1"
-        android:layout_width="85dp"
-        android:layout_height="81dp"
+        android:layout_width="80dp"
+        android:layout_height="62dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.552"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.529"
+        app:layout_constraintVertical_bias="0.632"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/rabbit4"
-        android:layout_width="85dp"
-        android:layout_height="81dp"
+        android:layout_width="71dp"
+        android:layout_height="59dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.757"
@@ -130,14 +130,13 @@
 
     <ImageView
         android:id="@+id/rabbit2"
-        android:layout_width="73dp"
-        android:layout_height="70dp"
-        android:layout_marginBottom="30dp"
+        android:layout_width="61dp"
+        android:layout_height="59dp"
+        android:layout_marginBottom="28dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.546"
+        app:layout_constraintHorizontal_bias="0.554"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.989"
         app:srcCompat="@drawable/fig1" />
 
     <Button
@@ -267,7 +266,6 @@
 
     <Button
         android:id="@+id/buttonField7"
-        android:visibility="invisible"
         android:layout_width="39dp"
         android:layout_height="52dp"
         android:layout_marginStart="343dp"
@@ -275,6 +273,7 @@
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="373dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="1.0"
@@ -284,20 +283,19 @@
 
     <Button
         android:id="@+id/buttonFiled8"
-        android:visibility="invisible"
         android:layout_width="39dp"
         android:layout_height="67dp"
         android:layout_marginStart="345dp"
         android:layout_marginTop="87dp"
         android:layout_marginEnd="37dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView" />
 
     <Button
         android:id="@+id/buttonFiled9"
-        android:visibility="invisible"
         android:layout_width="39dp"
         android:layout_height="63dp"
         android:layout_marginStart="345dp"
@@ -305,6 +303,7 @@
         android:layout_marginEnd="37dp"
         android:layout_marginBottom="235dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -312,7 +311,6 @@
 
     <Button
         android:id="@+id/buttonField10"
-        android:visibility="invisible"
         android:layout_width="39dp"
         android:layout_height="63dp"
         android:layout_marginStart="344dp"
@@ -320,6 +318,7 @@
         android:layout_marginEnd="38dp"
         android:layout_marginBottom="168dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.0"
@@ -328,13 +327,13 @@
 
     <Button
         android:id="@+id/buttonFiled11"
-        android:visibility="invisible"
         android:layout_width="40dp"
         android:layout_height="57dp"
         android:layout_marginTop="281dp"
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="106dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageView"
@@ -342,7 +341,6 @@
 
     <Button
         android:id="@+id/buttonField12"
-        android:visibility="invisible"
         android:layout_width="41dp"
         android:layout_height="49dp"
         android:layout_marginStart="344dp"
@@ -350,6 +348,7 @@
         android:layout_marginEnd="36dp"
         android:layout_marginBottom="53dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -357,7 +356,6 @@
 
     <Button
         android:id="@+id/buttonFiled13"
-        android:visibility="invisible"
         android:layout_width="58dp"
         android:layout_height="50dp"
         android:layout_marginStart="280dp"
@@ -365,6 +363,7 @@
         android:layout_marginEnd="83dp"
         android:layout_marginBottom="52dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -372,7 +371,6 @@
 
     <Button
         android:id="@+id/buttonField14"
-        android:visibility="invisible"
         android:layout_width="57dp"
         android:layout_height="50dp"
         android:layout_marginStart="222dp"
@@ -380,6 +378,7 @@
         android:layout_marginEnd="142dp"
         android:layout_marginBottom="52dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -387,10 +386,8 @@
         app:layout_constraintVertical_bias="1.0" />
 
 
-
     <Button
         android:id="@+id/buttonField20"
-        android:visibility="invisible"
         android:layout_width="42dp"
         android:layout_height="55dp"
         android:layout_marginStart="45dp"
@@ -398,6 +395,7 @@
         android:layout_marginEnd="334dp"
         android:layout_marginBottom="240dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -405,7 +403,6 @@
 
     <Button
         android:id="@+id/buttonField21"
-        android:visibility="invisible"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="43dp"
@@ -413,6 +410,7 @@
         android:layout_marginEnd="333dp"
         android:layout_marginBottom="292dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="1.0"
@@ -422,7 +420,6 @@
 
     <Button
         android:id="@+id/buttonField22"
-        android:visibility="invisible"
         android:layout_width="57dp"
         android:layout_height="44dp"
         android:layout_marginStart="100dp"
@@ -430,6 +427,7 @@
         android:layout_marginEnd="263dp"
         android:layout_marginBottom="291dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
 
@@ -440,7 +438,6 @@
 
     <Button
         android:id="@+id/buttonField23"
-        android:visibility="invisible"
         android:layout_width="53dp"
         android:layout_height="44dp"
         android:layout_marginStart="167dp"
@@ -448,6 +445,7 @@
         android:layout_marginEnd="208dp"
         android:layout_marginBottom="293dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="1.0"
@@ -457,7 +455,6 @@
 
     <Button
         android:id="@+id/buttonField24"
-        android:visibility="invisible"
         android:layout_width="40dp"
         android:layout_height="43dp"
         android:layout_marginStart="226dp"
@@ -465,6 +462,7 @@
         android:layout_marginEnd="76dp"
         android:layout_marginBottom="296dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintEnd_toStartOf="@+id/hole7"
@@ -475,7 +473,6 @@
 
     <Button
         android:id="@+id/buttonField29"
-        android:visibility="invisible"
         android:layout_width="92dp"
         android:layout_height="43dp"
         android:layout_marginStart="124dp"
@@ -483,6 +480,7 @@
         android:layout_marginEnd="205dp"
         android:layout_marginBottom="124dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -490,13 +488,13 @@
 
     <Button
         android:id="@+id/buttonField25"
-        android:visibility="invisible"
         android:layout_width="45dp"
         android:layout_height="41dp"
         android:layout_marginStart="272dp"
         android:layout_marginTop="114dp"
         android:layout_marginBottom="28dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/carrotButton"
         app:layout_constraintHorizontal_bias="0.076"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -505,7 +503,6 @@
 
     <Button
         android:id="@+id/buttonField26"
-        android:visibility="invisible"
         android:layout_width="0dp"
         android:layout_height="49dp"
         android:layout_marginStart="4dp"
@@ -513,6 +510,7 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="244dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/hole25"
         app:layout_constraintStart_toEndOf="@+id/moveTurn"></Button>
@@ -520,11 +518,11 @@
 
     <Button
         android:id="@+id/buttonField27"
-        android:visibility="invisible"
         android:layout_width="38dp"
         android:layout_height="77dp"
         android:layout_marginBottom="172dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.708"
@@ -532,7 +530,6 @@
 
     <Button
         android:id="@+id/buttonField16"
-        android:visibility="invisible"
         android:layout_width="62dp"
         android:layout_height="52dp"
         android:layout_marginStart="96dp"
@@ -540,6 +537,7 @@
         android:layout_marginEnd="263dp"
         android:layout_marginBottom="50dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -547,7 +545,6 @@
 
     <Button
         android:id="@+id/buttonField17"
-        android:visibility="invisible"
         android:layout_width="48dp"
         android:layout_height="52dp"
         android:layout_marginStart="41dp"
@@ -555,6 +552,7 @@
         android:layout_marginEnd="332dp"
         android:layout_marginBottom="49dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -562,7 +560,6 @@
 
     <Button
         android:id="@+id/buttonField18"
-        android:visibility="invisible"
         android:layout_width="45dp"
         android:layout_height="63dp"
         android:layout_marginStart="41dp"
@@ -570,6 +567,7 @@
         android:layout_marginEnd="335dp"
         android:layout_marginBottom="108dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -594,7 +592,6 @@
 
     <Button
         android:id="@+id/buttonField15"
-        android:visibility="invisible"
         android:layout_width="52dp"
         android:layout_height="54dp"
         android:layout_marginStart="164dp"
@@ -602,6 +599,7 @@
         android:layout_marginEnd="205dp"
         android:layout_marginBottom="52dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -638,7 +636,6 @@
 
     <Button
         android:id="@+id/buttonField1"
-        android:visibility="invisible"
         android:layout_width="39dp"
         android:layout_height="44dp"
         android:layout_marginStart="10dp"
@@ -646,6 +643,7 @@
         android:layout_marginEnd="372dp"
         android:layout_marginBottom="368dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -653,7 +651,6 @@
 
     <Button
         android:id="@+id/buttonField2"
-        android:visibility="invisible"
         android:layout_width="51dp"
         android:layout_height="49dp"
         android:layout_marginStart="57dp"
@@ -661,6 +658,7 @@
         android:layout_marginEnd="313dp"
         android:layout_marginBottom="361dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -668,7 +666,6 @@
 
     <Button
         android:id="@+id/buttonField5"
-        android:visibility="invisible"
         android:layout_width="46dp"
         android:layout_height="42dp"
         android:layout_marginStart="234dp"
@@ -676,6 +673,7 @@
         android:layout_marginEnd="141dp"
         android:layout_marginBottom="368dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -683,7 +681,6 @@
 
     <Button
         android:id="@+id/buttonField4"
-        android:visibility="invisible"
         android:layout_width="55dp"
         android:layout_height="45dp"
         android:layout_marginStart="167dp"
@@ -691,6 +688,7 @@
         android:layout_marginEnd="199dp"
         android:layout_marginBottom="363dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -698,7 +696,6 @@
 
     <Button
         android:id="@+id/buttonField3"
-        android:visibility="invisible"
         android:layout_width="56dp"
         android:layout_height="0dp"
         android:layout_marginStart="109dp"
@@ -706,6 +703,7 @@
         android:layout_marginEnd="256dp"
         android:layout_marginBottom="199dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@+id/buttonField29"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -714,7 +712,6 @@
 
     <Button
         android:id="@+id/buttonField6"
-        android:visibility="invisible"
         android:layout_width="43dp"
         android:layout_height="44dp"
         android:layout_marginStart="291dp"
@@ -722,6 +719,7 @@
         android:layout_marginEnd="87dp"
         android:layout_marginBottom="366dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
@@ -729,7 +727,6 @@
 
     <Button
         android:id="@+id/buttonField28"
-        android:visibility="invisible"
         android:layout_width="78dp"
         android:layout_height="41dp"
         android:layout_marginStart="225dp"
@@ -737,10 +734,36 @@
         android:layout_marginEnd="118dp"
         android:layout_marginBottom="128dp"
         android:text="Button"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView" />
+
+    <TextView
+        android:id="@+id/textViewAvailableRabbits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="181dp"
+        android:layout_marginEnd="122dp"
+        android:layout_marginBottom="155dp"
+        android:text="Available Rabbits"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewInstructions" />
+
+    <TextView
+        android:id="@+id/textViewInstructions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Instruction:"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.53"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/moveTurn"
+        app:layout_constraintVertical_bias="0.049" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 cardView.setImageResource(cards[random]);
                 switch(random) {
                     case 0: touchCntLimit = 3; startTurn.setEnabled(true); break;
-                    case 1: boolean pressCarrot = true; break;
+                    case 1: carrotButton.setEnabled(true); break;
                     case 2: touchCntLimit = 1; startTurn.setEnabled(true); break;
                     case 3: touchCntLimit = 2; startTurn.setEnabled(true); break;
                 }
