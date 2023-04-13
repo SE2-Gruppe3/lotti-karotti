@@ -2,13 +2,15 @@ package com.example.lottikarotti;
 
 public class Rabbit {
 
+    private int id;
     private int xCor;
     private int yCor;
     private int field;
 
     private boolean inUse;
 
-    public Rabbit(int xCor, int yCor) {
+    public Rabbit(int id,int xCor, int yCor) {
+        this.id=id;
         this.xCor = xCor;
         this.yCor = yCor;
         this.field = 0;
@@ -17,6 +19,14 @@ public class Rabbit {
 
     public boolean isInUse() {
         return inUse;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public void setInUse(boolean inUse) {
