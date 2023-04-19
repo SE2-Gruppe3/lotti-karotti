@@ -85,6 +85,11 @@ io.on('connection', (socket) => {
 
     });
 
+    socket.on('getplayerlist', () => {
+        console.log('[Server] Sending player list information!');
+        io.emit('getplayerlist', clientsList);
+    });
+
     //********************************************************************************************************** */
     //                          ***Lobby and Online Logic below here***                                          */
     //********************************************************************************************************** */
