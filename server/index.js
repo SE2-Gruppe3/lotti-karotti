@@ -153,6 +153,7 @@ io.on('connection', (socket) => {
     socket.on('move', steps=>{
         if(registered === 1 && lobbycode !== 0 && steps < 8){
             io.to(lobbycode).emit("move", socket.id, steps);
+            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps!")
         }else{
             console.error("[Server] Invalid move!")
             io.emit("error", 500);
