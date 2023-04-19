@@ -12,15 +12,12 @@
         android:id="@+id/imageView"
         android:layout_width="421dp"
         android:layout_height="451dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="3dp"
-        android:layout_marginBottom="112dp"
-        app:layout_constraintBottom_toTopOf="@+id/endTurn"
+        android:layout_marginBottom="280dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.529"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.226"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/gameboard" />
 
     <ImageView
@@ -55,99 +52,106 @@
 
     <ImageView
         android:id="@+id/imageViewCard"
-        android:layout_width="0dp"
+        android:layout_width="76dp"
         android:layout_height="136dp"
-        android:layout_marginStart="37dp"
-        android:layout_marginTop="53dp"
-        android:layout_marginEnd="169dp"
-        android:layout_marginBottom="48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/endTurn"
-        app:layout_constraintHorizontal_bias="0.018"
+        android:layout_marginStart="41dp"
+        android:layout_marginTop="11dp"
+        android:layout_marginEnd="48dp"
+        app:layout_constraintEnd_toStartOf="@+id/rabbit1"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintTop_toBottomOf="@+id/drawCard"
         app:srcCompat="@drawable/deckkarte" />
 
     <Button
         android:id="@+id/drawCard"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="31dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="11dp"
         android:text="Draw card"
+        android:textSize="11sp"
         app:layout_constraintBottom_toTopOf="@+id/imageViewCard"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <Button
         android:id="@+id/moveTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="175dp"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="148dp"
-        android:layout_marginBottom="202dp"
+        android:layout_marginBottom="20dp"
         android:text="Move"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toTopOf="@+id/textViewInstructions"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/drawCard"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <ImageView
         android:id="@+id/rabbit3"
         android:layout_width="74dp"
         android:layout_height="63dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="101dp"
+        android:layout_marginBottom="61dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.756"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.635"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toEndOf="@+id/rabbit2"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAvailableRabbits"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/rabbit1"
-        android:layout_width="80dp"
-        android:layout_height="62dp"
+        android:layout_width="85dp"
+        android:layout_height="63dp"
+        android:layout_marginStart="173dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="62dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.552"
+        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.632"
+        app:layout_constraintTop_toBottomOf="@+id/textViewAvailableRabbits"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/rabbit4"
         android:layout_width="71dp"
         android:layout_height="59dp"
+        android:layout_marginEnd="104dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.757"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.873"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/rabbit2"
         android:layout_width="61dp"
         android:layout_height="59dp"
-        android:layout_marginBottom="28dp"
+        android:layout_marginStart="44dp"
+        android:layout_marginBottom="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.554"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rabbit4"
+        app:layout_constraintStart_toEndOf="@+id/endTurn"
         app:srcCompat="@drawable/fig1" />
 
     <Button
         android:id="@+id/endTurn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="204dp"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="9dp"
+        android:layout_marginEnd="280dp"
+        android:layout_marginBottom="28dp"
         android:text="End Turn"
+        android:textSize="11sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewCard" />
 
     <TextView
         android:id="@+id/textView"
@@ -744,26 +748,42 @@
         android:id="@+id/textViewAvailableRabbits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="181dp"
-        android:layout_marginEnd="122dp"
-        android:layout_marginBottom="155dp"
+        android:layout_marginStart="72dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="114dp"
+        android:layout_marginBottom="14dp"
         android:text="Available Rabbits"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/rabbit3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewInstructions" />
+        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
+        app:layout_constraintTop_toBottomOf="@+id/textViewInstructions"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:id="@+id/textViewInstructions"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="217dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="124dp"
         android:text="Instruction:"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/moveTurn" />
+
+    <ImageButton
+        android:id="@+id/settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="36dp"
+        android:layout_marginTop="213dp"
+        android:layout_marginEnd="13dp"
+        android:layout_marginBottom="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.53"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/moveTurn"
-        app:layout_constraintVertical_bias="0.049" />
+        app:layout_constraintStart_toEndOf="@+id/rabbit4"
+        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:srcCompat="@android:drawable/ic_menu_manage" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

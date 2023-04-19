@@ -4,20 +4,22 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.graphics.Matrix;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class MainActivity extends AppCompatActivity {
 
     private Button carrotButton;
+
+    private ImageButton settingsButton;
     private Button drawButton;
     private Button startTurn;
     private Button endTurn;
@@ -68,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
         User user = new User("testuserl", new Rabbit(1,rabbit1.getLeft(),rabbit1.getRight()), new Rabbit(2,rabbit2.getLeft(),rabbit2.getRight()),new Rabbit(3,rabbit3.getLeft(),rabbit3.getRight()), new Rabbit(4,rabbit4.getLeft(),rabbit4.getRight()));
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
+        settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
         startTurn = (Button) findViewById(R.id.moveTurn);
@@ -152,12 +155,20 @@ public class MainActivity extends AppCompatActivity {
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
                 switch(random) {
-                    case 0: touchCntLimit = 3;instructions.setText("Instructions: Move three fields with your rabbit on the game board"); startTurn.setEnabled(true); break;
-                    case 1: carrotButton.setEnabled(true); instructions.setText("Instructions: Click the carrot on the game board");
+                    case 0: touchCntLimit = 3;instructions.setText("Instructions: Move three fields with\n your rabbit on the game board"); startTurn.setEnabled(true); break;
+                    case 1: carrotButton.setEnabled(true); instructions.setText("Instructions: Click the carrot\n on the game board");
                         break;
-                    case 2: touchCntLimit = 1; instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOnStep(user);startTurn.setEnabled(true); break;
-                    case 3: touchCntLimit = 2; instructions.setText("Instructions: Move two fields with your rabbit on the game board");startTurn.setEnabled(true); break;
+                    case 2: touchCntLimit = 1; instructions.setText("Instructions: Move one field with\n your rabbit on the game board");moveOnStep(user);startTurn.setEnabled(true); break;
+                    case 3: touchCntLimit = 2; instructions.setText("Instructions: Move two fields with\n your rabbit on the game board");startTurn.setEnabled(true); break;
                 }
+            }
+        });
+
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
             }
         });
 
