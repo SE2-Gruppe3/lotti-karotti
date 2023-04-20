@@ -1,0 +1,22 @@
+{
+  "name": "lotti-karotti-server",
+  "version": "1.0.0",
+  "description": "A server for the android game \"Lotti Karotti\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "game",
+    "android",
+    "apk",
+    "server",
+    "network"
+  ],
+  "author": "Samuel Ziegler",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.6.1"
+  }
+}
