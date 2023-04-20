@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
         settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
+        carrotButton.setEnabled(false);
 
 
         instructions.setText("Instructions: Choose a rabbit to play");
@@ -195,14 +196,13 @@ public class MainActivity extends AppCompatActivity {
 
         Button targetButton = (Button)findViewById(fields[currentField]);
         targetButton.setEnabled(true);
-        targetButton.setBackgroundResource(R.drawable.deckkarte);
+       // targetButton.setBackgroundResource(R.drawable.deckkarte);
         targetButton.setVisibility(View.VISIBLE);
 
         targetButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getBaseContext(),"Clicked",Toast.LENGTH_SHORT).show();
 
                 int[] values = new int[2];
                 v.getLocationOnScreen(values);
@@ -213,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
                      u.getCurrentRabbit().setyCor(y);
                     drawButton.setEnabled(true);
                     targetButton.setEnabled(false);
+                    instructions.setText("Draw card or choose rabbit");
              }
         });
       }
@@ -220,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
     private void animateFigure(float x, float y,User u) {
         ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
         currentRabbit.animate()
-                .x(x - (currentRabbit.getWidth()/2 ))
+                .x(x - (currentRabbit.getWidth()/2 )+50)
                 .y(y - (currentRabbit.getHeight() / 2))
                 .setDuration(500)
                 .start();
