@@ -36,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private int touchCntLimit;
 
     private TextView instructions;
+    final int[]rabbits={
+          R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
     final int[] cards = {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
             R.drawable.card4 };
@@ -43,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
        R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
 
-    final int[] fields = {
+    final int[] fields = {    R.id.buttonField1,
             R.id.buttonField1, R.id.buttonField2,R.id.buttonField3,R.id.buttonField4,R.id.buttonField5,R.id.buttonField6,R.id.buttonField7,
             R.id.buttonField8,R.id.buttonField9,R.id.buttonField10, R.id.buttonField11, R.id.buttonField12, R.id.buttonField13, R.id.buttonField14,
     R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
@@ -154,11 +156,11 @@ public class MainActivity extends AppCompatActivity {
                 cardView.setImageResource(cards[random]);
 
                 switch(random) {
-                    case 0: touchCntLimit = 3;drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); moveOnStep(user); break;
+                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); moveOn(user,3); break;
                     case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
                         break;
-                    case 2: touchCntLimit = 1; drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOnStep(user); break;
-                    case 3: touchCntLimit = 2; drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");moveOnStep(user); break;
+                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOn(user,1); break;
+                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");moveOn(user,2); break;
                 }
 
                 rabbit1.setEnabled(true);
@@ -172,16 +174,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void moveOnStep( User u){
+    private void moveOn( User u, int step){
 
         drawButton.setEnabled(false);
-        touchCounter = 0;
 
-        int currentField =u.getCurrentRabbit().getField();
+        int currentField =u.getCurrentRabbit().getField()+step;
+        u.getCurrentRabbit().setField(currentField);
 
-         Button targetButton = (Button)findViewById(fields[currentField]);
-        currentField++;
+        Button targetButton = (Button)findViewById(fields[currentField]);
         targetButton.setEnabled(true);
+        targetButton.setBackgroundResource(R.drawable.deckkarte);
         targetButton.setVisibility(View.VISIBLE);
 
         targetButton.setOnClickListener(new View.OnClickListener() {
@@ -194,22 +196,22 @@ public class MainActivity extends AppCompatActivity {
                 v.getLocationOnScreen(values);
                     float x = values[0];
                     float y = values[1];
-                     animateFigure(x, y);
+                     animateFigure(x, y,u);
                      u.getCurrentRabbit().setxCor(x);
                      u.getCurrentRabbit().setyCor(y);
+                    drawButton.setEnabled(true);
+                    targetButton.setEnabled(false);
              }
         });
       }
 
-    private void animateFigure(float x, float y) {
-        figOne.animate()
-                .x(x - (figOne.getWidth() / 2))
-                .y(y - (figOne.getHeight() / 2))
+    private void animateFigure(float x, float y,User u) {
+        ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()]);
+        currentRabbit.animate()
+                .x(x - (currentRabbit.getWidth()/2 )+20)
+                .y(y - (currentRabbit.getHeight() / 2))
                 .setDuration(500)
                 .start();
     }
-    private boolean isWithinRadius(float x, float y) {
-        float distance = (float) Math.sqrt(Math.pow(x - corX, 2) + Math.pow(y - corY, 2));
-        return distance <= radius;
-    }
+
 }
