@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -70,15 +71,12 @@ public class MainActivity extends AppCompatActivity {
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
-        startTurn = (Button) findViewById(R.id.moveTurn);
-        startTurn.setEnabled(false);
+
 
         instructions.setText("Instructions: Choose a rabbit to play");
 
         gameBoard = (ImageView) findViewById(R.id.imageView);
         figOne = (ImageView) findViewById(R.id.rabbit1);
-        endTurn = (Button) findViewById(R.id.endTurn);
-        endTurn.setEnabled(false);
         myTurn = false;
         touchCounter = 0;
         touchCntLimit = -1;
@@ -127,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                drawButton.setEnabled(true);
                 Random rand = new Random();
                 int random = rand.nextInt(10);
                 for (int hole : holes) {
@@ -147,75 +145,62 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-
+                rabbit1.setEnabled(false);
+                rabbit2.setEnabled(false);
+                rabbit3.setEnabled(false);
+                rabbit4.setEnabled(false);
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
+
                 switch(random) {
-                    case 0: touchCntLimit = 3;instructions.setText("Instructions: Move three fields with your rabbit on the game board"); startTurn.setEnabled(true); break;
-                    case 1: carrotButton.setEnabled(true); instructions.setText("Instructions: Click the carrot on the game board");
+                    case 0: touchCntLimit = 3;drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); moveOnStep(user); break;
+                    case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
                         break;
-                    case 2: touchCntLimit = 1; instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOnStep(user);startTurn.setEnabled(true); break;
-                    case 3: touchCntLimit = 2; instructions.setText("Instructions: Move two fields with your rabbit on the game board");startTurn.setEnabled(true); break;
+                    case 2: touchCntLimit = 1; drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOnStep(user); break;
+                    case 3: touchCntLimit = 2; drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");moveOnStep(user); break;
                 }
+
+                rabbit1.setEnabled(true);
+                rabbit2.setEnabled(true);
+                rabbit3.setEnabled(true);
+                rabbit4.setEnabled(true);
             }
         });
 
-
-
-
-        startTurn.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("ClickableViewAccessibility")
-            @Override
-            public void onClick(View view) {
-
-                myTurn = true;
-                startTurn.setEnabled(false);
-                endTurn.setEnabled(false);
-                drawButton.setEnabled(false);
-                touchCounter = 0;
-                gameBoard.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        if (event.getAction() == MotionEvent.ACTION_DOWN && myTurn && touchCounter < touchCntLimit) {
-                            float x = event.getX();
-                            float y = event.getY();
-                            if (corX == -1 && corY == -1 || isWithinRadius(x, y)) {
-                                animateFigure(x, y);
-                                touchCounter++;
-                                corX = x;
-                                corY = y;
-                            }
-
-                        } else if (touchCounter >= touchCntLimit) {
-                            endTurn.setEnabled(true);
-                            drawButton.setEnabled(false);
-                        }
-                        return true;
-                    }
-                });
-
-            }
-
-        });
-        endTurn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                myTurn = false;
-                drawButton.setEnabled(true);
-                endTurn.setEnabled(false);
-            }
-        });
 
     }
 
 
     private void moveOnStep( User u){
-     //   Rabbit currRabbit = u.getCurrentRabbit();
-      //  if(currRabbit.getField() == 0){
 
-       // }
-    }
+        drawButton.setEnabled(false);
+        touchCounter = 0;
+
+        int currentField =u.getCurrentRabbit().getField();
+
+         Button targetButton = (Button)findViewById(fields[currentField]);
+        currentField++;
+        targetButton.setEnabled(true);
+        targetButton.setVisibility(View.VISIBLE);
+
+        targetButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getBaseContext(),"Clicked",Toast.LENGTH_SHORT).show();
+
+                int[] values = new int[2];
+                v.getLocationOnScreen(values);
+                    float x = values[0];
+                    float y = values[1];
+                     animateFigure(x, y);
+                     u.getCurrentRabbit().setxCor(x);
+                     u.getCurrentRabbit().setyCor(y);
+             }
+        });
+      }
+
     private void animateFigure(float x, float y) {
         figOne.animate()
                 .x(x - (figOne.getWidth() / 2))

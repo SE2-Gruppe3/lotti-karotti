@@ -3,13 +3,13 @@ package com.example.lottikarotti;
 public class Rabbit {
 
     private int id;
-    private int xCor;
-    private int yCor;
+    private float xCor;
+    private float yCor;
     private int field;
 
     private boolean inUse;
 
-    public Rabbit(int id,int xCor, int yCor) {
+    public Rabbit(int id,float xCor, float yCor) {
         this.id=id;
         this.xCor = xCor;
         this.yCor = yCor;
@@ -33,19 +33,19 @@ public class Rabbit {
         this.inUse = inUse;
     }
 
-    public int getxCor() {
+    public float getxCor() {
         return xCor;
     }
 
-    public void setxCor(int xCor) {
+    public void setxCor(float xCor) {
         this.xCor = xCor;
     }
 
-    public int getyCor() {
+    public float getyCor() {
         return yCor;
     }
 
-    public void setyCor(int yCor) {
+    public void setyCor(float yCor) {
         this.yCor = yCor;
     }
 
