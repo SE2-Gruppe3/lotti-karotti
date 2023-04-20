@@ -132,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
                 int random = rand.nextInt(10);
                 for (int hole : holes) {
                     ImageView img = (ImageView) findViewById(hole);
-                    img.setVisibility(View.INVISIBLE);
+                    img.setVisibility(View.GONE);
+
                 }
                 ImageView img=(ImageView)findViewById(holes[random]);
                 img.setVisibility(View.VISIBLE);
@@ -147,10 +148,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 
-                rabbit1.setEnabled(false);
-                rabbit2.setEnabled(false);
-                rabbit3.setEnabled(false);
-                rabbit4.setEnabled(false);
+
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
@@ -163,10 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");moveOn(user,2); break;
                 }
 
-                rabbit1.setEnabled(true);
-                rabbit2.setEnabled(true);
-                rabbit3.setEnabled(true);
-                rabbit4.setEnabled(true);
+
             }
         });
 
@@ -176,9 +171,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void moveOn( User u, int step){
 
+
         drawButton.setEnabled(false);
 
         int currentField =u.getCurrentRabbit().getField()+step;
+      /*  if(u.getRabbit2().getField() ==currentField && u.getRabbit3().getField() == currentField && u.getRabbit4().getField()== currentField)
+        {
+            instructions.setText("Please choose another rabbit");
+            return;
+        }*/
         u.getCurrentRabbit().setField(currentField);
 
         Button targetButton = (Button)findViewById(fields[currentField]);
@@ -206,12 +207,16 @@ public class MainActivity extends AppCompatActivity {
       }
 
     private void animateFigure(float x, float y,User u) {
-        ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()]);
+        ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
         currentRabbit.animate()
-                .x(x - (currentRabbit.getWidth()/2 )+20)
+                .x(x - (currentRabbit.getWidth()/2 ))
                 .y(y - (currentRabbit.getHeight() / 2))
                 .setDuration(500)
                 .start();
+
+        currentRabbit.clearAnimation();
+
     }
+
 
 }
