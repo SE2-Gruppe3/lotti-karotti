@@ -24,18 +24,18 @@
         android:layout_width="151dp"
         android:layout_height="45dp"
         android:layout_marginTop="28dp"
-        android:layout_marginBottom="658dp"
         android:text="Main Menu"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.033" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_width="13dp"
+        android:layout_height="15dp" />
 
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group2"
@@ -53,42 +53,30 @@
         android:id="@+id/button_Play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="161dp"
-        android:layout_marginTop="148dp"
-        android:layout_marginEnd="162dp"
-        android:layout_marginBottom="535dp"
+        android:layout_marginTop="76dp"
         android:text="Play"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/menuHead" />
 
     <Button
         android:id="@+id/button_Settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="151dp"
-        android:layout_marginTop="273dp"
-        android:layout_marginEnd="152dp"
-        android:layout_marginBottom="410dp"
+        android:layout_marginTop="77dp"
         android:text="Settings"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/button_Play" />
 
     <Button
         android:id="@+id/button_About"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="158dp"
-        android:layout_marginTop="405dp"
-        android:layout_marginEnd="159dp"
-        android:layout_marginBottom="278dp"
+        android:layout_marginTop="83dp"
         android:text="About"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/button_Settings" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
