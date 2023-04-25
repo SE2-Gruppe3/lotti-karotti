@@ -27,6 +27,7 @@ public class SettingsActivity extends AppCompatActivity {
     private boolean isBound = false;
     private static float volume = 1f;
     private static boolean muted = false;
+    private static boolean isBarZero = false;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +53,15 @@ public class SettingsActivity extends AppCompatActivity {
             settingsVolOn.setVisibility(View.INVISIBLE);
             settingsVolMute.setVisibility(View.VISIBLE);
             barVolume.setEnabled(false);
+        }else if (isBarZero) {
+            settingsVolOn.setVisibility(View.INVISIBLE);
+            settingsVolMute.setVisibility(View.VISIBLE);
+            settingsVolMute.setEnabled(false);
+            barVolume.setEnabled(true);
         } else {
             settingsVolMute.setVisibility(View.INVISIBLE);
             settingsVolOn.setVisibility(View.VISIBLE);
+            settingsVolMute.setEnabled(false);
             barVolume.setEnabled(true);
         }
 
@@ -67,6 +74,7 @@ public class SettingsActivity extends AppCompatActivity {
                     muted = true;
                     bgMusicService.setVolume(0f);
                     barVolume.setEnabled(false);
+                    settingsVolMute.setEnabled(true);
                 }
             }
         });
@@ -95,9 +103,13 @@ public class SettingsActivity extends AppCompatActivity {
                     if(volume == 0f){
                         settingsVolOn.setVisibility(View.INVISIBLE);
                         settingsVolMute.setVisibility(View.VISIBLE);
+                        settingsVolMute.setEnabled(false);
+                        isBarZero = true;
                     } else {
                         settingsVolMute.setVisibility(View.INVISIBLE);
                         settingsVolOn.setVisibility(View.VISIBLE);
+                        settingsVolMute.setEnabled(true);
+                        isBarZero = false;
                     }
                 }
             }

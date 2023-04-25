@@ -26,6 +26,10 @@ public class MenuActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
+        //Connecting the Service to the MainActivity
+        Intent intent = new Intent(this, BGMusic.class);
+        startService(intent);
+
         playGame = findViewById(R.id.button_Play);
         playGame.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,6 +59,13 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+
+    }
+    @Override
+    public void onDestroy() {
+        Intent intent = new Intent(this, BGMusic.class);
+        stopService(intent);
+        super.onDestroy();
 
     }
 }

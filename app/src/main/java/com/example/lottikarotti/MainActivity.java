@@ -80,9 +80,6 @@ public class MainActivity extends AppCompatActivity {
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
         instructions = (TextView) findViewById(R.id.textViewInstructions);
 
-        //Connecting the Service to the MainActivity
-        Intent intent = new Intent(this, BGMusic.class);
-        startService(intent);
 
 
         for (int field : fields) {
@@ -267,8 +264,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onDestroy() {
-       Intent intent = new Intent(this, BGMusic.class);
-        stopService(intent);
+//       Intent intent = new Intent(this, BGMusic.class);
+//        stopService(intent);
         super.onDestroy();
 
     }
