@@ -26,7 +26,7 @@ public class SettingsActivity extends AppCompatActivity {
     private BGMusic bgMusicService;
     private boolean isBound = false;
     private static float volume = 1f;
-
+    private static boolean muted = false;
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +45,18 @@ public class SettingsActivity extends AppCompatActivity {
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
         barVolume.setMax(100);
-        barVolume.setProgress(barVolume.getMax());
+        barVolume.setProgress((int)(volume*100));
+
+        //Checking whether the volume is muted or not
+        if (muted) {
+            settingsVolOn.setVisibility(View.INVISIBLE);
+            settingsVolMute.setVisibility(View.VISIBLE);
+            barVolume.setEnabled(false);
+        } else {
+            settingsVolMute.setVisibility(View.INVISIBLE);
+            settingsVolOn.setVisibility(View.VISIBLE);
+            barVolume.setEnabled(true);
+        }
 
         settingsVolOn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,6 +64,7 @@ public class SettingsActivity extends AppCompatActivity {
                 settingsVolOn.setVisibility(View.INVISIBLE);
                 settingsVolMute.setVisibility(View.VISIBLE);
                 if (isBound) {
+                    muted = true;
                     bgMusicService.setVolume(0f);
                     barVolume.setEnabled(false);
                 }
@@ -65,6 +77,7 @@ public class SettingsActivity extends AppCompatActivity {
                 settingsVolMute.setVisibility(View.INVISIBLE);
                 settingsVolOn.setVisibility(View.VISIBLE);
                 if (isBound) {
+                    muted = false;
                     bgMusicService.setVolume(volume);
                     barVolume.setEnabled(true);
                 }
