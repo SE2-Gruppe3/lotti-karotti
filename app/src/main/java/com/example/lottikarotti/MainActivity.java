@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -67,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
 
         Socket socket = getSocket();
 
-        socket.emit("register", "Oksy");
+        socket.emit("register", "abc");
         socket.emit("joinlobby", "123456");
         socket.emit("playonline");
 
@@ -202,16 +203,24 @@ public class MainActivity extends AppCompatActivity {
 
         // Listen for the move event from the server
         socket.on("move", args -> {
+
+            Log.d("move", "move");
             // Extract the steps from the event arguments
-            int moveSteps = (int) args[0];
+            int moveSteps = (int) args[1];
+            Log.d("move", "arg passed");
 
             // Update the current field of the rabbit
             int currentField = u.getCurrentRabbit().getField() + moveSteps;
             u.getCurrentRabbit().setField(currentField);
 
             // Get the target button and enable it
+
             Button targetButton = findViewById(fields[currentField]);
-            targetButton.setEnabled(true);
+            runOnUiThread(()->{{
+                targetButton.setEnabled(true);
+            }
+            });
+
             targetButton.setVisibility(View.VISIBLE);
 
             // Set the onClickListener for the target button
