@@ -156,7 +156,7 @@ io.on('connection', (socket) => {
             console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps!")
         }else{
             console.error("[Server] Invalid move!")
-            io.emit("error", 500);
+            io.to(socketid).emit("error", 500);
         }
     });
 
