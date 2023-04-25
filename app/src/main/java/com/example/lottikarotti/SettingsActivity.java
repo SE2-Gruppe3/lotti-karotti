@@ -25,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity {
     private Button exitSettings;
     private BGMusic bgMusicService;
     private boolean isBound = false;
+    private static float volume = 1f;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -40,19 +41,51 @@ public class SettingsActivity extends AppCompatActivity {
         barBrightness = (SeekBar) findViewById(R.id.seekBar2);
         exitSettings = (Button) findViewById(R.id.exitMenu);
 
-
         Intent intent = new Intent(this, BGMusic.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
-
-
         barVolume.setMax(100);
+        barVolume.setProgress(barVolume.getMax());
+
+        settingsVolOn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                settingsVolOn.setVisibility(View.INVISIBLE);
+                settingsVolMute.setVisibility(View.VISIBLE);
+                if (isBound) {
+                    bgMusicService.setVolume(0f);
+                    barVolume.setEnabled(false);
+                }
+            }
+        });
+
+        settingsVolMute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                settingsVolMute.setVisibility(View.INVISIBLE);
+                settingsVolOn.setVisibility(View.VISIBLE);
+                if (isBound) {
+                    bgMusicService.setVolume(volume);
+                    barVolume.setEnabled(true);
+                }
+            }
+        });
+
+
+
         barVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int volume, boolean isUser) {
+            public void onProgressChanged(SeekBar seekBar, int vol, boolean isUser) {
                 if (isBound) {
-                    float volume2 = (float) volume / 100;
-                    bgMusicService.setVolume(volume2);
+                    volume = (float) vol / 100;
+                    bgMusicService.setVolume(volume);
+                    if(volume == 0f){
+                        settingsVolOn.setVisibility(View.INVISIBLE);
+                        settingsVolMute.setVisibility(View.VISIBLE);
+                    } else {
+                        settingsVolMute.setVisibility(View.INVISIBLE);
+                        settingsVolOn.setVisibility(View.VISIBLE);
+                    }
                 }
             }
 
