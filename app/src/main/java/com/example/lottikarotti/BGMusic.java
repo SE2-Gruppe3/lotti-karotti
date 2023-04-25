@@ -15,6 +15,7 @@ public void onCreate() {
         super.onCreate();
         player = MediaPlayer.create(this, R.raw.bgmusic2);
         player.setLooping(true);
+        player.setVolume(1f, 1f);
     }
 
     @Override

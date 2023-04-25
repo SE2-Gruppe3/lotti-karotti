@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
 
 
 
-
+        barVolume.setMax(100);
         barVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int volume, boolean isUser) {
