@@ -41,7 +41,8 @@ public class SettingsActivity extends AppCompatActivity {
         exitSettings = (Button) findViewById(R.id.exitMenu);
 
 
-
+        Intent intent = new Intent(this, BGMusic.class);
+        bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
 
 
 
@@ -76,5 +77,27 @@ public class SettingsActivity extends AppCompatActivity {
 
 
     }
+    ServiceConnection serviceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName compName, IBinder service) {
+            BGMusic.MusicBinder binder = (BGMusic.MusicBinder) service;
+            bgMusicService = binder.getService();
+            isBound = true;
+        }
 
+        @Override
+        public void onServiceDisconnected(ComponentName compName) {
+            isBound = false;
+        }
+    };
+
+
+    @Override
+    protected void onDestroy() {
+        if (isBound) {
+            unbindService(serviceConnection);
+            isBound = false;
+        }
+        super.onDestroy();
+    }
 }
