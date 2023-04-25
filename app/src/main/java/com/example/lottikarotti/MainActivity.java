@@ -67,11 +67,10 @@ public class MainActivity extends AppCompatActivity {
 
         Socket socket = getSocket();
 
-        checkIfConnectionIsAlive(socket, this);
-        getNumberOfConnectedPlayers(socket, this);
-        registerNewPlayer(socket, "Robot");
-        createNewLobby(socket, 1234567);
-        getListOfConnectedPlayers(socket, this);
+        socket.emit("register", "Oksy");
+        socket.emit("joinlobby", "123456");
+        socket.emit("playonline");
+
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
@@ -173,11 +172,11 @@ public class MainActivity extends AppCompatActivity {
                 cardView.setImageResource(cards[random]);
 
                 switch(random) {
-                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); moveOn(user,3); break;
+                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); moveOn(user,3, socket); break;
                     case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
                         break;
-                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOn(user,1); break;
-                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");moveOn(user,2); break;
+                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOn(user,1, socket); break;
+                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");moveOn(user,2, socket); break;
                 }
 
 
@@ -196,42 +195,55 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void moveOn( User u, int step){
+    private void moveOn(User u, int steps, Socket socket) {
 
-
+        // Disable the draw button
         drawButton.setEnabled(false);
 
-        int currentField =u.getCurrentRabbit().getField()+step;
-      /*  if(u.getRabbit2().getField() ==currentField && u.getRabbit3().getField() == currentField && u.getRabbit4().getField()== currentField)
-        {
-            instructions.setText("Please choose another rabbit");
-            return;
-        }*/
-        u.getCurrentRabbit().setField(currentField);
+        // Listen for the move event from the server
+        socket.on("move", args -> {
+            // Extract the steps from the event arguments
+            int moveSteps = (int) args[0];
 
-        Button targetButton = (Button)findViewById(fields[currentField]);
-        targetButton.setEnabled(true);
-       // targetButton.setBackgroundResource(R.drawable.deckkarte);
-        targetButton.setVisibility(View.VISIBLE);
+            // Update the current field of the rabbit
+            int currentField = u.getCurrentRabbit().getField() + moveSteps;
+            u.getCurrentRabbit().setField(currentField);
 
-        targetButton.setOnClickListener(new View.OnClickListener() {
+            // Get the target button and enable it
+            Button targetButton = findViewById(fields[currentField]);
+            targetButton.setEnabled(true);
+            targetButton.setVisibility(View.VISIBLE);
 
-            @Override
-            public void onClick(View v) {
-
-                int[] values = new int[2];
-                v.getLocationOnScreen(values);
+            // Set the onClickListener for the target button
+            targetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get the coordinates of the button
+                    int[] values = new int[2];
+                    v.getLocationOnScreen(values);
                     float x = values[0];
                     float y = values[1];
-                     animateFigure(x, y,u);
-                     u.getCurrentRabbit().setxCor(x);
-                     u.getCurrentRabbit().setyCor(y);
+
+                    // Animate the rabbit figure
+                    animateFigure(x, y, u);
+
+                    // Update the x and y coordinates of the rabbit
+                    u.getCurrentRabbit().setxCor(x);
+                    u.getCurrentRabbit().setyCor(y);
+
+                    // Enable the draw button and disable the target button
                     drawButton.setEnabled(true);
                     targetButton.setEnabled(false);
+
+                    // Set the instruction text
                     instructions.setText("Draw card or choose rabbit");
-             }
+                }
+            });
         });
-      }
+
+        // Emit the movement to the server
+        socket.emit("move", steps);
+    }
 
     private void animateFigure(float x, float y,User u) {
         ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
@@ -242,7 +254,6 @@ public class MainActivity extends AppCompatActivity {
                 .start();
 
         currentRabbit.clearAnimation();
-
     }
 
 
