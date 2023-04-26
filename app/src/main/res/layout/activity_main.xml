@@ -711,5 +711,32 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_menu_manage" />
 
+    <ImageButton
+        android:id="@+id/button_playerList"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_marginEnd="37dp"
+        android:layout_marginBottom="428dp"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_compass"
+        android:onClick="openFragmentPlayerList"/>
+
+    <FrameLayout
+        android:id="@+id/container_playerList"
+        android:layout_width="332dp"
+        android:layout_height="464dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.288">
+
+    </FrameLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

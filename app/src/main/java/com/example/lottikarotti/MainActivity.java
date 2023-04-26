@@ -9,24 +9,27 @@ import static com.example.lottikarotti.Network.ServerConnection.registerNewPlaye
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MotionEvent;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.lottikarotti.Listeners.IOnDataSentListener;
 
 import java.util.Random;
 
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener {
     private Button carrotButton;
 
     private ImageButton settingsButton;
@@ -45,6 +48,10 @@ public class MainActivity extends AppCompatActivity {
     private boolean myTurn;
     private int touchCounter;
     private int touchCntLimit;
+
+    //  Container for the Player List Fragment (Placeholder Container)
+    private FrameLayout containerplayerList;
+    private Fragment fragmentPlayerList;
 
     private TextView instructions;
     final int[]rabbits={
@@ -79,6 +86,9 @@ public class MainActivity extends AppCompatActivity {
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
         instructions= (TextView) findViewById(R.id.textViewInstructions);
 
+        //  Initialize PlayerList Fragment and Layout
+        containerplayerList = findViewById(R.id.container_playerList);
+        fragmentPlayerList = new PlayerListFragment();
 
 
         for (int field : fields) {
@@ -246,5 +256,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void openFragmentPlayerList(View view){
+        toggleFragmentPlayerList();
+    }
 
+    public void toggleFragmentPlayerList(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (containerplayerList.getVisibility() == View.VISIBLE) {
+            containerplayerList.setVisibility(View.GONE);
+
+            fragmentTransaction.remove(fragmentPlayerList);
+            fragmentTransaction.commit();
+        }
+        else {
+            containerplayerList.setVisibility(View.VISIBLE);
+
+            fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList);
+            fragmentTransaction.commit();
+        }
+    }
+
+    @Override
+    public void onDataSent(String data) {
+        Log.d("Game", "Received data from Fragment: " + data);
+
+        if (data == "closeFragmentPlayerList")
+            toggleFragmentPlayerList();
+    }
 }
