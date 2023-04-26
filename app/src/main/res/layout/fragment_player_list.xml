@@ -10,6 +10,7 @@
     <!-- TODO: Update blank fragment layout -->
 
     <TableLayout
+        android:id="@+id/tblayout_players"
         android:layout_width="match_parent"
         android:layout_height="678dp">
 

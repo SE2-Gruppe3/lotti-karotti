@@ -144,6 +144,15 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('getplayerslobby', args => {
+        if(lobbycode.length === 6){
+            lobby = fetchLobbyInstance(lobbies, lobbycode);
+            console.log("[Server] PlayerList\n\t"+JSON.stringify(lobby.players));
+
+            io.to(socket.id).emit("getplayerslobby", JSON.stringify(lobby.players));
+    }
+    });
+
     //********************************************************************************************************** */
     //                          ***Game Logic handling below here***                                             */
     //              From here on out there will be no suffisticated checks if the login and stuff is in order    */
@@ -174,4 +183,3 @@ io.on('connection', (socket) => {
         console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
 });
-

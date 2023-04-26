@@ -20,18 +20,15 @@ public class ServerConnection{
 
     private static synchronized void setSocket(){
         try{
-            socket = IO.socket("http://10.2.0.141:3000/");
+            socket = IO.socket("http://192.168.178.22:3000/");
         } catch (URISyntaxException e){
             throw new RuntimeException("Failed to create socket!", e);
         }
     }
 
     public static synchronized Socket getSocket(){
-        establishConnection();
-
-        if(socket == null){
-            throw new IllegalStateException("Socket has not been initialized!");
-        }
+        if (socket == null)
+            establishConnection();
         return socket;
     }
 
@@ -113,7 +110,7 @@ public class ServerConnection{
         socket.emit("register", name);
     }
 
-    public static synchronized void createNewLobby(Socket socket, int lobbyCode){
+    public static synchronized void createNewLobby(Socket socket, String lobbyCode){
         socket.emit("createlobby", lobbyCode);
     }
 

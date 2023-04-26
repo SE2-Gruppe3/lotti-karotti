@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         checkIfConnectionIsAlive(socket, this);
         getNumberOfConnectedPlayers(socket, this);
         registerNewPlayer(socket, "Robot");
-        createNewLobby(socket, 1234567);
+        createNewLobby(socket, "123456");
         getListOfConnectedPlayers(socket, this);
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);

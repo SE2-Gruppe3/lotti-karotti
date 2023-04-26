@@ -5,13 +5,31 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
+import com.example.lottikarotti.Network.ServerConnection;
+import com.example.lottikarotti.Util.DisectJSON;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.Console;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import io.socket.client.Socket;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,7 +68,7 @@ public class PlayerListFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
-
+    private  String[] names;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +76,13 @@ public class PlayerListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        Socket socket = ServerConnection.getSocket();
+
+        socket.on("getplayerslobby", jsonlist->{
+            names = DisectJSON.getNames(jsonlist[0].toString());
+        });
+        socket.emit("getplayerslobby", "");
     }
 
     @Override
@@ -72,6 +97,32 @@ public class PlayerListFragment extends Fragment {
                 delegateClose();
             }
         });
+
+        TableLayout tableLayout = view.findViewById(R.id.tblayout_players);
+
+// Loop through the array
+        for (String name : names) {
+            // Create a new TableRow
+            TableRow tableRow = new TableRow(getContext());
+
+            // Create a new TextView for the name
+            TextView textView = new TextView(getContext());
+            textView.setText(name);
+
+            // Set the text size to 18sp
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
+
+            // Add 16dp of padding to the right
+            int padding = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+            textView.setPadding(30, 5, padding, 0);
+
+            // Add the TextView to the TableRow
+            tableRow.addView(textView);
+
+            // Add the TableRow to the TableLayout
+            tableLayout.addView(tableRow);
+        }
         // Inflate the layout for this fragment
         return view;
     }
