@@ -17,9 +17,15 @@ import io.socket.client.Socket;
 
 public class ServerConnection{
     private final Socket socket;
+    private final Activity activity;
 
-    public ServerConnection(String serverUrl) throws URISyntaxException {
-        this.socket = IO.socket(serverUrl);
+    public ServerConnection(String serverUrl, Activity activity) throws URISyntaxException {
+        this(IO.socket(serverUrl), activity);
+    }
+
+    public ServerConnection(Socket socket, Activity activity) {
+        this.socket = socket;
+        this.activity = activity;
     }
 
     public Socket getSocket(){
@@ -38,7 +44,7 @@ public class ServerConnection{
         }
     }
 
-    public void checkIfConnectionIsAlive(Activity activity, ConnectionCallback callback){
+    public void checkIfConnectionIsAlive(ConnectionCallback callback){
         socket.on("alive", args -> {
             int number = (Integer) args[0];
             boolean alive = (number == 1);
@@ -52,7 +58,7 @@ public class ServerConnection{
         void onConnectionChecked(boolean isAlive);
     }
 
-    public void getNumberOfConnectedPlayers(Activity activity, PlayerCountCallback callback){
+    public void getNumberOfConnectedPlayers(PlayerCountCallback callback){
         socket.on("getplayers", args -> {
             int number = (Integer) args[0];
             activity.runOnUiThread(() -> callback.onPlayerCountReceived(number));
@@ -65,7 +71,7 @@ public class ServerConnection{
         void onPlayerCountReceived(int count);
     }
 
-    public void getListOfConnectedPlayers(Activity activity, PlayerListCallback callback){
+    public void getListOfConnectedPlayers(PlayerListCallback callback){
         socket.on("getplayerlist", args -> {
             JSONArray playerList = (JSONArray) args[0];
             List<String> names = new ArrayList<>();

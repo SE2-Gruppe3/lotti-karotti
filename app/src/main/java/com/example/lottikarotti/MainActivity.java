@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         ServerConnection serverConnection;
 
         try {
-            serverConnection = new ServerConnection(serverUrl);
+            serverConnection = new ServerConnection(serverUrl, this);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         serverConnection.joinLobby("123456");
 
         /// Example of getting server response using callbacks - We get here online player count back
-        serverConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
+        serverConnection.getNumberOfConnectedPlayers(new ServerConnection.PlayerCountCallback() {
             @Override
             public void onPlayerCountReceived(int count) {
                 Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
