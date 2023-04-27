@@ -16,10 +16,13 @@
         android:theme="@style/Theme.LottiKarotti"
         tools:targetApi="31">
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Activities.SettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".MenuActivity"
+            android:name=".Activities.LobbyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.MenuActivity"
             android:exported="true" >
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
@@ -27,7 +30,7 @@
         </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name=".Activities.MainActivity"
             android:exported="false">
         </activity>
 

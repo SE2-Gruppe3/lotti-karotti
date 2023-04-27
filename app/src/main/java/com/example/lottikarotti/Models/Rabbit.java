@@ -1,4 +1,4 @@
-package com.example.lottikarotti;
+package com.example.lottikarotti.Models;
 
 public class Rabbit {
 

@@ -9,7 +9,7 @@
 
     <ImageView
         android:layout_width="423dp"
-        android:layout_height="334dp"
+        android:layout_height="319dp"
         android:layout_weight="0"
         android:adjustViewBounds="true"
         android:contentDescription="@string/logo"
@@ -60,9 +60,10 @@
             android:inputType="textPersonName"
             app:layout_constraintBottom_toTopOf="@+id/btnJoinGame"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.495"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnStartGame"
-            app:layout_constraintVertical_bias="0.503" />
+            app:layout_constraintVertical_bias="0.706" />
 
         <Button
             android:id="@+id/btnJoinGame"
@@ -75,7 +76,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.565" />
+            app:layout_constraintVertical_bias="0.47" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

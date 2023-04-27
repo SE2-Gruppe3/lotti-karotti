@@ -1,4 +1,4 @@
-package com.example.lottikarotti;
+package com.example.lottikarotti.Activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -7,9 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.SeekBar;
-import android.widget.Switch;
+
+import com.example.lottikarotti.R;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -30,7 +29,7 @@ public class MenuActivity extends AppCompatActivity {
         playGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this, MainActivity.class);
+                Intent intent = new Intent(MenuActivity.this, LobbyActivity.class);
                 startActivity(intent);
             }
         });

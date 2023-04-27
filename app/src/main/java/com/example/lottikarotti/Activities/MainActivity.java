@@ -1,4 +1,4 @@
-package com.example.lottikarotti;
+package com.example.lottikarotti.Activities;
 
 import static com.example.lottikarotti.Network.ServerConnection.checkIfConnectionIsAlive;
 import static com.example.lottikarotti.Network.ServerConnection.createNewLobby;
@@ -10,17 +10,17 @@ import static com.example.lottikarotti.Network.ServerConnection.registerNewPlaye
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.lottikarotti.R;
+import com.example.lottikarotti.Models.Rabbit;
+import com.example.lottikarotti.Models.User;
 
 import java.util.Random;
 
