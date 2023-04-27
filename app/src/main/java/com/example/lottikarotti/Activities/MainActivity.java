@@ -5,6 +5,7 @@ import static com.example.lottikarotti.Network.ServerConnection.createNewLobby;
 import static com.example.lottikarotti.Network.ServerConnection.getListOfConnectedPlayers;
 import static com.example.lottikarotti.Network.ServerConnection.getNumberOfConnectedPlayers;
 import static com.example.lottikarotti.Network.ServerConnection.getSocket;
+import static com.example.lottikarotti.Network.ServerConnection.joinLobby;
 import static com.example.lottikarotti.Network.ServerConnection.registerNewPlayer;
 
 import androidx.appcompat.app.ActionBar;
@@ -25,6 +26,7 @@ import com.example.lottikarotti.Models.User;
 
 import java.util.Random;
 
+import butterknife.ButterKnife;
 import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,11 +69,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ButterKnife.bind(this);
         Socket socket = getSocket();
-
-
-
 
 
 
@@ -91,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
         User user = new User("testuserl", new Rabbit(1,rabbit1.getLeft(),rabbit1.getRight()), new Rabbit(2,rabbit2.getLeft(),rabbit2.getRight()),new Rabbit(3,rabbit3.getLeft(),rabbit3.getRight()), new Rabbit(4,rabbit4.getLeft(),rabbit4.getRight()));
 
         setUpNetwork(socket,user);
+        setupGame(socket);
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
@@ -238,15 +238,23 @@ public class MainActivity extends AppCompatActivity {
         });
       }
 
+    private <Int> void setupGame(Socket socket) {
+        Int lobbyId = (Int) getIntent().getStringExtra("lobbyID");
+
+        if (lobbyId != null) {
+             joinLobby(socket, (Integer) lobbyId);
+        } else {
+            Random rand = new Random();
+            int lobbycode = rand.nextInt(800000);
+            createNewLobby(socket,lobbycode );
+        }
+    }
       private void setUpNetwork(Socket socket, User u){
 
-          Random rand = new Random();
-          int lobbycode = rand.nextInt(800000);
+
           checkIfConnectionIsAlive(socket, this);
-          getNumberOfConnectedPlayers(socket, this);
           registerNewPlayer(socket,u.getUsername());
-          getListOfConnectedPlayers(socket, this);
-          createNewLobby(socket,lobbycode );
+
 
 
       }

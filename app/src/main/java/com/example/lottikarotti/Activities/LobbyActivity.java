@@ -3,6 +3,7 @@ package com.example.lottikarotti.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,8 +13,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LobbyActivity extends AppCompatActivity {
-    @BindView(R.id.etIP)
-    TextView ip;
+    @BindView(R.id.etLobbyId)
+    TextView lobbyId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,18 +29,22 @@ public class LobbyActivity extends AppCompatActivity {
     void onBtnStartGameClick() {
         startGameActivity(null);
     }
-    private void startGameActivity(String host) {
+    private void startGameActivity(Integer lobbyId) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("host", host);
+        intent.putExtra("lobbyID", lobbyId);
         startActivity(intent);
     }
 
     @OnClick(R.id.btnJoinGame)
     void onBtnJoinGameClick() {
-        final String host = ip.getText().toString();
 
-        if(!host.isEmpty()){
-            startGameActivity(host);
+        try{final int lobby = Integer.parseInt(lobbyId.getText().toString());
+            startGameActivity(lobby);}
+        catch (Exception ex){
+            Toast.makeText(getBaseContext(), "Please type valid number", Toast.LENGTH_SHORT).show();
         }
+
+
+
     }
 }
