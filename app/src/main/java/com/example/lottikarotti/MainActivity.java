@@ -23,6 +23,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.Console;
+import java.util.ArrayList;
 import java.util.Random;
 
 import io.socket.client.Socket;
@@ -110,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         socket.on("move", args -> {
             System.out.println(args[0].toString()+ " -- "+args[1].toString());
-            handleMove((String) args[0], (int)args[1]);
+            handleMove((String) args[0], (int)args[1], (int) args[2]);
                 });
 
         rabbit1.setOnClickListener(new View.OnClickListener() {
@@ -179,11 +180,11 @@ public class MainActivity extends AppCompatActivity {
                 cardView.setImageResource(cards[random]);
 
                 switch(random) {
-                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3); break;
+                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, user.getCurrentRabbit().getId()); break;
                     case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
                         break;
-                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1); break;
-                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2); break;
+                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, user.getCurrentRabbit().getId()); break;
+                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, user.getCurrentRabbit().getId()); break;
                 }
 
 
@@ -206,13 +207,47 @@ public class MainActivity extends AppCompatActivity {
      * This method sends an emit to the Server signalising "move"
      * @param steps
      */
-    private void playerMove(int steps){
-        
+    private void playerMove(int steps, int rabbit){
+        System.out.println(steps+" steps with");
+
+        // send the steps aswell as the rabbit to the server (the server can fetch the socketid itself)
+        socket.emit("move", steps, rabbit);
     }
 
-    private void handleMove(String socketID, int steps){
-        socket.emit("move", steps);
+    /***************************************************************
+     * Spieler bewegen Online
+     ***************************************************************/
+    ArrayList<PlayerTEMP> players = new ArrayList<PlayerTEMP>();
+    private void handleMove(String socketID, int steps, int rabbit){
+        if (players.isEmpty()) players.add(new PlayerTEMP(socketID));
+        else {
+            boolean notfound = true;
+            for (int i=0; i<players.size(); i++){
+                PlayerTEMP player = players.get(i);
+                if (player.getSocketid() == socketID) {
+                    player.moveRabbit(rabbit, steps);
+                    notfound = false;
+                    break;
+                }
+            }
+            if (notfound)
+            {
+                players.add(new PlayerTEMP(socketID));
+                handleMove(socketID, steps, rabbit);
+            }
+        }
+
+        putRabbitsOnTheBoard();
     }
+
+    /**
+     * Implement here
+     */
+    private void putRabbitsOnTheBoard(){
+        // Du musst hier nurnoch die rabbits plazieren, alle informationen sollten in der "players" liste drinnen sein
+    }
+
+    /*
     private void moveOn(User u, int steps) {
 
         // Disable the draw button
@@ -271,6 +306,8 @@ public class MainActivity extends AppCompatActivity {
         socket.emit("move", steps);
     }
 
+     */
+
     private void animateFigure(float x, float y,User u) {
         ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
         currentRabbit.animate()
@@ -284,3 +321,4 @@ public class MainActivity extends AppCompatActivity {
 
 
 }
+
