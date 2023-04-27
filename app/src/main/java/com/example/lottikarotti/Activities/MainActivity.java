@@ -18,6 +18,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.lottikarotti.Network.ServerConnection;
 import com.example.lottikarotti.R;
 import com.example.lottikarotti.Models.Rabbit;
 import com.example.lottikarotti.Models.User;
@@ -28,6 +29,7 @@ import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity {
     private Button carrotButton;
+
 
     private ImageButton settingsButton;
     private Button drawButton;
@@ -68,11 +70,9 @@ public class MainActivity extends AppCompatActivity {
 
         Socket socket = getSocket();
 
-        checkIfConnectionIsAlive(socket, this);
-        getNumberOfConnectedPlayers(socket, this);
-        registerNewPlayer(socket, "Robot");
-        createNewLobby(socket, 1234567);
 
+
+        setUpNetwork(socket);
 
 
         getListOfConnectedPlayers(socket, this);
@@ -237,6 +237,15 @@ public class MainActivity extends AppCompatActivity {
         });
       }
 
+      private void setUpNetwork(Socket socket){
+
+          checkIfConnectionIsAlive(socket, this);
+          getNumberOfConnectedPlayers(socket, this);
+          registerNewPlayer(socket, "Robot");
+          createNewLobby(socket, 1234567);
+
+
+      }
     private void animateFigure(float x, float y,User u) {
         ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
         currentRabbit.animate()
