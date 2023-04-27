@@ -72,10 +72,9 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        setUpNetwork(socket);
 
 
-        getListOfConnectedPlayers(socket, this);
+
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
@@ -90,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         User user = new User("testuserl", new Rabbit(1,rabbit1.getLeft(),rabbit1.getRight()), new Rabbit(2,rabbit2.getLeft(),rabbit2.getRight()),new Rabbit(3,rabbit3.getLeft(),rabbit3.getRight()), new Rabbit(4,rabbit4.getLeft(),rabbit4.getRight()));
+
+        setUpNetwork(socket,user);
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
@@ -237,12 +238,15 @@ public class MainActivity extends AppCompatActivity {
         });
       }
 
-      private void setUpNetwork(Socket socket){
+      private void setUpNetwork(Socket socket, User u){
 
+          Random rand = new Random();
+          int lobbycode = rand.nextInt(800000);
           checkIfConnectionIsAlive(socket, this);
           getNumberOfConnectedPlayers(socket, this);
-          registerNewPlayer(socket, "Robot");
-          createNewLobby(socket, 1234567);
+          registerNewPlayer(socket,u.getUsername());
+          getListOfConnectedPlayers(socket, this);
+          createNewLobby(socket,lobbycode );
 
 
       }
