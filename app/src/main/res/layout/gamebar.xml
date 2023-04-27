@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/board_view"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:layout_weight="1"
+    android:orientation="vertical"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="75dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="551dp">
+
+            <TextView
+                android:id="@+id/textViewInstructions"
+                android:layout_width="217dp"
+                android:layout_height="42dp"
+                android:text="Instruction:"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.031" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="500px"
+            android:layout_height="wrap_content"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="551dp">
+
+                <ImageView
+                    android:id="@+id/imageViewCard"
+                    android:layout_width="140dp"
+                    android:layout_height="177dp"
+                    android:layout_marginTop="25dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.485"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.194"
+                    app:srcCompat="@drawable/deckkarte" />
+
+                <Button
+                    android:id="@+id/drawCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:text="Draw card"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.529"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.0" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            >
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="289dp"
+                android:layout_height="551dp">
+
+
+                <ImageView
+                    android:id="@+id/rabbit3"
+                    android:layout_width="97dp"
+                    android:layout_height="86dp"
+                    android:onClick="preventClicks"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/rabbit1"
+                    app:layout_constraintTop_toBottomOf="@+id/rabbit4"
+                    app:layout_constraintVertical_bias="0.0"
+                    app:srcCompat="@drawable/fig1" />
+
+                <ImageView
+                    android:id="@+id/rabbit1"
+                    android:layout_width="90dp"
+                    android:layout_height="84dp"
+                    android:onClick="preventClicks"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.16"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rabbit2"
+                    app:layout_constraintVertical_bias="0.007"
+                    app:srcCompat="@drawable/fig1" />
+
+                <ImageView
+                    android:id="@+id/rabbit4"
+                    android:layout_width="100dp"
+                    android:layout_height="86dp"
+                    android:layout_marginTop="52dp"
+                    android:onClick="preventClicks"
+                    app:layout_constraintStart_toEndOf="@+id/rabbit2"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewAvailableRabbits"
+                    app:srcCompat="@drawable/fig1" />
+
+                <ImageView
+                    android:id="@+id/rabbit2"
+                    android:layout_width="90dp"
+                    android:layout_height="86dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginTop="52dp"
+                    android:onClick="preventClicks"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/textViewAvailableRabbits"
+                    app:srcCompat="@drawable/fig1" />
+
+                <TextView
+                    android:id="@+id/textViewAvailableRabbits"
+                    android:layout_width="118dp"
+                    android:layout_height="17dp"
+                    android:text="Available Rabbits"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.339"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.076" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </LinearLayout>
+
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+   </LinearLayout>
