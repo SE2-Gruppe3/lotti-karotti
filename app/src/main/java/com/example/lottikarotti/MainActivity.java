@@ -1,12 +1,5 @@
 package com.example.lottikarotti;
 
-import static com.example.lottikarotti.Network.ServerConnection.checkIfConnectionIsAlive;
-import static com.example.lottikarotti.Network.ServerConnection.createNewLobby;
-import static com.example.lottikarotti.Network.ServerConnection.getListOfConnectedPlayers;
-import static com.example.lottikarotti.Network.ServerConnection.getNumberOfConnectedPlayers;
-import static com.example.lottikarotti.Network.ServerConnection.getSocket;
-import static com.example.lottikarotti.Network.ServerConnection.registerNewPlayer;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,7 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.lottikarotti.Network.ServerConnection;
+
 import java.io.Console;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -30,9 +26,6 @@ import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity {
     private Button carrotButton;
-
-    //  Socket instance
-     private static final Socket socket = getSocket();
     private ImageButton settingsButton;
     private Button drawButton;
     private Button startTurn;
@@ -49,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean myTurn;
     private int touchCounter;
     private int touchCntLimit;
+    private Socket socket;
 
     private TextView instructions;
     final int[]rabbits={
@@ -70,10 +64,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        String serverUrl = "http://10.2.0.141:3000";
+        ServerConnection serverConnection;
 
-        socket.emit("register", "abc");
-        socket.emit("createlobby", "123456");
-        socket.emit("playonline");
+        try {
+            serverConnection = new ServerConnection(serverUrl);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        serverConnection.connect();
+        socket = serverConnection.getSocket();
+
+        serverConnection.registerNewPlayer("Amar");
+        serverConnection.createNewLobby("123456");
+        serverConnection.joinLobby("123456");
+
+        /// Example of getting server response using callbacks - We get here online player count back
+        serverConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
+            @Override
+            public void onPlayerCountReceived(int count) {
+                Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
