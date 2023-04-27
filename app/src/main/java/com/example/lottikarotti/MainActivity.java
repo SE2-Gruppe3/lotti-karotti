@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Console;
 import java.util.Random;
 
 import io.socket.client.Socket;
@@ -29,6 +30,8 @@ import io.socket.client.Socket;
 public class MainActivity extends AppCompatActivity {
     private Button carrotButton;
 
+    //  Socket instance
+     private static final Socket socket = getSocket();
     private ImageButton settingsButton;
     private Button drawButton;
     private Button startTurn;
@@ -66,10 +69,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Socket socket = getSocket();
 
         socket.emit("register", "abc");
-        socket.emit("joinlobby", "123456");
+        socket.emit("createlobby", "123456");
         socket.emit("playonline");
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
@@ -106,6 +108,10 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
+        socket.on("move", args -> {
+            System.out.println(args[0].toString()+ " -- "+args[1].toString());
+            handleMove((String) args[0], (int)args[1]);
+                });
 
         rabbit1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,11 +179,11 @@ public class MainActivity extends AppCompatActivity {
                 cardView.setImageResource(cards[random]);
 
                 switch(random) {
-                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); moveOn(user,3, socket); break;
+                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3); break;
                     case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
                         break;
-                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOn(user,1, socket); break;
-                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");moveOn(user,2, socket); break;
+                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1); break;
+                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2); break;
                 }
 
 
@@ -196,7 +202,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void moveOn(User u, int steps, Socket socket) {
+    /**
+     * This method sends an emit to the Server signalising "move"
+     * @param steps
+     */
+    private void playerMove(int steps){
+        
+    }
+
+    private void handleMove(String socketID, int steps){
+        socket.emit("move", steps);
+    }
+    private void moveOn(User u, int steps) {
 
         // Disable the draw button
         drawButton.setEnabled(false);

@@ -20,7 +20,7 @@ public class ServerConnection{
 
     private static synchronized void setSocket(){
         try{
-            socket = IO.socket("http://10.2.0.141:3000/");
+            socket = IO.socket("http://192.168.178.22:3000/");
         } catch (URISyntaxException e){
             throw new RuntimeException("Failed to create socket!", e);
         }

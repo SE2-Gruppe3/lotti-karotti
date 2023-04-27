@@ -150,10 +150,10 @@ io.on('connection', (socket) => {
     //********************************************************************************************************** */
 
     // Move logic, Client must handle the logic accordingly
-    socket.on('move', steps=>{
+    socket.on('move', steps, rabbit=>{
         if(registered === 1 && lobbycode !== 0 && steps < 8){
             io.to(lobbycode).emit("move", socket.id, steps);
-            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps!")
+            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id).name+" is moving "+steps+" steps with rabbit "+rabbit+"!")
         }else{
             console.error("[Server] Invalid move!")
             io.to(socketid).emit("error", 500);
