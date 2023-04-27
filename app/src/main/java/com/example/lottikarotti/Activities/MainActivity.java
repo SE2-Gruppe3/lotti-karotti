@@ -72,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         getNumberOfConnectedPlayers(socket, this);
         registerNewPlayer(socket, "Robot");
         createNewLobby(socket, 1234567);
+
+
+
         getListOfConnectedPlayers(socket, this);
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
