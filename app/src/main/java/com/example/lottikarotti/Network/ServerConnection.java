@@ -19,6 +19,18 @@ public class ServerConnection{
     private final Socket socket;
     private final Activity activity;
 
+    private static synchronized void setSocket(){
+        try{
+            socket = IO.socket("http://192.168.178.22:3000/");
+        } catch (URISyntaxException e){
+            throw new RuntimeException("Failed to create socket!", e);
+        }
+    }
+
+    public static synchronized Socket getSocket(){
+        if (socket == null)
+            establishConnection();
+
     public ServerConnection(String serverUrl, Activity activity) throws URISyntaxException {
         this(IO.socket(serverUrl), activity);
     }
@@ -29,6 +41,7 @@ public class ServerConnection{
     }
 
     public Socket getSocket(){
+
         return socket;
     }
 
@@ -97,7 +110,9 @@ public class ServerConnection{
         socket.emit("register", name);
     }
 
+
     public void createNewLobby(String lobbyCode){
+
         socket.emit("createlobby", lobbyCode);
     }
 

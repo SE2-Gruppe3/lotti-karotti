@@ -2,18 +2,24 @@ package com.example.lottikarotti;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+
 import android.view.MotionEvent;
+
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.lottikarotti.Listeners.IOnDataSentListener;
 
 import com.example.lottikarotti.Network.ServerConnection;
 
@@ -24,7 +30,7 @@ import java.util.Random;
 
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener {
     private Button carrotButton;
     private ImageButton settingsButton;
     private Button drawButton;
@@ -43,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
     private int touchCounter;
     private int touchCntLimit;
     private Socket socket;
+
+    //  Container for the Player List Fragment (Placeholder Container)
+    private FrameLayout containerplayerList;
+    private Fragment fragmentPlayerList;
 
     private TextView instructions;
     final int[]rabbits={
@@ -76,10 +86,6 @@ public class MainActivity extends AppCompatActivity {
         serverConnection.connect();
         socket = serverConnection.getSocket();
 
-        serverConnection.registerNewPlayer("Amar");
-        serverConnection.createNewLobby("123456");
-        serverConnection.joinLobby("123456");
-
         /// Example of getting server response using callbacks - We get here online player count back
         serverConnection.getNumberOfConnectedPlayers(new ServerConnection.PlayerCountCallback() {
             @Override
@@ -88,12 +94,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
+        checkIfConnectionIsAlive(socket, this);
+        getNumberOfConnectedPlayers(socket, this);
+        registerNewPlayer(socket, "Robot");
+        createNewLobby(socket, "123456");
+        getListOfConnectedPlayers(socket, this);
+
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
         instructions= (TextView) findViewById(R.id.textViewInstructions);
 
+        //  Initialize PlayerList Fragment and Layout
+        containerplayerList = findViewById(R.id.container_playerList);
+        fragmentPlayerList = new PlayerListFragment();
 
 
         for (int field : fields) {
@@ -332,6 +348,34 @@ public class MainActivity extends AppCompatActivity {
         currentRabbit.clearAnimation();
     }
 
+    public void openFragmentPlayerList(View view){
+        toggleFragmentPlayerList();
+    }
 
+    public void toggleFragmentPlayerList(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (containerplayerList.getVisibility() == View.VISIBLE) {
+            containerplayerList.setVisibility(View.GONE);
+
+            fragmentTransaction.remove(fragmentPlayerList);
+            fragmentTransaction.commit();
+        }
+        else {
+            containerplayerList.setVisibility(View.VISIBLE);
+
+            fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList);
+            fragmentTransaction.commit();
+        }
+    }
+
+    @Override
+    public void onDataSent(String data) {
+        Log.d("Game", "Received data from Fragment: " + data);
+
+        if (data == "closeFragmentPlayerList")
+            toggleFragmentPlayerList();
+    }
 }
 
