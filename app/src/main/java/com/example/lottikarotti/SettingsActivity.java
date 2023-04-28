@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -32,7 +31,7 @@ public class SettingsActivity extends AppCompatActivity {
         barVolume = (SeekBar) findViewById(R.id.seekBar);
         barBrightness = (SeekBar) findViewById(R.id.seekBar2);
 
-        exitSettings = (Button) findViewById(R.id.exitSettings);
+        exitSettings = (Button) findViewById(R.id.exitMenu);
 
         exitSettings.setOnClickListener(new View.OnClickListener() {
             @Override

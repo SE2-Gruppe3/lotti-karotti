@@ -17,7 +17,7 @@
         app:layout_constraintTop_toBottomOf="@+id/switch2" />
 
     <Button
-        android:id="@+id/exitSettings"
+        android:id="@+id/exitMenu"
         android:layout_width="74dp"
         android:layout_height="45dp"
         android:layout_marginStart="309dp"
@@ -32,7 +32,7 @@
         app:layout_constraintTop_toBottomOf="@+id/seekBar2" />
 
     <TextView
-        android:id="@+id/settingsHead"
+        android:id="@+id/menuHead"
         android:layout_width="117dp"
         android:layout_height="45dp"
         android:layout_marginTop="32dp"
