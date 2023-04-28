@@ -17,31 +17,12 @@ import io.socket.client.Socket;
 
 public class ServerConnection{
     private final Socket socket;
-    private final Activity activity;
 
-    private static synchronized void setSocket(){
-        try{
-            socket = IO.socket("http://192.168.178.22:3000/");
-        } catch (URISyntaxException e){
-            throw new RuntimeException("Failed to create socket!", e);
-        }
-    }
-
-    public static synchronized Socket getSocket(){
-        if (socket == null)
-            establishConnection();
-
-    public ServerConnection(String serverUrl, Activity activity) throws URISyntaxException {
-        this(IO.socket(serverUrl), activity);
-    }
-
-    public ServerConnection(Socket socket, Activity activity) {
-        this.socket = socket;
-        this.activity = activity;
+    public ServerConnection(String serverUrl) throws URISyntaxException {
+        this.socket = IO.socket(serverUrl);
     }
 
     public Socket getSocket(){
-
         return socket;
     }
 
@@ -57,7 +38,7 @@ public class ServerConnection{
         }
     }
 
-    public void checkIfConnectionIsAlive(ConnectionCallback callback){
+    public void checkIfConnectionIsAlive(Activity activity, ConnectionCallback callback){
         socket.on("alive", args -> {
             int number = (Integer) args[0];
             boolean alive = (number == 1);
@@ -71,7 +52,7 @@ public class ServerConnection{
         void onConnectionChecked(boolean isAlive);
     }
 
-    public void getNumberOfConnectedPlayers(PlayerCountCallback callback){
+    public void getNumberOfConnectedPlayers(Activity activity, PlayerCountCallback callback){
         socket.on("getplayers", args -> {
             int number = (Integer) args[0];
             activity.runOnUiThread(() -> callback.onPlayerCountReceived(number));
@@ -84,7 +65,7 @@ public class ServerConnection{
         void onPlayerCountReceived(int count);
     }
 
-    public void getListOfConnectedPlayers(PlayerListCallback callback){
+    public void getListOfConnectedPlayers(Activity activity, PlayerListCallback callback){
         socket.on("getplayerlist", args -> {
             JSONArray playerList = (JSONArray) args[0];
             List<String> names = new ArrayList<>();
@@ -110,9 +91,7 @@ public class ServerConnection{
         socket.emit("register", name);
     }
 
-
     public void createNewLobby(String lobbyCode){
-
         socket.emit("createlobby", lobbyCode);
     }
 

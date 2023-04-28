@@ -1,3 +1,4 @@
+
 package com.example.lottikarotti;
 
 import android.content.Context;
@@ -25,6 +26,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.Console;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,6 +71,7 @@ public class PlayerListFragment extends Fragment {
         return fragment;
     }
     private  String[] names;
+    ServerConnection socket;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,13 +79,14 @@ public class PlayerListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        Socket socket = ServerConnection.getSocket();
+    /*
+        socket = bruh
 
         socket.on("getplayerslobby", jsonlist->{
             names = DisectJSON.getNames(jsonlist[0].toString());
         });
         socket.emit("getplayerslobby", "");
+        */
     }
 
     @Override

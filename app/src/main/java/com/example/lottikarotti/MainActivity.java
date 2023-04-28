@@ -12,12 +12,18 @@ import android.util.Log;
 
 import android.view.MotionEvent;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
 
@@ -78,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ServerConnection serverConnection;
 
         try {
-            serverConnection = new ServerConnection(serverUrl, this);
+            serverConnection = new ServerConnection(serverUrl);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -86,20 +92,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         serverConnection.connect();
         socket = serverConnection.getSocket();
 
+        serverConnection.registerNewPlayer("Amar");
+        serverConnection.createNewLobby("123456");
+        serverConnection.joinLobby("123456");
+
         /// Example of getting server response using callbacks - We get here online player count back
-        serverConnection.getNumberOfConnectedPlayers(new ServerConnection.PlayerCountCallback() {
+        serverConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
             @Override
             public void onPlayerCountReceived(int count) {
                 Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
             }
         });
-
-
-        checkIfConnectionIsAlive(socket, this);
-        getNumberOfConnectedPlayers(socket, this);
-        registerNewPlayer(socket, "Robot");
-        createNewLobby(socket, "123456");
-        getListOfConnectedPlayers(socket, this);
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
