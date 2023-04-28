@@ -12,7 +12,7 @@ const lobbyExist = require('./utils/checkLobbyExists.js');
 const fetchClientInstance = require('./utils/fetchClient.js');
 const fetchLobbyInstance = require('./utils/fetchLobby.js');
 
-// Print a message to the console indicating that the server is running
+// Print a message to the console indicating that the gerver is running
 console.log('Server is running');
 
 // Create a new Socket.IO instance and define variables to track player count
@@ -44,7 +44,12 @@ io.on('connection', (socket) => {
     //  CURRENT LISTENERS:
     //      "alive"         -   serves as a ping to the server, may be used by the client
     //      "register"      -   registers client on server with a name (lets see how this is going in the future)
-    //      "getplayers"    -   get all the current players
+    //      "getplayers"    -   get playercount
+    //      "createlobby"   -   create a lobby with a code
+    //      "getplayerlist" -   gerver sends all clients of the server
+    //      "joinlobby"     -   join a lobby with a code
+    //      "playonline"    -   check if playing online is possible for the client(ambigious, may be removed in the future)
+    //      "move"          -   handle movement(may get bigger in the future, currently only handles movement of rabbits)
     //********************************************************************************************************** */
     //                          ***PLEASE PUT YOUR LISTENERS/EMITTERS BELOW HERE***                              */
     //********************************************************************************************************** */
