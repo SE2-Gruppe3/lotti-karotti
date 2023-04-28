@@ -214,9 +214,9 @@ public class MainActivity extends AppCompatActivity {
         socket.emit("move", steps, rabbit);
     }
 
-    /***************************************************************
-     * Spieler bewegen Online
-     ***************************************************************/
+    /**
+     * Temporary solution for Movement handling
+     */
     ArrayList<PlayerTEMP> players = new ArrayList<PlayerTEMP>();
     private void handleMove(String socketID, int steps, int rabbit){
         if (players.isEmpty()) players.add(new PlayerTEMP(socketID));
@@ -237,14 +237,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        putRabbitsOnTheBoard();
+        renderBoard();
     }
 
     /**
      * Implement here
      */
-    private void putRabbitsOnTheBoard(){
-        // Du musst hier nurnoch die rabbits plazieren, alle informationen sollten in der "players" liste drinnen sein
+    private void renderBoard(){
+        //TODO: Implement
     }
 
     /*
