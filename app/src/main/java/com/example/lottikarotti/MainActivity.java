@@ -1,17 +1,8 @@
 package com.example.lottikarotti;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -20,15 +11,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
-
 import com.example.lottikarotti.Network.ServerConnection;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.Console;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Random;
 
 import io.socket.client.Socket;
@@ -136,9 +132,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             try {
                 handleMove((String) args[0]);
             }catch (Exception e){
-                Log.w(TAG);
+                Log.w(TAG, "Can't handle move \n" + e.getMessage());
             }
-
                 });
 
         /**
