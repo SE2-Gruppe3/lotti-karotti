@@ -1,6 +1,11 @@
 package com.example.lottikarotti;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,19 +27,14 @@ import com.example.lottikarotti.Network.ServerConnection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity implements IOnDataSentListener {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener {
     private Button carrotButton;
     private ImageButton settingsButton;
     private Button drawButton;
@@ -54,6 +54,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int touchCntLimit;
     private int currRabbit;
     private final String TAG = "MainActivity";
+
+    // Variables for the Sensor
+    private SensorManager sensorManager;
+    private Sensor shakeSensor;
+    private float oldX, oldY, oldZ;
+    private long preUpdate;
+    private static final int SHAKE_THRESHOLD = 1000;
 
     //  Container for the Player List Fragment (Placeholder Container)
     private FrameLayout containerplayerList;
@@ -98,6 +105,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+        /** Initialize Sensor**/
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
@@ -141,6 +153,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
                 });
+
+        socket.on("shake", args -> {
+            try {
+                handleShake(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle shake \n" + e.toString());
+            }
+        });
+
 
         /**
          * Rabbit Selection
@@ -197,7 +218,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             public void onClick(View view) {
 
 
-
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
@@ -223,6 +243,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
 
 
+    }
+
+    /**
+     * Override the onSensorChanged method to detect the shake gesture
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
     }
 
 
@@ -256,6 +290,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }
         renderBoard();
     }
+    /**
+     * Handle the shake event
+     * @param socketid
+     */
+    private void handleShake(String socketid)  {
+        if (socketid != socket.id()){
+
+        }
+   }
 
     /**
      * Implement here
@@ -370,5 +413,39 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             instructions.setText("Fuck you");
     }
 
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float newX = sensorEvent.values[0];
+            float newY = sensorEvent.values[1];
+            float newZ = sensorEvent.values[2];
+
+            long timeNow = System.currentTimeMillis();
+
+            if ((timeNow - preUpdate) > 100) {
+                long diff = (timeNow - preUpdate);
+                preUpdate = timeNow;
+
+                float speed = Math.abs(newX + newY + newZ - oldX - oldY - oldZ) / diff * 10000;
+
+                if (speed > SHAKE_THRESHOLD) {
+                    onShakeDetected();
+                }
+
+                oldX = newX;
+                oldY = newY;
+                oldZ = newZ;
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+    private void onShakeDetected() {
+        ServerConnection.shake();
+        Toast.makeText(this, "Shake detected!", Toast.LENGTH_SHORT).show();
+    }
 }
 

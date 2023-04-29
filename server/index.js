@@ -189,6 +189,11 @@ io.on('connection', (socket) => {
             io.to(socket.id).emit("error", 500);
         }
     });
+    //Shake-Sensor, notifying each player once event occurs.
+    socket.on('shake', args=>{
+        io.to(lobbycode).emit('shake', socket.id);
+    });
+
 
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
