@@ -10,25 +10,25 @@ import static com.example.lottikarotti.Network.ServerConnection.registerNewPlaye
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.Random;
 
 import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity {
+
     private Button carrotButton;
 
     private ImageButton settingsButton;
@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
         instructions = (TextView) findViewById(R.id.textViewInstructions);
-
 
 
         for (int field : fields) {
@@ -271,10 +270,17 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
 
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         updateBrightness();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
     }
 
     private void updateBrightness() {
@@ -284,4 +290,5 @@ public class MainActivity extends AppCompatActivity {
         layoutPar.screenBrightness = brightness / 255f;
         getWindow().setAttributes(layoutPar);
     }
+
 }

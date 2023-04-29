@@ -22,21 +22,18 @@ public class SettingsActivity extends AppCompatActivity {
     //**Relevant variables for Volume**//
     private ImageButton settingsVolOn;
     private SeekBar barVolume;
-
     private ImageButton settingsVolMute;
     private Button exitSettings;
     private BGMusic bgMusicService;
     private boolean isBound = false;
     private static float volume = 1f;
+    private float volumeBuffer;
     private static boolean muted = false;
     private static boolean isBarZero = false;
 
     //**Relevant variables for Brightness**//
     private SeekBar barBrightness;
-    private SharedPreferences sharedBrightness;
-
-
-
+    private SharedPreferences preferences;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -48,7 +45,6 @@ public class SettingsActivity extends AppCompatActivity {
 
         settingsVolMute = (ImageButton) findViewById(R.id.settingsVolMute);
         settingsVolOn = (ImageButton) findViewById(R.id.settingVolOn);
-        //darkMode = (Switch) findViewById(R.id.switch2);
         barVolume = (SeekBar) findViewById(R.id.seekBar);
         barBrightness = (SeekBar) findViewById(R.id.seekBar2);
         exitSettings = (Button) findViewById(R.id.exitMenu);
@@ -140,12 +136,12 @@ public class SettingsActivity extends AppCompatActivity {
         //--------------------------------------------------------------------------------------------//
         //-------------------------------Brightness Settings--------------------------------------------------------//
 
-        sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
-        barBrightness.setProgress(sharedBrightness.getInt("brightness", 100));
+        preferences = getSharedPreferences("settings", MODE_PRIVATE);
+        barBrightness.setProgress(preferences.getInt("brightness", 100));
         barBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar barBrightness, int amount, boolean isUser) {
-                SharedPreferences.Editor editor = sharedBrightness.edit();
+                SharedPreferences.Editor editor = preferences.edit();
                 editor.putInt("brightness", amount);
                 editor.apply();
                 setBrightness(amount);
@@ -200,9 +196,9 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         //Can be removed in case we decide to storage the volume changes-information
-        isBarZero = false;
-        muted = false;
-        volume = 1f;
+//        isBarZero = false;
+//        muted = false;
+//        volume = 1f;
 
         super.onDestroy();
     }
