@@ -22,9 +22,14 @@ import com.example.lottikarotti.Network.ServerConnection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import io.socket.client.Socket;
@@ -75,7 +80,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setContentView(R.layout.activity_main);
         Socket socket;
         try {
-            socket = ServerConnection.getInstance("http://1.1.1.1:3000");
+            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
+            ServerConnection.connect();
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -130,9 +136,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         socket.on("move", args -> {
             try {
-                handleMove((String) args[0]);
+                handleMove(args[0].toString());
             }catch (Exception e){
-                Log.w(TAG, "Can't handle move \n" + e.getMessage());
+                Log.w(TAG, "Can't handle move \n" + e.toString());
             }
                 });
 
@@ -145,10 +151,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 selectRabbit(0);
             }
         });
-        rabbit4.setOnClickListener(new View.OnClickListener() {
+        rabbit2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectRabbit(3);
+                selectRabbit(1);
             }
         });
         rabbit3.setOnClickListener(new View.OnClickListener() {
@@ -157,10 +163,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 selectRabbit(2);
             }
         });
-        rabbit2.setOnClickListener(new View.OnClickListener() {
+        rabbit4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectRabbit(1);
+                selectRabbit(3);
             }
         });
 
@@ -234,10 +240,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Temporary solution for Movement handling
      */
-    private ArrayList<Player> players = new ArrayList<>();
     private void handleMove(String json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        players = (ArrayList<Player>) Arrays.asList(mapper.readValue(json, Player[].class));
+        List<Player> players = Arrays.asList(mapper.readValue(json, Player[].class));
+        for (Player player : players) {
+            System.out.println("SID: " + player.getSid());
+            System.out.println("Lobbycode: " + player.getLobbycode());
+            System.out.println("Color: " + player.getColor());
+            System.out.println("Rabbits:");
+            for (Rabbit rabbit : player.getRabbits()) {
+                System.out.println("  Name: " + rabbit.getName());
+                System.out.println("  Position: " + rabbit.getPosition());
+            }
+            System.out.println();
+        }
         renderBoard();
     }
 

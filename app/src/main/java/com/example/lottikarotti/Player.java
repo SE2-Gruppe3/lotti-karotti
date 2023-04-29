@@ -1,5 +1,8 @@
 package com.example.lottikarotti;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class Player {
@@ -8,7 +11,11 @@ public class Player {
     private String color;
     private List<Rabbit> rabbits;
 
-    public Player(String sid, String lobbycode, String color, List<Rabbit> rabbits) {
+    @JsonCreator
+    public Player(@JsonProperty("sid") String sid,
+                  @JsonProperty("lobbycode") String lobbycode,
+                  @JsonProperty("color") String color,
+                  @JsonProperty("rabbits") List<Rabbit> rabbits) {
         this.sid = sid;
         this.lobbycode = lobbycode;
         this.color = color;
@@ -36,7 +43,10 @@ class Rabbit {
     private String name;
     private int position;
 
-    public Rabbit(String name, int position) {
+    public Rabbit() {}
+
+    @JsonCreator
+    public Rabbit(@JsonProperty("name") String name, @JsonProperty("position") int position) {
         this.name = name;
         this.position = position;
     }
@@ -49,3 +59,4 @@ class Rabbit {
         return position;
     }
 }
+
