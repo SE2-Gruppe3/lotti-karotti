@@ -1,7 +1,13 @@
-//********************************************************************************************************** */
-//               ***Gerver for Lotti Karotti, please use PM2 if launching Gerver professionally***           */
-//                                   ***Imports section***                                                   */
-//********************************************************************************************************** */
+/**
+ * @file index.js is the main file of the server. It handles all the connections and the logic behind the game.
+ * @version 1.0.0
+ * @module index
+ * 
+ * @requires express
+ * @requires socket.io
+ *  
+ */
+
 const server = require('./utils/server.js');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
@@ -11,6 +17,8 @@ const playerExist = require('./utils/checkPlayerExists.js');
 const lobbyExist = require('./utils/checkLobbyExists.js');
 const fetchClientInstance = require('./utils/fetchClient.js');
 const fetchLobbyInstance = require('./utils/fetchLobby.js');
+const storeGameData = require('./utils/storeGameData.js');
+const fetchGameDataInstance = require('./utils/fetchGame.js');
 
 // Print a message to the console indicating that the gerver is running
 console.log('Server is running');
@@ -20,6 +28,7 @@ const io = socket(server);
 var playercounter = 0;
 var clientsList = [];
 var lobbies = [];
+var gameData = [];
 
 //********************************************************************************************************** */
 //                          ***Connection Handling begins here***                                            */
@@ -42,12 +51,12 @@ io.on('connection', (socket) => {
     }
     //********************************************************************************************************** */
     //  CURRENT LISTENERS:
-    //      "alive"         -   serves as a ping to the server, may be used by the client
-    //      "register"      -   registers client on server with a name (lets see how this is going in the future)
+    //      "alive"         -   serves as a ping to the gerver, may be used by the client
+    //      "register"      -   registers client on gerver with a name (lets see how this is going in the future)
     //      "getplayers"    -   get playercount
-    //      "createlobby"   -   create a lobby with a code
-    //      "getplayerlist" -   gerver sends all clients of the server
-    //      "joinlobby"     -   join a lobby with a code
+    //      "createlobby"   -   create a lobby with a code(six digit number)
+    //      "getplayerlist" -   gerver sends all clients of the gerver
+    //      "joinlobby"     -   join a lobby with a code (six digit number)
     //      "playonline"    -   check if playing online is possible for the client(ambigious, may be removed in the future)
     //      "move"          -   handle movement(may get bigger in the future, currently only handles movement of rabbits)
     //********************************************************************************************************** */
@@ -112,6 +121,7 @@ io.on('connection', (socket) => {
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t"+JSON.stringify(lobbies));
             socket.join(code);
             lobbycode = code;
+            saveGameData(socket.id, lobbycode, 'white');
             io.to(socket.id).emit("createlobby", 1);
         }
     });
@@ -132,6 +142,7 @@ io.on('connection', (socket) => {
                 console.log(JSON.stringify(lobbies[0])),
                 socket.join(code),
                 lobbycode = code,
+                saveGameData(socket.id, lobbycode, 'white'),
                 console.log("[Server] Player " + socket.id + " joins lobby " + code)
             );
         }
@@ -164,10 +175,13 @@ io.on('connection', (socket) => {
     //********************************************************************************************************** */
 
     // Move logic, Client must handle the logic accordingly
-    socket.on('move', (steps, rabbit) =>{
+    socket.on('move', (steps, rabbit) =>{   
         if(registered === 1 && lobbycode !== 0 && steps < 8){
-            io.to(lobbycode).emit("move", socket.id, steps, rabbit);
-            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!")
+            var game = fetchGameDataInstance(gameData, socket.id);
+            game.rabbits[parseInt(rabbit)].position += parseInt(steps);
+
+            io.to(lobbycode).emit("move", socket.id, steps, rabbit);    
+            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!\n\t"+JSON.stringify(gameData));
         }else{
             console.error("[Server] Invalid move!")
             io.to(socket.id).emit("error", 500);
@@ -181,10 +195,22 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         playercounter -= 1;
         const index = clientsList.findIndex(client => client.clientId === socket.id);
-        if (index !== -1) {
+        if (index !== -1) { // Remove client from clientsList
             clientsList.splice(index, 1);
             console.log('[Server] Player Unregistered, id: '+socket.id);
         }
         console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
 });
+
+    //********************************************************************************************************** */
+    //                          ***Functions below here***                                                       */
+    //********************************************************************************************************** */
+
+    // Function to save the game data with log of what is happening, may be removed in the future
+    function saveGameData(socketid, lobbycode, rabbitcolor){
+        gameDataTemp = (storeGameData(socketid, lobbycode, rabbitcolor));
+        console.log("[Server] Game data sucessfully created"+JSON.stringify(gameDataTemp));
+        gameData.push(gameDataTemp);
+        console.log("[Server] Game data saved!\n");
+    }

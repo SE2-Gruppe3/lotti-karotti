@@ -6,17 +6,18 @@
  */
 function storeGameData(socketid, lobbycode, color) {
     var playerData = {
-      id: socketid,
-      lobbycode: lobbycode,
-      color: color,
-      rabbits: [
-        { name: 'rabbit1', position: 0 },
-        { name: 'rabbit2', position: 0 },
+      sid: socketid,  // socket id
+      lobbycode: lobbycode, // lobby code
+      color: color, // color of the player
+      rabbits: [  // array of rabbit objects
+        { name: 'rabbit1', position: 0 }, // rabbit object
+        { name: 'rabbit2', position: 0 }, 
         { name: 'rabbit3', position: 0 },
         { name: 'rabbit4', position: 0 },
       ],
     };
   
-    return playerData;
+    return playerData;  // return the player data object
   }
   
+module.exports = storeGameData; // export the function
