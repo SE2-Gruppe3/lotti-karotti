@@ -19,6 +19,7 @@ const fetchClientInstance = require('./utils/fetchClient.js');
 const fetchLobbyInstance = require('./utils/fetchLobby.js');
 const storeGameData = require('./utils/storeGameData.js');
 const fetchGameDataInstance = require('./utils/fetchGame.js');
+const fetchLobbyGameData = require('./utils/fetchLobbyGame.js');
 
 // Print a message to the console indicating that the gerver is running
 console.log('Server is running');
@@ -121,7 +122,7 @@ io.on('connection', (socket) => {
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t"+JSON.stringify(lobbies));
             socket.join(code);
             lobbycode = code;
-            saveGameData(socket.id, lobbycode, 'white');
+            saveGameData(socket.id, lobbycode);
             io.to(socket.id).emit("createlobby", 1);
         }
     });
@@ -142,7 +143,7 @@ io.on('connection', (socket) => {
                 console.log(JSON.stringify(lobbies[0])),
                 socket.join(code),
                 lobbycode = code,
-                saveGameData(socket.id, lobbycode, 'white'),
+                saveGameData(socket.id, lobbycode),
                 console.log("[Server] Player " + socket.id + " joins lobby " + code)
             );
         }
@@ -175,13 +176,14 @@ io.on('connection', (socket) => {
     //********************************************************************************************************** */
 
     // Move logic, Client must handle the logic accordingly
+    // Please don't forget rabbit1 = 0, rabbit2 = 1, rabbit3 = 2, rabbit4 = 3
     socket.on('move', (steps, rabbit) =>{   
         if(registered === 1 && lobbycode !== 0 && steps < 8){
             var game = fetchGameDataInstance(gameData, socket.id);
             game.rabbits[parseInt(rabbit)].position += parseInt(steps);
 
-            io.to(lobbycode).emit("move", socket.id, steps, rabbit);    
-            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!\n\t"+JSON.stringify(gameData));
+            io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
+            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!");
         }else{
             console.error("[Server] Invalid move!")
             io.to(socket.id).emit("error", 500);
@@ -208,7 +210,29 @@ io.on('connection', (socket) => {
     //********************************************************************************************************** */
 
     // Function to save the game data with log of what is happening, may be removed in the future
-    function saveGameData(socketid, lobbycode, rabbitcolor){
+    function saveGameData(socketid, lobbycode){
+        var gdCurr = fetchLobbyGameData(gameData, lobbycode);
+        const usedColors = [];
+        rabbitcolor = 'white';
+        gdCurr.forEach(game => {
+            // Check if the game's color property is already in the usedColors array
+            if (!usedColors.includes(game.color)) {
+              // If not, add it to the usedColors array
+              usedColors.push(game.color);
+            }
+          });
+          console.log("[Server] Game data sucessfully created"+usedColors.toString());
+          // Fowler would be proud
+          if (!usedColors.includes('white')) {
+            rabbitcolor = 'white';
+          }else if (!usedColors.includes('red')) {
+            rabbitcolor = 'red';
+          }else if (!usedColors.includes('blue')) {
+            rabbitcolor = 'blue';
+          }else if (!usedColors.includes('green')) {
+            rabbitcolor = 'green';
+          }
+
         gameDataTemp = (storeGameData(socketid, lobbycode, rabbitcolor));
         console.log("[Server] Game data sucessfully created"+JSON.stringify(gameDataTemp));
         gameData.push(gameDataTemp);
