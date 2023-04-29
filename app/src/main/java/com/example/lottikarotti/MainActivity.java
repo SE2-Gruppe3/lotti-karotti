@@ -1,6 +1,10 @@
 package com.example.lottikarotti;
 
+import android.content.Context;
 import android.content.Intent;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -60,6 +64,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Fragment fragmentPlayerList;
 
     private TextView instructions;
+
+    // Variables for the Sensor
+    private SensorManager sensorManager;
+    private Sensor shakeSensor;
+    private float oldX, oldY, oldZ;
+    private long preUpdate;
+    private static final int SHAKE_THRESHOLD = 1000;
     final int[]rabbits={
           R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
     final int[] cards = {
@@ -90,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
 
+
         /// Example of getting server response using callbacks - We get here online player count back
         ServerConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
             @Override
@@ -97,6 +109,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
             }
         });
+
+        /** Initialize Sensor**/
+        sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
@@ -141,6 +158,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
                 });
+
+        socket.on("shake", args -> {
+            try {
+                handleShake(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle shake \n" + e.toString());
+            }
+        });
 
         /**
          * Rabbit Selection
@@ -225,6 +250,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
 
+    /**
+     * Override the onSensorChanged method to detect the shake gesture
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
 
     /**
      * This method sends an emit to the Server signalising "move"
@@ -255,6 +294,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             System.out.println();
         }
         renderBoard();
+    }
+    /**
+     * Handle the shake event
+     * @param socketid
+     */
+    private void handleShake(String socketid)  {
+        if (socketid != socket.id()){
+
+        }
     }
 
     /**
@@ -368,6 +416,41 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }
         else
             instructions.setText("Fuck you");
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent sensorEvent) {
+        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+            float newX = sensorEvent.values[0];
+            float newY = sensorEvent.values[1];
+            float newZ = sensorEvent.values[2];
+
+            long timeNow = System.currentTimeMillis();
+
+            if ((timeNow - preUpdate) > 100) {
+                long diff = (timeNow - preUpdate);
+                preUpdate = timeNow;
+
+                float speed = Math.abs(newX + newY + newZ - oldX - oldY - oldZ) / diff * 10000;
+
+                if (speed > SHAKE_THRESHOLD) {
+                    onShakeDetected();
+                }
+
+                oldX = newX;
+                oldY = newY;
+                oldZ = newZ;
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int i) {
+
+    }
+    private void onShakeDetected() {
+        ServerConnection.shake();
+        Toast.makeText(this, "Shake detected!", Toast.LENGTH_SHORT).show();
     }
 
 }
