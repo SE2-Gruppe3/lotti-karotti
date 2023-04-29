@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
@@ -38,7 +39,7 @@ import java.util.Random;
 
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity implements IOnDataSentListener {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener {
     private Button carrotButton;
     private ImageButton settingsButton;
     private Button drawButton;
@@ -284,17 +285,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void handleMove(String json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         List<Player> players = Arrays.asList(mapper.readValue(json, Player[].class));
-        for (Player player : players) {
-            System.out.println("SID: " + player.getSid());
-            System.out.println("Lobbycode: " + player.getLobbycode());
-            System.out.println("Color: " + player.getColor());
-            System.out.println("Rabbits:");
-            for (Rabbit rabbit : player.getRabbits()) {
-                System.out.println("  Name: " + rabbit.getName());
-                System.out.println("  Position: " + rabbit.getPosition());
-            }
-            System.out.println();
-        }
+
         renderBoard();
     }
     /**
