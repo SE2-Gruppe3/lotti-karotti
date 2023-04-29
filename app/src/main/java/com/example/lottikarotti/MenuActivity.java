@@ -4,8 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -67,5 +69,18 @@ public class MenuActivity extends AppCompatActivity {
         stopService(intent);
         super.onDestroy();
 
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBrightness();
+    }
+
+    private void updateBrightness() {
+        SharedPreferences sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
+        int brightness = sharedBrightness.getInt("brightness", 100);
+        WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
+        layoutPar.screenBrightness = brightness / 255f;
+        getWindow().setAttributes(layoutPar);
     }
 }

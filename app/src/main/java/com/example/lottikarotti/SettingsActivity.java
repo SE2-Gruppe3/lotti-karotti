@@ -7,9 +7,11 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
@@ -17,10 +19,10 @@ import android.widget.Switch;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    //**Relevant variables for Volume**//
     private ImageButton settingsVolOn;
     private SeekBar barVolume;
-    private Switch darkMode;
-    private SeekBar barBrightness;
+
     private ImageButton settingsVolMute;
     private Button exitSettings;
     private BGMusic bgMusicService;
@@ -28,19 +30,31 @@ public class SettingsActivity extends AppCompatActivity {
     private static float volume = 1f;
     private static boolean muted = false;
     private static boolean isBarZero = false;
+
+    //**Relevant variables for Brightness**//
+    private SeekBar barBrightness;
+    private SharedPreferences sharedBrightness;
+
+
+
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        //**finding the buttons and the seekbars**//
 
         settingsVolMute = (ImageButton) findViewById(R.id.settingsVolMute);
         settingsVolOn = (ImageButton) findViewById(R.id.settingVolOn);
-        darkMode = (Switch) findViewById(R.id.switch2);
+        //darkMode = (Switch) findViewById(R.id.switch2);
         barVolume = (SeekBar) findViewById(R.id.seekBar);
         barBrightness = (SeekBar) findViewById(R.id.seekBar2);
         exitSettings = (Button) findViewById(R.id.exitMenu);
+
+        //--------------------------------------------------------------------------------------------//
+        //-------------------------------Volume Settings--------------------------------------------------------//
 
         Intent intent = new Intent(this, BGMusic.class);
         bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE);
@@ -123,6 +137,28 @@ public class SettingsActivity extends AppCompatActivity {
             }
         });
 
+        //--------------------------------------------------------------------------------------------//
+        //-------------------------------Brightness Settings--------------------------------------------------------//
+
+        sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
+        barBrightness.setProgress(sharedBrightness.getInt("brightness", 100));
+        barBrightness.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar barBrightness, int amount, boolean isUser) {
+                SharedPreferences.Editor editor = sharedBrightness.edit();
+                editor.putInt("brightness", amount);
+                editor.apply();
+                setBrightness(amount);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        });
 
 
 
@@ -149,6 +185,12 @@ public class SettingsActivity extends AppCompatActivity {
         }
     };
 
+    private void setBrightness(int brightness) {
+        WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
+        layoutPar.screenBrightness = brightness / 255f;
+        getWindow().setAttributes(layoutPar);
+    }
+
 
     @Override
     protected void onDestroy() {
@@ -156,6 +198,25 @@ public class SettingsActivity extends AppCompatActivity {
             unbindService(serviceConnection);
             isBound = false;
         }
+
+        //Can be removed in case we decide to storage the volume changes-information
+        isBarZero = false;
+        muted = false;
+        volume = 1f;
+
         super.onDestroy();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBrightness();
+    }
+
+    private void updateBrightness() {
+        SharedPreferences sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
+        int brightness = sharedBrightness.getInt("brightness", 100);
+        WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
+        layoutPar.screenBrightness = brightness / 255f;
+        getWindow().setAttributes(layoutPar);
     }
 }

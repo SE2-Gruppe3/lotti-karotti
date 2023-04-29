@@ -12,10 +12,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -254,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
         ImageView currentRabbit = (ImageView) findViewById(rabbits[u.getCurrentRabbit().getId() - 1]);
         currentRabbit.animate()
                 .x(x - (currentRabbit.getWidth() / 2) + 50)
-                .y(y - (currentRabbit.getHeight() / 2))
+                .y(y - (currentRabbit.getHeight() / 2) - 60)
                 .setDuration(500)
                 .start();
 
@@ -268,5 +270,18 @@ public class MainActivity extends AppCompatActivity {
 //        stopService(intent);
         super.onDestroy();
 
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBrightness();
+    }
+
+    private void updateBrightness() {
+        SharedPreferences sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
+        int brightness = sharedBrightness.getInt("brightness", 100);
+        WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
+        layoutPar.screenBrightness = brightness / 255f;
+        getWindow().setAttributes(layoutPar);
     }
 }
