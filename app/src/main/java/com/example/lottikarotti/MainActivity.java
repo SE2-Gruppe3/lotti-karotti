@@ -79,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Socket socket;
+
         try {
             socket = ServerConnection.getInstance("http://192.168.178.22:3000");
             ServerConnection.connect();
@@ -170,9 +171,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
-        /**
-         * Settings Button
-         */
+
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -195,9 +194,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         drawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
@@ -344,19 +340,25 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        int visibility = containerplayerList.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
-        containerplayerList.setVisibility(visibility);
+        if (containerplayerList.getVisibility() == View.VISIBLE) {
+            containerplayerList.setVisibility(View.GONE);
 
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList, visibility == View.VISIBLE ? "player_list" : null);
-        fragmentTransaction.commit();
+            fragmentTransaction.remove(fragmentPlayerList);
+            fragmentTransaction.commit();
+        }
+        else {
+            containerplayerList.setVisibility(View.VISIBLE);
+
+            fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList);
+            fragmentTransaction.commit();
+        }
     }
 
     @Override
     public void onDataSent(String data) {
         Log.d("Game", "Received data from Fragment: " + data);
 
-        if ("closeFragmentPlayerList".equals(data))
+        if (data == "closeFragmentPlayerList")
             toggleFragmentPlayerList();
     }
 
