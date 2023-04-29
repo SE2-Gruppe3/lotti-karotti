@@ -1,4 +1,4 @@
-package com.example.lottikarotti;
+/*package com.example.lottikarotti;
 
 public class Rabbit {
 
@@ -57,3 +57,4 @@ public class Rabbit {
         this.field = field;
     }
 }
+*/

@@ -10,13 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import android.view.MotionEvent;
-
-import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -32,6 +27,8 @@ import com.example.lottikarotti.Network.ServerConnection;
 import java.io.Console;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import io.socket.client.Socket;
@@ -54,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private boolean myTurn;
     private int touchCounter;
     private int touchCntLimit;
+    private int currRabbit;
+    private final String TAG = "MainActivity";
 
     //  Container for the Player List Fragment (Placeholder Container)
     private FrameLayout containerplayerList;
@@ -78,9 +77,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        String serverUrl = "http://10.2.0.141:3000";
-        Socket socket = null;
+        Socket socket;
         try {
             socket = ServerConnection.getInstance("http://1.1.1.1:3000");
         } catch (URISyntaxException e) {
@@ -115,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
            button.setEnabled(false);
         }
 
-        User user = new User("testuserl", new Rabbit(1,rabbit1.getLeft(),rabbit1.getRight()), new Rabbit(2,rabbit2.getLeft(),rabbit2.getRight()),new Rabbit(3,rabbit3.getLeft(),rabbit3.getRight()), new Rabbit(4,rabbit4.getLeft(),rabbit4.getRight()));
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
@@ -137,46 +133,45 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         actionBar.hide();
 
         socket.on("move", args -> {
-            System.out.println(args[0].toString()+ " -- "+args[1].toString());
-            handleMove((String) args[0], (int)args[1], (int) args[2]);
+            try {
+                handleMove((String) args[0]);
+            }catch (Exception e){
+                Log.w(TAG);
+            }
+
                 });
 
+        /**
+         * Rabbit Selection
+         */
         rabbit1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.setCurrentRabbit(user.getRabbit1());
-                user.getRabbit1().setInUse(true);
-                instructions.setText("Instructions: You are playing with Rabbit"+user.getCurrentRabbit().getId());
-                drawButton.setEnabled(true);
+                selectRabbit(0);
             }
         });
         rabbit4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.setCurrentRabbit(user.getRabbit4());
-                user.getRabbit4().setInUse(true);
-                instructions.setText("Instructions: You are playing with Rabbit"+user.getCurrentRabbit().getId());
-                drawButton.setEnabled(true);
+                selectRabbit(3);
             }
         });
         rabbit3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.setCurrentRabbit(user.getRabbit3());
-                user.getRabbit3().setInUse(true);
-                instructions.setText("Instructions: You are playing with Rabbit"+user.getCurrentRabbit().getId());
-                drawButton.setEnabled(true);
+                selectRabbit(2);
             }
         });
         rabbit2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                user.setCurrentRabbit(user.getRabbit2());
-                user.getRabbit2().setInUse(true);
-                instructions.setText("Instructions: You are playing with Rabbit"+user.getCurrentRabbit().getId());
-                drawButton.setEnabled(true);
+                selectRabbit(1);
             }
         });
+
+        /**
+         * Settings Button
+         */
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -207,11 +202,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 cardView.setImageResource(cards[random]);
 
                 switch(random) {
-                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, user.getCurrentRabbit().getId()); break;
+                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, currRabbit); break;
                     case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
                         break;
-                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, user.getCurrentRabbit().getId()); break;
-                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, user.getCurrentRabbit().getId()); break;
+                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, currRabbit); break;
+                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, currRabbit); break;
                 }
 
 
@@ -244,26 +239,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Temporary solution for Movement handling
      */
-    ArrayList<PlayerTEMP> players = new ArrayList<PlayerTEMP>();
-    private void handleMove(String socketID, int steps, int rabbit){
-        if (players.isEmpty()) players.add(new PlayerTEMP(socketID));
-        else {
-            boolean notfound = true;
-            for (int i=0; i<players.size(); i++){
-                PlayerTEMP player = players.get(i);
-                if (player.getSocketid() == socketID) {
-                    player.moveRabbit(rabbit, steps);
-                    notfound = false;
-                    break;
-                }
-            }
-            if (notfound)
-            {
-                players.add(new PlayerTEMP(socketID));
-                handleMove(socketID, steps, rabbit);
-            }
-        }
-
+    private ArrayList<Player> players = new ArrayList<>();
+    private void handleMove(String json) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        players = (ArrayList<Player>) Arrays.asList(mapper.readValue(json, Player[].class));
         renderBoard();
     }
 
@@ -336,7 +315,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
 
     private void animateFigure(float x, float y,User u) {
-        ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
+        ImageView currentRabbit =(ImageView) findViewById(rabbits[currRabbit-1]);
         currentRabbit.animate()
                 .x(x - (currentRabbit.getWidth()/2 )+50)
                 .y(y - (currentRabbit.getHeight() / 2))
@@ -354,26 +333,31 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        if (containerplayerList.getVisibility() == View.VISIBLE) {
-            containerplayerList.setVisibility(View.GONE);
+        int visibility = containerplayerList.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
+        containerplayerList.setVisibility(visibility);
 
-            fragmentTransaction.remove(fragmentPlayerList);
-            fragmentTransaction.commit();
-        }
-        else {
-            containerplayerList.setVisibility(View.VISIBLE);
-
-            fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList);
-            fragmentTransaction.commit();
-        }
+        fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList, visibility == View.VISIBLE ? "player_list" : null);
+        fragmentTransaction.commit();
     }
 
     @Override
     public void onDataSent(String data) {
         Log.d("Game", "Received data from Fragment: " + data);
 
-        if (data == "closeFragmentPlayerList")
+        if ("closeFragmentPlayerList".equals(data))
             toggleFragmentPlayerList();
     }
+
+    public void selectRabbit(int num){
+        if (num<4) {
+            currRabbit = num;
+            instructions.setText("Instructions: You are playing with Rabbit"+currRabbit);
+            drawButton.setEnabled(true);
+        }
+        else
+            instructions.setText("Fuck you");
+    }
+
 }
 
