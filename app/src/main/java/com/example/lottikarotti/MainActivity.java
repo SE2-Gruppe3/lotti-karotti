@@ -22,12 +22,7 @@ import com.example.lottikarotti.Network.ServerConnection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -74,11 +69,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.buttonField8,R.id.buttonField9,R.id.buttonField10, R.id.buttonField11, R.id.buttonField12, R.id.buttonField13, R.id.buttonField14,
     R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
     R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
+    private Socket socket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Socket socket;
 
         try {
             socket = ServerConnection.getInstance("http://192.168.178.22:3000");
@@ -239,17 +234,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void handleMove(String json) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         List<Player> players = Arrays.asList(mapper.readValue(json, Player[].class));
-        for (Player player : players) {
-            System.out.println("SID: " + player.getSid());
-            System.out.println("Lobbycode: " + player.getLobbycode());
-            System.out.println("Color: " + player.getColor());
-            System.out.println("Rabbits:");
-            for (Rabbit rabbit : player.getRabbits()) {
-                System.out.println("  Name: " + rabbit.getName());
-                System.out.println("  Position: " + rabbit.getPosition());
-            }
-            System.out.println();
-        }
         renderBoard();
     }
 
@@ -258,6 +242,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     private void renderBoard(){
         //TODO: Implement
+
     }
 
     /*
