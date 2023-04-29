@@ -54,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private boolean myTurn;
     private int touchCounter;
     private int touchCntLimit;
-    private Socket socket;
 
     //  Container for the Player List Fragment (Placeholder Container)
     private FrameLayout containerplayerList;
@@ -81,23 +80,19 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setContentView(R.layout.activity_main);
 
         String serverUrl = "http://10.2.0.141:3000";
-        ServerConnection serverConnection;
-
+        Socket socket = null;
         try {
-            serverConnection = new ServerConnection(serverUrl);
+            socket = ServerConnection.getInstance("http://1.1.1.1:3000");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
 
-        serverConnection.connect();
-        socket = serverConnection.getSocket();
-
-        serverConnection.registerNewPlayer("Amar");
-        serverConnection.createNewLobby("123456");
-        serverConnection.joinLobby("123456");
+        ServerConnection.registerNewPlayer("Amar");
+        ServerConnection.createNewLobby("123456");
+        ServerConnection.joinLobby("123456");
 
         /// Example of getting server response using callbacks - We get here online player count back
-        serverConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
+        ServerConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
             @Override
             public void onPlayerCountReceived(int count) {
                 Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
@@ -243,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         System.out.println(steps+" steps with");
 
         // send the steps aswell as the rabbit to the server (the server can fetch the socketid itself)
-        socket.emit("move", steps, rabbit);
+        ServerConnection.move(steps, rabbit);
     }
 
     /**
