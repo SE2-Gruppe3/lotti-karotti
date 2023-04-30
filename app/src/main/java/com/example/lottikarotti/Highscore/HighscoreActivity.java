@@ -1,4 +1,4 @@
-package com.example.lottikarotti;
+package com.example.lottikarotti.Highscore;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.widget.Toast;
 
 import com.example.lottikarotti.Network.ServerConnection;
+import com.example.lottikarotti.R;
 
 import java.net.URISyntaxException;
 import java.util.List;

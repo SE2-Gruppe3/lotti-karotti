@@ -16,7 +16,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31" >
         <activity
-            android:name=".HighscoreActivity"
+            android:name=".Highscore.HighscoreActivity"
             android:exported="false" />
         <activity
             android:name=".SettingsActivity"

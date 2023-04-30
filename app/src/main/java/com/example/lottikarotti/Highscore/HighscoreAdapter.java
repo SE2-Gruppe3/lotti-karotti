@@ -1,12 +1,13 @@
-package com.example.lottikarotti;
+package com.example.lottikarotti.Highscore;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.lottikarotti.R;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,40 +53,5 @@ public class HighscoreAdapter extends RecyclerView.Adapter<HighscoreViewHolder> 
             return 0;
         }
         return usernames.size();
-    }
-}
-
-class HighscoreViewHolder extends  RecyclerView.ViewHolder {
-    private TextView usernameTextView;
-    private TextView scoreTextView;
-
-    public HighscoreViewHolder(@NonNull View itemView) {
-        super(itemView);
-        usernameTextView = itemView.findViewById(R.id.usernameTextView);
-        scoreTextView = itemView.findViewById(R.id.scoreTextView);
-    }
-
-    public void bind(String username, int score) {
-        if (usernameTextView != null) {
-            usernameTextView.setText(username);
-        }
-        if (scoreTextView != null) {
-            scoreTextView.setText(String.valueOf(score));
-        }
-    }
-}
-
-class Highscore implements Comparable<Highscore> {
-    public String username;
-    public int score;
-
-    public Highscore(String username, int score) {
-        this.username = username;
-        this.score = score;
-    }
-
-    @Override
-    public int compareTo(Highscore other) {
-        return Integer.compare(score, other.score);
     }
 }
