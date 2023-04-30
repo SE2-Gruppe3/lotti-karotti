@@ -2,12 +2,11 @@ package com.example.lottikarotti;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -17,7 +16,6 @@ import android.widget.Toast;
 
 import com.example.lottikarotti.Network.ServerConnection;
 
-import java.io.Console;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
@@ -187,12 +185,10 @@ public class MainActivity extends AppCompatActivity {
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                Intent intent = new Intent(MainActivity.this, HighscoreActivity.class);
                 startActivity(intent);
             }
         });
-
-
     }
 
 

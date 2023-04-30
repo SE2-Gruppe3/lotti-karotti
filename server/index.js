@@ -5,6 +5,7 @@
 const server = require('./utils/server.js');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
+const fs = require('fs');
 const storeClientInfo = require('./utils/storeClient.js');
 const storeLobbyInfo = require('./utils/storeLobby.js');
 const playerExist = require('./utils/checkPlayerExists.js');
@@ -88,6 +89,17 @@ io.on('connection', (socket) => {
     socket.on('getplayerlist', () => {
         console.log('[Server] Sending player list information!');
         io.to(lobbycode).emit('getplayerlist', clientsList);
+    });
+
+    socket.on('gethighscore', () => {
+        fs.readFile('highscore.json', 'utf8', (err, data) => {
+            if(err) {
+                console.log("Error loading file!");
+            }
+            const jsonData = JSON.parse(data);
+            console.log('[Server] Sending players highscore information!');
+        io.emit('gethighscore', jsonData);
+        });
     });
 
     //********************************************************************************************************** */
