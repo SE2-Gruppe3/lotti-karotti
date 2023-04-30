@@ -47,9 +47,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView instructions;
     final int[]rabbits={
           R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    final int[] cards = {
-            R.drawable.card1, R.drawable.card2, R.drawable.card3,
-            R.drawable.card4 };
     final int[] holes = {
        R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
@@ -93,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
         instructions= (TextView) findViewById(R.id.textViewInstructions);
-
-
 
         for (int field : fields) {
            Button button= (Button)findViewById(field);
@@ -185,22 +180,7 @@ public class MainActivity extends AppCompatActivity {
         drawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-
-                Random rand = new Random();
-                int random = rand.nextInt(4);
-                cardView.setImageResource(cards[random]);
-
-                switch(random) {
-                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, user.getCurrentRabbit().getId()); break;
-                    case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
-                        break;
-                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, user.getCurrentRabbit().getId()); break;
-                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, user.getCurrentRabbit().getId()); break;
-                }
-
-
+                DrawCard.draw(serverConnection, drawButton, instructions, carrotButton, cardView, user);
             }
         });
 

@@ -160,6 +160,12 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('drawcard', () => {
+        let card = Math.floor(Math.random() * 4);
+        console.log("[Server] Player drawed a card number " + card);
+        io.to(lobbycode).emit('drawcard', card);
+    });
+
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
     //********************************************************************************************************** */

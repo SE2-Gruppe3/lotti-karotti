@@ -1,8 +1,6 @@
 package com.example.lottikarotti.Network;
 
 import android.app.Activity;
-import android.media.browse.MediaBrowser;
-import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -103,5 +101,42 @@ public class ServerConnection{
 
     public void joinLobby(String lobbyCode){
         socket.emit("joinlobby", lobbyCode);
+    }
+
+    public void getHighScoreBoard(HighScoreBoardCallback callback){
+        socket.on("gethighscore", args -> {
+            JSONArray highScore = (JSONArray) args[0];
+            List<String> usernames = new ArrayList<>();
+            List<Integer> scores = new ArrayList<>();
+            for(int i=0; i<highScore.length(); i++){
+                try {
+                    JSONObject object = highScore.getJSONObject(i);
+                    usernames.add(object.getString("username"));
+                    scores.add(object.getInt("score"));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            activity.runOnUiThread(() -> callback.onHighScoreBoardReceived(usernames, scores));
+        });
+
+        socket.emit("gethighscore");
+    }
+
+    public interface HighScoreBoardCallback {
+        void onHighScoreBoardReceived(List<String> usernames, List<Integer> scores);
+    }
+
+    public void drawCard(DrawCardCallback callback){
+        socket.on("drawcard", args -> {
+            int number = (Integer) args[0];
+            activity.runOnUiThread(() -> callback.onCardDrawn(number));
+        });
+
+        socket.emit("drawcard");
+    }
+
+    public interface DrawCardCallback {
+        void onCardDrawn(int random);
     }
 }
