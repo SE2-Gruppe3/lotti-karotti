@@ -77,6 +77,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private static final int SHAKE_THRESHOLD = 1000;
     private boolean isMyTurn;
     private List<Player> players;
+    private String sid;
     final int[]rabbits={
           R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
     final int[] cards = {
@@ -106,10 +107,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }
 
         ServerConnection.registerNewPlayer("Amar");
+        ServerConnection.fetchUnique();
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
 
-
+        players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
         ServerConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
             @Override
@@ -257,7 +259,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
-
     }
 
     /**
@@ -282,15 +283,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         isMyTurn = true;
         System.out.println(steps+" steps with rabbit "+rabbit);
         int add = 0;
-        // fetching current position (if available)
-        if (players != null)
-            for (Player bigman:players) {
-                if (bigman.getSid() == socket.id())
-                {
-                    add = bigman.getRabbits().get(rabbit).getPosition();
-                    break;
-                }
-            }
+        for (Player payer:players) {
+            System.out.println(payer.getSid());
+        }
         // activating field to press
         Button field = (Button) findViewById(fields[steps+add]);
 
@@ -306,7 +301,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     /**
-     * Temporary solution for Movement handling
+     * Movement handler
+     * Annotate JSON Values to @Class Player and @Class Rabbit
      */
     private void handleMove(String json) throws JsonProcessingException {
         System.out.println("Recieved move from gerver!");
@@ -329,19 +325,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Renders the board to a pulp will get updatet, shitcode is temporary
      */
     private void renderBoard() {
-        Drawable rabbitPicture = getResources().getDrawable(R.drawable.card2);
-        int width = rabbitPicture.getIntrinsicWidth();
-        int height = rabbitPicture.getIntrinsicHeight();
-        rabbitPicture.setBounds(0, 0, width, height);
-
         for (int x:fields) {
             runOnUiThread(()-> {
-                Button button = findViewById(x);
-                button.setCompoundDrawables(null, null, null, null);
-                button.setEnabled(false);
+                Button btn = findViewById(x);
+                btn.setBackgroundColor(0);
+                btn.setEnabled(false);
             });
         }
-
         for (Player gayer: players) {
             List<Rabbit> tempRabbits = gayer.getRabbits();
             for (Rabbit rabbit:tempRabbits) {
@@ -350,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     System.out.println("Drawing rabbit on field " + rabbit.getPosition());
                     Button rabbitbtn = findViewById(fields[rabbit.getPosition()]);
                     rabbitbtn.setOnClickListener(null);
-                    rabbitbtn.setCompoundDrawablesWithIntrinsicBounds(rabbitPicture, null, null, null);
+                    rabbitbtn.setBackgroundColor(Color.RED);
                     rabbitbtn.setEnabled(true);
                     });
                 }

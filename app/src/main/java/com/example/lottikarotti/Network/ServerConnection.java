@@ -104,4 +104,5 @@ public class ServerConnection {
     public static void shake() {
         socket.emit("shake");
     }
+    public static void fetchUnique(){socket.emit("fetchuniqueid");}
 }
