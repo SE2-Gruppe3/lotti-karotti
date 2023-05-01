@@ -335,9 +335,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         rabbitPicture.setBounds(0, 0, width, height);
 
         for (int x:fields) {
-            Button button = findViewById(x);
-            button.setCompoundDrawables(null, null, null, null);
-            button.setEnabled(false);
+            runOnUiThread(()-> {
+                Button button = findViewById(x);
+                button.setCompoundDrawables(null, null, null, null);
+                button.setEnabled(false);
+            });
         }
 
         for (Player gayer: players) {
