@@ -3,7 +3,6 @@ package com.example.lottikarotti;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -28,11 +27,6 @@ import com.example.lottikarotti.Listeners.IOnDataSentListener;
 import com.example.lottikarotti.Network.ServerConnection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.android.material.button.MaterialButton;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -106,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             throw new RuntimeException(e);
         }
 
-        ServerConnection.registerNewPlayer("Amar");
+        ServerConnection.registerNewPlayer("Bro");
         ServerConnection.fetchUnique();
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
