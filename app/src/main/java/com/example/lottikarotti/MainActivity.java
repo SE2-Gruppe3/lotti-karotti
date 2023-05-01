@@ -2,6 +2,8 @@ package com.example.lottikarotti;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -26,6 +28,7 @@ import com.example.lottikarotti.Listeners.IOnDataSentListener;
 import com.example.lottikarotti.Network.ServerConnection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.android.material.button.MaterialButton;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,6 +75,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private float oldX, oldY, oldZ;
     private long preUpdate;
     private static final int SHAKE_THRESHOLD = 1000;
+    private boolean isMyTurn;
+    private List<Player> players;
     final int[]rabbits={
           R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
     final int[] cards = {
@@ -116,6 +121,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         /** Initialize Sensor**/
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+
+        isMyTurn = false;
 
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
@@ -199,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
 
         /**
-         * Settings Button
+         * Turn Carrot
          */
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -210,8 +217,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 for (int hole : holes) {
                     ImageView img = (ImageView) findViewById(hole);
                     img.setVisibility(View.GONE);
-
                 }
+
                 ImageView img=(ImageView)findViewById(holes[random]);
                 img.setVisibility(View.VISIBLE);
                 boolean carrotClicked = false;
@@ -267,24 +274,44 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         sensorManager.unregisterListener(this);
     }
 
-
     /**
      * This method sends an emit to the Server signalising "move"
      * @param steps
      */
     private void playerMove(int steps, int rabbit){
-        System.out.println(steps+" steps with");
+        isMyTurn = true;
+        System.out.println(steps+" steps with rabbit "+rabbit);
+        int add = 0;
+        // fetching current position (if available)
+        if (players != null)
+            for (Player bigman:players) {
+                if (bigman.getSid() == socket.id())
+                {
+                    add = bigman.getRabbits().get(rabbit).getPosition();
+                    break;
+                }
+            }
+        // activating field to press
+        Button field = (Button) findViewById(fields[steps+add]);
 
-        // send the steps aswell as the rabbit to the server (the server can fetch the socketid itself)
-        ServerConnection.move(steps, rabbit);
+        field.setEnabled(true);
+        field.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("Sending move to gerver");
+                ServerConnection.move(steps, rabbit);
+                field.setEnabled(false);
+            }
+        });
     }
 
     /**
      * Temporary solution for Movement handling
      */
     private void handleMove(String json) throws JsonProcessingException {
+        System.out.println("Recieved move from gerver!");
         ObjectMapper mapper = new ObjectMapper();
-        List<Player> players = Arrays.asList(mapper.readValue(json, Player[].class));
+        players = Arrays.asList(mapper.readValue(json, Player[].class));
 
         renderBoard();
     }
@@ -299,74 +326,39 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     /**
-     * Implement here
+     * Renders the board to a pulp will get updatet, shitcode is temporary
      */
-    private void renderBoard(){
-        //TODO: Implement
-    }
+    private void renderBoard() {
+        Drawable rabbitPicture = getResources().getDrawable(R.drawable.card2);
+        int width = rabbitPicture.getIntrinsicWidth();
+        int height = rabbitPicture.getIntrinsicHeight();
+        rabbitPicture.setBounds(0, 0, width, height);
 
-    /*
-    private void moveOn(User u, int steps) {
+        for (int x:fields) {
+            Button button = findViewById(x);
+            button.setCompoundDrawables(null, null, null, null);
+            button.setEnabled(false);
+        }
 
-        // Disable the draw button
-        drawButton.setEnabled(false);
-
-        // Listen for the move event from the server
-        socket.on("move", args -> {
-
-            Log.d("move", "move");
-            // Extract the steps from the event arguments
-            int moveSteps = (int) args[1];
-            Log.d("move", "arg passed");
-
-            // Update the current field of the rabbit
-            int currentField = u.getCurrentRabbit().getField() + moveSteps;
-            u.getCurrentRabbit().setField(currentField);
-
-            // Get the target button and enable it
-
-            Button targetButton = findViewById(fields[currentField]);
-            runOnUiThread(()->{{
-                targetButton.setEnabled(true);
-            }
-            });
-
-            targetButton.setVisibility(View.VISIBLE);
-
-            // Set the onClickListener for the target button
-            targetButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Get the coordinates of the button
-                    int[] values = new int[2];
-                    v.getLocationOnScreen(values);
-                    float x = values[0];
-                    float y = values[1];
-
-                    // Animate the rabbit figure
-                    animateFigure(x, y, u);
-
-                    // Update the x and y coordinates of the rabbit
-                    u.getCurrentRabbit().setxCor(x);
-                    u.getCurrentRabbit().setyCor(y);
-
-                    // Enable the draw button and disable the target button
-                    drawButton.setEnabled(true);
-                    targetButton.setEnabled(false);
-
-                    // Set the instruction text
-                    instructions.setText("Draw card or choose rabbit");
+        for (Player gayer: players) {
+            List<Rabbit> tempRabbits = gayer.getRabbits();
+            for (Rabbit rabbit:tempRabbits) {
+                if (rabbit.getPosition() > 0) {
+                    runOnUiThread(()->{
+                    System.out.println("Drawing rabbit on field " + rabbit.getPosition());
+                    Button rabbitbtn = findViewById(fields[rabbit.getPosition()]);
+                    rabbitbtn.setOnClickListener(null);
+                    rabbitbtn.setCompoundDrawablesWithIntrinsicBounds(rabbitPicture, null, null, null);
+                    rabbitbtn.setEnabled(true);
+                    });
                 }
-            });
-        });
-
-        // Emit the movement to the server
-        socket.emit("move", steps);
+            }
+        }
+        isMyTurn = false;
     }
 
-     */
 
-    private void animateFigure(float x, float y,User u) {
+    private void animateFigure(float x, float y) {
         ImageView currentRabbit =(ImageView) findViewById(rabbits[currRabbit-1]);
         currentRabbit.animate()
                 .x(x - (currentRabbit.getWidth()/2 )+50)
@@ -381,15 +373,18 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         toggleFragmentPlayerList();
     }
 
-    public void toggleFragmentPlayerList(){
+    public void toggleFragmentPlayerList() {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        int visibility = containerplayerList.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE;
-        containerplayerList.setVisibility(visibility);
+        if (containerplayerList.getVisibility() == View.VISIBLE) {
+            containerplayerList.setVisibility(View.GONE);
 
-        fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList, visibility == View.VISIBLE ? "player_list" : null);
+            fragmentTransaction.remove(fragmentPlayerList);
+        } else {
+            containerplayerList.setVisibility(View.VISIBLE);
+            fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList);
+        }
         fragmentTransaction.commit();
     }
 
