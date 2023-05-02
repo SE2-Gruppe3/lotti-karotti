@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -38,7 +40,7 @@ import java.util.Random;
 
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity implements IOnDataSentListener {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener {
     private Button carrotButton;
     private ImageButton settingsButton;
     private Button drawButton;
@@ -93,8 +95,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setContentView(R.layout.activity_main);
 
         try {
-            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
+            socket = ServerConnection.getInstance("http://10.0.0.6:3000");
             ServerConnection.connect();
+            Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -162,6 +165,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 });
 
         socket.on("shake", args -> {
+            Log.println(Log.INFO, "Shake", "Shake received");
             try {
                 handleShake(args[0].toString());
             }catch (Exception e){
@@ -299,12 +303,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
     /**
      * Handle the shake event
-     * @param socketid
      */
     private void handleShake(String socketid)  {
-        if (socketid != socket.id()){
+        Looper.prepare();
+        Toast.makeText(this, "Shake detected!", Toast.LENGTH_SHORT).show();
+//        if (socketid == socket.id()){
+//            System.out.println("Shake from: " + socketid);
+//
+//            //TODO: Implement
+//        }
 
-        }
+
     }
 
     /**
@@ -452,7 +461,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
     private void onShakeDetected() {
         ServerConnection.shake();
-        Toast.makeText(this, "Shake detected!", Toast.LENGTH_SHORT).show();
     }
 
 }
