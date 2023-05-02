@@ -70,6 +70,7 @@ public class PlayerListFragment extends Fragment {
         return fragment;
     }
     private  String[] names;
+    private final String TAG = "FragmentPlayerList";
     Socket socket;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,13 +101,21 @@ public class PlayerListFragment extends Fragment {
         btnclose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                delegateClose();
+                    delegateClose();
             }
         });
 
         TableLayout tableLayout = view.findViewById(R.id.tblayout_players);
         if (names == null){
-            names = new String[0];
+            do {
+                try {
+                    Thread.sleep(50);
+
+                } catch (Exception ex) {
+                    Log.w(TAG, "Threading Error");
+                    break;
+                }
+            }while (names == null);
         }
 // Loop through the array
         for (String name : names) {
