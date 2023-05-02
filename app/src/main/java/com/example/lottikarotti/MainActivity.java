@@ -1,5 +1,6 @@
 package com.example.lottikarotti;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -8,9 +9,12 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -38,6 +42,8 @@ import java.util.Random;
 import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener {
+
+
     private Button carrotButton;
     private ImageButton settingsButton;
     private Button drawButton;
@@ -70,6 +76,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private float oldX, oldY, oldZ;
     private long preUpdate;
     private static final int SHAKE_THRESHOLD = 1000;
+
+    //Variables for the Clouds
+    private Button cloudButton;
+    private int screenWidth;
+    private int screenHeight;
+    private ImageView cloudL;
+    private ImageView cloudR;
+    private int cloudLX;
+    private int cloudRX;
+
+    //--------------------------------
     private boolean isMyTurn;
     private List<Player> players;
     private String sid;
@@ -89,10 +106,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
     private Socket socket;
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
             socket = ServerConnection.getInstance("http://10.0.0.6:3000");
@@ -175,6 +194,44 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
+        /**
+         * Clouds for the Sensor
+         */
+        cloudL = (ImageView) findViewById(R.id.cloudLeft);
+        cloudR = (ImageView) findViewById(R.id.cloudRight);
+        // Get Starting-Location of Clouds
+
+        int[] locationOfCloudL = new int[2];
+        int[] locationOfCloudR = new int[2];
+        cloudL.getLocationOnScreen(locationOfCloudL);
+        cloudR.getLocationOnScreen(locationOfCloudR);
+        cloudLX = locationOfCloudL[0];
+        cloudRX = locationOfCloudR[0];
+
+        // Get Screen Size
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screenWidth = displayMetrics.widthPixels;
+        screenHeight = displayMetrics.heightPixels;
+
+
+        /**
+         * Set Card Size based on Screen
+         */
+        ViewGroup.LayoutParams cloudLeftParam = cloudL.getLayoutParams();
+        ViewGroup.LayoutParams cloudRightParam = cloudR.getLayoutParams();
+
+        cloudLeftParam.width = screenWidth*2;
+        cloudLeftParam.height = screenHeight/2;
+        cloudL.setLayoutParams(cloudLeftParam);
+
+        cloudRightParam.width = screenWidth * 2;
+        cloudRightParam.height = screenHeight / 2;
+        cloudR.setLayoutParams(cloudRightParam);
+
+
+
+
+
 
         /**
          * Rabbit Selection
@@ -312,13 +369,18 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Handle the shake event
      */
     private void handleShake(String socketid)  {
-        Looper.prepare();
-        Toast.makeText(this, "Shake detected!", Toast.LENGTH_SHORT).show();
-//        if (socketid == socket.id()){
-//            System.out.println("Shake from: " + socketid);
-//
-//            //TODO: Implement
-//        }
+
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                //Toast.makeText(MainActivity.this, "Shake detected!", Toast.LENGTH_SHORT).show();
+
+                animateClouds(screenWidth);
+
+                resetClouds(cloudLX, cloudRX);
+            }
+        });
 
 
     }
@@ -432,7 +494,50 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
     private void onShakeDetected() {
         ServerConnection.shake();
+
+        //Debugging
+       // animateClouds(screenWidth);
+      //  handleShake("socketid");
     }
+
+    private void animateClouds(Integer screenWidth) {
+        float finalPosition = ((float)screenWidth);
+
+        // Animate Left Cloud
+        cloudL.animate()
+                .translationX(finalPosition / 0.7f)
+                .setDuration(1000)
+                .start();
+
+        // Animate Right Cloud
+        cloudR.animate()
+                .translationX(-finalPosition / 0.7f)
+                .setDuration(1000)
+                .start();
+
+    }
+
+    private void resetClouds(Integer cloudLX, Integer cloudRX) {
+
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                // Animate the clouds back to their initial positions after a 5 sec delay
+                cloudL.animate()
+                        .translationX(cloudLX)
+                        .setDuration(1000)
+                        .start();
+
+                cloudR.animate()
+                        .translationX(cloudRX)
+                        .setDuration(1000)
+                        .start();
+            }
+        }, 5000);
+    }
+
+
 
 }
 
