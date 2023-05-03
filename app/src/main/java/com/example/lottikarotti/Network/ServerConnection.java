@@ -1,7 +1,7 @@
 package com.example.lottikarotti.Network;
 
 import android.app.Activity;
-import android.widget.Toast;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -10,87 +10,65 @@ import org.json.JSONObject;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import io.socket.client.IO;
 import io.socket.client.Socket;
 
-public class ServerConnection{
+public class ServerConnection {
+    private static final String TAG = ServerConnection.class.getSimpleName();
     private static Socket socket;
 
-    private static synchronized void setSocket(){
-        try{
-            socket = IO.socket("http://10.2.0.141:3000/");
-        } catch (URISyntaxException e){
-            throw new RuntimeException("Failed to create socket!", e);
-        }
-    }
-
-    public static synchronized Socket getSocket(){
-        establishConnection();
-
-        if(socket == null){
-            throw new IllegalStateException("Socket has not been initialized!");
+    public static synchronized Socket getInstance(String serverUrl) throws URISyntaxException {
+        if (socket == null) {
+            socket = IO.socket(serverUrl);
         }
         return socket;
     }
 
-    private static synchronized void establishConnection(){
-        setSocket();
-
-        if(socket == null){
-            throw new IllegalStateException("Socket has not been initialized!");
-        }
-        if(!socket.connected()){
+    public static void connect() {
+        if (!socket.connected()) {
             socket.connect();
         }
     }
 
-    public static synchronized void closeConnection(){
-        if(socket == null){
-            throw new IllegalStateException("Socket has not been initialized!");
-        }
-        if(socket.connected()){
+    public static void disconnect() {
+        if (socket.connected()) {
             socket.disconnect();
         }
     }
 
-    public static synchronized void checkIfConnectionIsAlive(Socket socket, Activity activity){
+    public static void checkIfConnectionIsAlive(Activity activity, ConnectionCallback callback) {
         socket.on("alive", args -> {
             int number = (Integer) args[0];
-            boolean alive = false;
-            if (number == 1) alive = true;
-            boolean finalAlive = alive;
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(activity.getApplicationContext(), "Connected: " + finalAlive, Toast.LENGTH_SHORT).show();
-                }
-            });
+            boolean alive = (number == 1);
+            activity.runOnUiThread(() -> callback.onConnectionChecked(alive));
         });
 
         socket.emit("alive");
     }
 
-    public static synchronized void getNumberOfConnectedPlayers(Socket socket, Activity activity){
+    public interface ConnectionCallback {
+        void onConnectionChecked(boolean isAlive);
+    }
+
+    public static void getNumberOfConnectedPlayers(Activity activity, PlayerCountCallback callback) {
         socket.on("getplayers", args -> {
             int number = (Integer) args[0];
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(activity.getApplicationContext(), "Number of connected players: " + number, Toast.LENGTH_SHORT).show();
-                }
-            });
+            activity.runOnUiThread(() -> callback.onPlayerCountReceived(number));
         });
 
         socket.emit("getplayers");
     }
 
-    public static synchronized void getListOfConnectedPlayers(Socket socket, Activity activity){
+    public interface PlayerCountCallback {
+        void onPlayerCountReceived(int count);
+    }
+
+    public static void getListOfConnectedPlayers(Activity activity, PlayerListCallback callback) {
         socket.on("getplayerlist", args -> {
             JSONArray playerList = (JSONArray) args[0];
             List<String> names = new ArrayList<>();
-            for(int i=0; i<playerList.length(); i++){
+            for (int i = 0; i < playerList.length(); i++) {
                 try {
                     JSONObject object = playerList.getJSONObject(i);
                     names.add(object.getString("name"));
@@ -98,26 +76,33 @@ public class ServerConnection{
                     throw new RuntimeException(e);
                 }
             }
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast.makeText(activity.getApplicationContext(), "Name: " + names, Toast.LENGTH_SHORT).show();
-                }
-            });
+            activity.runOnUiThread(() -> callback.onPlayerListReceived(names));
         });
 
         socket.emit("getplayerlist");
     }
 
-    public static synchronized void registerNewPlayer(Socket socket, String name){
+    public interface PlayerListCallback {
+        void onPlayerListReceived(List<String> playerList);
+    }
+
+    public static void registerNewPlayer(String name) {
         socket.emit("register", name);
     }
 
-    public static synchronized void createNewLobby(Socket socket, int lobbyCode){
+    public static void createNewLobby(String lobbyCode) {
         socket.emit("createlobby", lobbyCode);
     }
 
-    public static synchronized void joinLobby(Socket socket, int lobbyCode){
+    public static void joinLobby(String lobbyCode) {
         socket.emit("joinlobby", lobbyCode);
     }
+
+    public static void move(int steps, int rabbitNo) {
+        socket.emit("move", steps, rabbitNo);
+    }
+    public static void shake() {
+        socket.emit("shake");
+    }
+    public static void fetchUnique(){socket.emit("fetchuniqueid");}
 }
