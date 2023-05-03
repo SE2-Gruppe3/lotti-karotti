@@ -1,24 +1,39 @@
-package com.example.lottikarotti;
+package com.example.lottikarotti.Activities;
+
+import static com.example.lottikarotti.Network.ServerConnection.checkIfConnectionIsAlive;
+import static com.example.lottikarotti.Network.ServerConnection.createNewLobby;
+import static com.example.lottikarotti.Network.ServerConnection.getListOfConnectedPlayers;
+import static com.example.lottikarotti.Network.ServerConnection.getNumberOfConnectedPlayers;
+import static com.example.lottikarotti.Network.ServerConnection.getSocket;
+import static com.example.lottikarotti.Network.ServerConnection.joinLobby;
+import static com.example.lottikarotti.Network.ServerConnection.registerNewPlayer;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.annotation.SuppressLint;
-import android.graphics.Matrix;
+import android.content.Intent;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import com.example.lottikarotti.Network.ServerConnection;
+import com.example.lottikarotti.R;
+import com.example.lottikarotti.Models.Rabbit;
+import com.example.lottikarotti.Models.User;
 
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
+
+import butterknife.ButterKnife;
+import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity {
-
     private Button carrotButton;
+
+
+    private ImageButton settingsButton;
     private Button drawButton;
     private Button startTurn;
     private Button endTurn;
@@ -54,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
+        Socket socket = getSocket();
+
+
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
@@ -69,10 +88,15 @@ public class MainActivity extends AppCompatActivity {
         }
 
         User user = new User("testuserl", new Rabbit(1,rabbit1.getLeft(),rabbit1.getRight()), new Rabbit(2,rabbit2.getLeft(),rabbit2.getRight()),new Rabbit(3,rabbit3.getLeft(),rabbit3.getRight()), new Rabbit(4,rabbit4.getLeft(),rabbit4.getRight()));
+
+        setUpNetwork(socket,user);
+        setupGame(socket);
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
+        settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
+        carrotButton.setEnabled(false);
 
 
         instructions.setText("Instructions: Choose a rabbit to play");
@@ -165,6 +189,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
 
     }
 
@@ -184,14 +216,13 @@ public class MainActivity extends AppCompatActivity {
 
         Button targetButton = (Button)findViewById(fields[currentField]);
         targetButton.setEnabled(true);
-        targetButton.setBackgroundResource(R.drawable.deckkarte);
+       // targetButton.setBackgroundResource(R.drawable.deckkarte);
         targetButton.setVisibility(View.VISIBLE);
 
         targetButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                Toast.makeText(getBaseContext(),"Clicked",Toast.LENGTH_SHORT).show();
 
                 int[] values = new int[2];
                 v.getLocationOnScreen(values);
@@ -202,14 +233,35 @@ public class MainActivity extends AppCompatActivity {
                      u.getCurrentRabbit().setyCor(y);
                     drawButton.setEnabled(true);
                     targetButton.setEnabled(false);
+                    instructions.setText("Draw card or choose rabbit");
              }
         });
       }
 
+    private <Int> void setupGame(Socket socket) {
+        Int lobbyId = (Int) getIntent().getStringExtra("lobbyID");
+
+        if (lobbyId != null) {
+             joinLobby(socket, (Integer) lobbyId);
+        } else {
+            Random rand = new Random();
+            int lobbycode = rand.nextInt(800000);
+            createNewLobby(socket,lobbycode );
+        }
+    }
+      private void setUpNetwork(Socket socket, User u){
+
+
+          checkIfConnectionIsAlive(socket, this);
+          registerNewPlayer(socket,u.getUsername());
+
+
+
+      }
     private void animateFigure(float x, float y,User u) {
         ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
         currentRabbit.animate()
-                .x(x - (currentRabbit.getWidth()/2 ))
+                .x(x - (currentRabbit.getWidth()/2 )+50)
                 .y(y - (currentRabbit.getHeight() / 2))
                 .setDuration(500)
                 .start();
