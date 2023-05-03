@@ -13,7 +13,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LobbyActivity extends AppCompatActivity {
-    @BindView(R.id.etLobbyId)
+    @BindView(R.id.etIpAddress)
     TextView lobbyId;
 
     @Override
