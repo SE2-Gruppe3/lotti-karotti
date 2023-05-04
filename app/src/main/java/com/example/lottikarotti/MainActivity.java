@@ -278,7 +278,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         System.out.println(steps+" steps with rabbit "+rabbit);
         int add = 0;
         for (Player payer:players) {
-            System.out.println(payer.getSid());
+            if (socket.id().equals(payer.getSid())){
+                add = payer.getRabbits().get(rabbit).getPosition();
+            }
+
         }
         // activating field to press
         Button field = (Button) findViewById(fields[steps+add]);
@@ -327,6 +330,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             });
         }
         for (Player gayer: players) {
+            String color = gayer.getColor();    // get color of player TODO: when implementing animations and stuff please use this
             List<Rabbit> tempRabbits = gayer.getRabbits();
             for (Rabbit rabbit:tempRabbits) {
                 if (rabbit.getPosition() > 0) {
