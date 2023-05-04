@@ -19,9 +19,36 @@ class SettingsActivityTest {
 
     @AfterEach
     void tearDown() {
+        settingsActivity = null;
     }
 
     @Test
     void onCreate() {
+
+    }
+
+    @Test
+    public void testSetBrightnessMax() {
+        int desiredBrightness = 100;
+        float expected = desiredBrightness / 255f;
+        settingsActivity.setBrightness(desiredBrightness);
+        float current = settingsActivity.getWindow().getAttributes().screenBrightness;
+        assertEquals(expected, current, 0.01);
+    }
+    @Test
+    public void testSetBrightnessMin() {
+        int desiredBrightness = 0;
+        float expected = desiredBrightness / 255f;
+        settingsActivity.setBrightness(desiredBrightness);
+        float current = settingsActivity.getWindow().getAttributes().screenBrightness;
+        assertEquals(expected, current, 0.01);
+    }
+    @Test
+    public void testSetBrightnessAverage() {
+        int desiredBrightness = 50;
+        float expected = desiredBrightness / 255f;
+        settingsActivity.setBrightness(desiredBrightness);
+        float current = settingsActivity.getWindow().getAttributes().screenBrightness;
+        assertEquals(expected, current, 0.01);
     }
 }
