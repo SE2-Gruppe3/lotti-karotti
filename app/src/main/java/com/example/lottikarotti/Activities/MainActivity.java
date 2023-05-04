@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     //  Container for the Player List Fragment (Placeholder Container)
     private FrameLayout containerplayerList;
     private Fragment fragmentPlayerList;
+    private TextView lobbyID;
 
     private TextView instructions;
     final int[]rabbits={
@@ -93,7 +94,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ButterKnife.bind(this);
        Socket socket ;
 
-
+        Intent intent = getIntent();
+        String lobbyId = intent.getStringExtra("lobbyId");
+        lobbyID= (TextView)findViewById(R.id.lobbyID);
+        lobbyID.setText("Lobby ID: "+lobbyId);
 
         String serverUrl = "http://10.2.0.141:3000";
         ServerConnection serverConnection;

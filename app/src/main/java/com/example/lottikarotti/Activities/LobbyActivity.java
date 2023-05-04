@@ -41,6 +41,7 @@ public class LobbyActivity extends AppCompatActivity {
     @OnClick(R.id.btnStartGame)
     void onBtnStartGameClick() {
         Random rand = new Random();
+
         int lobbycode = rand.nextInt(800000);
         serverConnection.registerNewPlayer("Amar");
         serverConnection.createNewLobby(String.valueOf(lobbycode));
@@ -48,7 +49,7 @@ public class LobbyActivity extends AppCompatActivity {
     }
     private void startGameActivity(Integer lobbyId) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("lobbyId", lobbyId);
+        intent.putExtra("lobbyId", String.valueOf(lobbyId));
         startActivity(intent);
     }
 

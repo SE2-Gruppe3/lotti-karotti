@@ -28,6 +28,7 @@
 
         <Button
             android:id="@+id/btnStartGame"
+            android:onClick="onBtnStartGameClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
@@ -67,6 +68,7 @@
 
         <Button
             android:id="@+id/btnJoinGame"
+            android:onClick="onBtnJoinGameClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
