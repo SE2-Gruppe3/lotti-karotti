@@ -24,7 +24,7 @@ public class LobbyActivity extends AppCompatActivity {
     TextView lobbId;
 
     Socket socket ;
-    String serverUrl = "http://10.2.0.141:3000";
+    String serverUrl = "http://143.205.186.74:3000";
     ServerConnection serverConnection;
 
     @Override

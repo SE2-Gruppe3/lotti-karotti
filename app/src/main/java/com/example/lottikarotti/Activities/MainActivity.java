@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         lobbyID= (TextView)findViewById(R.id.lobbyID);
         lobbyID.setText("Lobby ID: "+lobbyId);
 
-        String serverUrl = "http://10.2.0.141:3000";
+        String serverUrl = "http://143.205.186.74:3000";
         ServerConnection serverConnection;
 
         try {
@@ -267,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         // send the steps aswell as the rabbit to the server (the server can fetch the socketid itself)
         socket.emit("move", steps, rabbit);
+
     }
 
     /**
