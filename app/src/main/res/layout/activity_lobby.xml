@@ -51,12 +51,12 @@
         </LinearLayout>
 
         <EditText
-            android:id="@+id/etIpAddress"
+            android:id="@+id/etLobbyId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="5"
             android:ems="10"
-            android:hint="@string/ipAddress"
+            android:hint="@string/lobbyCode"
             android:inputType="textPersonName"
             app:layout_constraintBottom_toTopOf="@+id/btnJoinGame"
             app:layout_constraintEnd_toEndOf="parent"

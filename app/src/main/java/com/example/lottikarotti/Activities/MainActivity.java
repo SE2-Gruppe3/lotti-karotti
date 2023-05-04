@@ -91,8 +91,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-      //  Socket socket = getSocket();
-
+       Socket socket ;
 
 
 
@@ -111,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         serverConnection.registerNewPlayer("Amar");
         serverConnection.createNewLobby("123456");
         serverConnection.joinLobby("123456");
+
 
         /// Example of getting server response using callbacks - We get here online player count back
         serverConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
@@ -138,8 +138,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         User user = new User("testuserl", new Rabbit(1,rabbit1.getLeft(),rabbit1.getRight()), new Rabbit(2,rabbit2.getLeft(),rabbit2.getRight()),new Rabbit(3,rabbit3.getLeft(),rabbit3.getRight()), new Rabbit(4,rabbit4.getLeft(),rabbit4.getRight()));
 
-        setUpNetwork(socket,user);
-        setupGame(socket);
+
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
        // settingsButton = (ImageButton) findViewById(R.id.settings);
@@ -359,26 +358,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
      */
 
-    private <Int> void setupGame(Socket socket) {
-        Int lobbyId = (Int) getIntent().getStringExtra("lobbyID");
 
-        if (lobbyId != null) {
-             //joinLobby(socket, (Integer) lobbyId);
-        } else {
-            Random rand = new Random();
-            int lobbycode = rand.nextInt(800000);
-           // createNewLobby(socket,lobbycode );
-        }
-    }
-      private void setUpNetwork(Socket socket, User u){
-
-
-      //    checkIfConnectionIsAlive(socket, this);
-       //   registerNewPlayer(socket,u.getUsername());
-
-
-
-      }
     private void animateFigure(float x, float y,User u) {
         ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
         currentRabbit.animate()

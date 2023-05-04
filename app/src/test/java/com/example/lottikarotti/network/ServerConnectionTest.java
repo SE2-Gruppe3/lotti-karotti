@@ -17,6 +17,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.net.URISyntaxException;
+
 import io.socket.client.Socket;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,7 +33,7 @@ public class ServerConnectionTest {
     private ServerConnection serverConnection;
 
     @BeforeEach
-    public void setup() {
+    public void setup() throws URISyntaxException {
         serverConnection = new ServerConnection(socket, activity);
     }
 
