@@ -20,7 +20,7 @@ const fetchLobbyInstance = require('./utils/fetchLobby.js');
 const storeGameData = require('./utils/storeGameData.js');
 const fetchGameDataInstance = require('./utils/fetchGame.js');
 const fetchLobbyGameData = require('./utils/fetchLobbyGame.js');
-
+const positionAvail = require('./utils/positionUpdate.js');
 // Print a message to the console indicating that the gerver is running
 console.log('Server is running');
 
@@ -183,14 +183,9 @@ io.on('connection', (socket) => {
             var game = fetchGameDataInstance(gameData, socket.id);
 
             var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
-        
-            if (gameData.rabbits ) {
-                rabbitX.position = 0;
-                console.log("[Server] Rabbit "+rabbit+" is eating rabbit "+rabbitX+"!")
-              }else{
-                game.rabbits[parseInt(rabbit)].position = newpos;
+            gameData = positionAvail(gameData, newpos);
+            game.rabbits[parseInt(rabbit)].position = newpos;
 
-              }
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
             console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!");
         }else{
@@ -211,10 +206,19 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         playercounter -= 1;
         const index = clientsList.findIndex(client => client.clientId === socket.id);
+
+        // unregister lobby if owner disconnects
         if(lobbies) {
             var lobbyindex = lobbies.findIndex(lobby => lobby.owner === socket.id);
-            if(lobbyindex !== -1) lobbies.splice(lobbyindex, 1);
-            console.log('[Server] Owner disconnected, lobby will be deleted!');
+            if(lobbyindex !== -1) {
+                lobbies.splice(lobbyindex, 1);  // splice lobby from lobbies
+                for(var i = 0; i<gameData.length; i++){
+                    if(gameData[i].lobbycode === lobbycode){
+                        gameData.splice(i, 1);  // splice gameData of lobby from gameData
+                    }
+                }
+            console.log('[Server] Owner disconnected, lobby deleted!\n\t'+JSON.stringify(lobbies));
+            }
         }
         if (index !== -1) { // Remove client from clientsList
             clientsList.splice(index, 1);
