@@ -8,8 +8,8 @@
     android:orientation="vertical">
 
     <ImageView
-        android:layout_width="423dp"
-        android:layout_height="319dp"
+        android:layout_width="match_parent"
+        android:layout_height="154dp"
         android:layout_weight="0"
         android:adjustViewBounds="true"
         android:contentDescription="@string/logo"
