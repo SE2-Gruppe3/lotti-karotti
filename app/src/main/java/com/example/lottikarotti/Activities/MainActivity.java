@@ -10,11 +10,23 @@ import static com.example.lottikarotti.Network.ServerConnection.registerNewPlaye
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
+import android.view.MotionEvent;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -24,12 +36,19 @@ import com.example.lottikarotti.R;
 import com.example.lottikarotti.Models.Rabbit;
 import com.example.lottikarotti.Models.User;
 
+import com.example.lottikarotti.Listeners.IOnDataSentListener;
+
+import com.example.lottikarotti.Network.ServerConnection;
+
+import java.io.Console;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Random;
 
 import butterknife.ButterKnife;
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener {
     private Button carrotButton;
 
 
@@ -49,6 +68,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean myTurn;
     private int touchCounter;
     private int touchCntLimit;
+    private Socket socket;
+
+    //  Container for the Player List Fragment (Placeholder Container)
+    private FrameLayout containerplayerList;
+    private Fragment fragmentPlayerList;
 
     private TextView instructions;
     final int[]rabbits={
@@ -74,12 +98,40 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+        String serverUrl = "http://10.2.0.141:3000";
+        ServerConnection serverConnection;
+
+        try {
+            serverConnection = new ServerConnection(serverUrl);
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        serverConnection.connect();
+        socket = serverConnection.getSocket();
+
+        serverConnection.registerNewPlayer("Amar");
+        serverConnection.createNewLobby("123456");
+        serverConnection.joinLobby("123456");
+
+        /// Example of getting server response using callbacks - We get here online player count back
+        serverConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
+            @Override
+            public void onPlayerCountReceived(int count) {
+                Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
+            }
+        });
+
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
         instructions= (TextView) findViewById(R.id.textViewInstructions);
 
+        //  Initialize PlayerList Fragment and Layout
+        containerplayerList = findViewById(R.id.container_playerList);
+        fragmentPlayerList = new PlayerListFragment();
 
 
         for (int field : fields) {
@@ -111,6 +163,10 @@ public class MainActivity extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
+        socket.on("move", args -> {
+            System.out.println(args[0].toString()+ " -- "+args[1].toString());
+            handleMove((String) args[0], (int)args[1], (int) args[2]);
+                });
 
         rabbit1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,11 +234,11 @@ public class MainActivity extends AppCompatActivity {
                 cardView.setImageResource(cards[random]);
 
                 switch(random) {
-                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); moveOn(user,3); break;
+                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, user.getCurrentRabbit().getId()); break;
                     case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
                         break;
-                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");moveOn(user,1); break;
-                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");moveOn(user,2); break;
+                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, user.getCurrentRabbit().getId()); break;
+                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, user.getCurrentRabbit().getId()); break;
                 }
 
 
@@ -201,42 +257,110 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void moveOn( User u, int step){
+    /**
+     * This method sends an emit to the Server signalising "move"
+     * @param steps
+     */
+    private void playerMove(int steps, int rabbit){
+        System.out.println(steps+" steps with");
 
+        // send the steps aswell as the rabbit to the server (the server can fetch the socketid itself)
+        socket.emit("move", steps, rabbit);
+    }
 
+    /**
+     * Temporary solution for Movement handling
+     */
+    ArrayList<PlayerTEMP> players = new ArrayList<PlayerTEMP>();
+    private void handleMove(String socketID, int steps, int rabbit){
+        if (players.isEmpty()) players.add(new PlayerTEMP(socketID));
+        else {
+            boolean notfound = true;
+            for (int i=0; i<players.size(); i++){
+                PlayerTEMP player = players.get(i);
+                if (player.getSocketid() == socketID) {
+                    player.moveRabbit(rabbit, steps);
+                    notfound = false;
+                    break;
+                }
+            }
+            if (notfound)
+            {
+                players.add(new PlayerTEMP(socketID));
+                handleMove(socketID, steps, rabbit);
+            }
+        }
+
+        renderBoard();
+    }
+
+    /**
+     * Implement here
+     */
+    private void renderBoard(){
+        //TODO: Implement
+    }
+
+    /*
+    private void moveOn(User u, int steps) {
+
+        // Disable the draw button
         drawButton.setEnabled(false);
 
-        int currentField =u.getCurrentRabbit().getField()+step;
-      /*  if(u.getRabbit2().getField() ==currentField && u.getRabbit3().getField() == currentField && u.getRabbit4().getField()== currentField)
-        {
-            instructions.setText("Please choose another rabbit");
-            return;
-        }*/
-        u.getCurrentRabbit().setField(currentField);
+        // Listen for the move event from the server
+        socket.on("move", args -> {
 
-        Button targetButton = (Button)findViewById(fields[currentField]);
-        targetButton.setEnabled(true);
-       // targetButton.setBackgroundResource(R.drawable.deckkarte);
-        targetButton.setVisibility(View.VISIBLE);
+            Log.d("move", "move");
+            // Extract the steps from the event arguments
+            int moveSteps = (int) args[1];
+            Log.d("move", "arg passed");
 
-        targetButton.setOnClickListener(new View.OnClickListener() {
+            // Update the current field of the rabbit
+            int currentField = u.getCurrentRabbit().getField() + moveSteps;
+            u.getCurrentRabbit().setField(currentField);
 
-            @Override
-            public void onClick(View v) {
+            // Get the target button and enable it
 
-                int[] values = new int[2];
-                v.getLocationOnScreen(values);
+            Button targetButton = findViewById(fields[currentField]);
+            runOnUiThread(()->{{
+                targetButton.setEnabled(true);
+            }
+            });
+
+            targetButton.setVisibility(View.VISIBLE);
+
+            // Set the onClickListener for the target button
+            targetButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // Get the coordinates of the button
+                    int[] values = new int[2];
+                    v.getLocationOnScreen(values);
                     float x = values[0];
                     float y = values[1];
-                     animateFigure(x, y,u);
-                     u.getCurrentRabbit().setxCor(x);
-                     u.getCurrentRabbit().setyCor(y);
+
+                    // Animate the rabbit figure
+                    animateFigure(x, y, u);
+
+                    // Update the x and y coordinates of the rabbit
+                    u.getCurrentRabbit().setxCor(x);
+                    u.getCurrentRabbit().setyCor(y);
+
+                    // Enable the draw button and disable the target button
                     drawButton.setEnabled(true);
                     targetButton.setEnabled(false);
+
+                    // Set the instruction text
                     instructions.setText("Draw card or choose rabbit");
-             }
+                }
+            });
         });
-      }
+
+        // Emit the movement to the server
+        socket.emit("move", steps);
+    }
+
+     */
 
     private <Int> void setupGame(Socket socket) {
         Int lobbyId = (Int) getIntent().getStringExtra("lobbyID");
@@ -267,8 +391,36 @@ public class MainActivity extends AppCompatActivity {
                 .start();
 
         currentRabbit.clearAnimation();
-
     }
 
+    public void openFragmentPlayerList(View view){
+        toggleFragmentPlayerList();
+    }
 
+    public void toggleFragmentPlayerList(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+        if (containerplayerList.getVisibility() == View.VISIBLE) {
+            containerplayerList.setVisibility(View.GONE);
+
+            fragmentTransaction.remove(fragmentPlayerList);
+            fragmentTransaction.commit();
+        }
+        else {
+            containerplayerList.setVisibility(View.VISIBLE);
+
+            fragmentTransaction.add(R.id.container_playerList, fragmentPlayerList);
+            fragmentTransaction.commit();
+        }
+    }
+
+    @Override
+    public void onDataSent(String data) {
+        Log.d("Game", "Received data from Fragment: " + data);
+
+        if (data == "closeFragmentPlayerList")
+            toggleFragmentPlayerList();
+    }
 }
+

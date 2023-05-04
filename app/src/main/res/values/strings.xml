@@ -4,4 +4,7 @@
     <string name="start_game">Start game</string>
     <string name="ipAddress">IP Address</string>
     <string name="join_game">Join game</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_playerlist_intro">Current Players</string>
 </resources>

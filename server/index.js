@@ -12,7 +12,7 @@ const lobbyExist = require('./utils/checkLobbyExists.js');
 const fetchClientInstance = require('./utils/fetchClient.js');
 const fetchLobbyInstance = require('./utils/fetchLobby.js');
 
-// Print a message to the console indicating that the server is running
+// Print a message to the console indicating that the gerver is running
 console.log('Server is running');
 
 // Create a new Socket.IO instance and define variables to track player count
@@ -44,7 +44,12 @@ io.on('connection', (socket) => {
     //  CURRENT LISTENERS:
     //      "alive"         -   serves as a ping to the server, may be used by the client
     //      "register"      -   registers client on server with a name (lets see how this is going in the future)
-    //      "getplayers"    -   get all the current players
+    //      "getplayers"    -   get playercount
+    //      "createlobby"   -   create a lobby with a code
+    //      "getplayerlist" -   gerver sends all clients of the server
+    //      "joinlobby"     -   join a lobby with a code
+    //      "playonline"    -   check if playing online is possible for the client(ambigious, may be removed in the future)
+    //      "move"          -   handle movement(may get bigger in the future, currently only handles movement of rabbits)
     //********************************************************************************************************** */
     //                          ***PLEASE PUT YOUR LISTENERS/EMITTERS BELOW HERE***                              */
     //********************************************************************************************************** */
@@ -87,7 +92,7 @@ io.on('connection', (socket) => {
 
     socket.on('getplayerlist', () => {
         console.log('[Server] Sending player list information!');
-        io.emit('getplayerlist', clientsList);
+        io.to(lobbycode).emit('getplayerlist', clientsList);
     });
 
     //********************************************************************************************************** */
@@ -144,19 +149,28 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('getplayerslobby', args => {
+        if(lobbycode.length === 6){
+            lobby = fetchLobbyInstance(lobbies, lobbycode);
+            console.log("[Server] PlayerList\n\t"+JSON.stringify(lobby.players));
+
+            io.to(socket.id).emit("getplayerslobby", JSON.stringify(lobby.players));
+    }
+    });
+
     //********************************************************************************************************** */
     //                          ***Game Logic handling below here***                                             */
     //              From here on out there will be no suffisticated checks if the login and stuff is in order    */
     //********************************************************************************************************** */
 
     // Move logic, Client must handle the logic accordingly
-    socket.on('move', steps=>{
+    socket.on('move', (steps, rabbit) =>{
         if(registered === 1 && lobbycode !== 0 && steps < 8){
-            io.to(lobbycode).emit("move", socket.id, steps);
-            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps!")
+            io.to(lobbycode).emit("move", socket.id, steps, rabbit);
+            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!")
         }else{
             console.error("[Server] Invalid move!")
-            io.emit("error", 500);
+            io.to(socket.id).emit("error", 500);
         }
     });
 
@@ -174,4 +188,3 @@ io.on('connection', (socket) => {
         console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
 });
-
