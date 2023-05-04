@@ -14,7 +14,7 @@ import butterknife.OnClick;
 
 public class LobbyActivity extends AppCompatActivity {
     @BindView(R.id.etIpAddress)
-    TextView lobbyId;
+    TextView ipAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,17 +29,17 @@ public class LobbyActivity extends AppCompatActivity {
     void onBtnStartGameClick() {
         startGameActivity(null);
     }
-    private void startGameActivity(Integer lobbyId) {
+    private void startGameActivity(Integer ipAddress) {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra("lobbyID", lobbyId);
+        intent.putExtra("ipAddress", ipAddress);
         startActivity(intent);
     }
 
     @OnClick(R.id.btnJoinGame)
     void onBtnJoinGameClick() {
 
-        try{final int lobby = Integer.parseInt(lobbyId.getText().toString());
-            startGameActivity(lobby);}
+        try{final int ip = Integer.parseInt(ipAddress.getText().toString());
+            startGameActivity(ip);}
         catch (Exception ex){
             Toast.makeText(getBaseContext(), "Please type valid number", Toast.LENGTH_SHORT).show();
         }

@@ -93,7 +93,7 @@ public class MainActivity extends AppCompatActivity {
         setupGame(socket);
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
-        settingsButton = (ImageButton) findViewById(R.id.settings);
+       // settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        settingsButton.setOnClickListener(new View.OnClickListener() {
+      /*  settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+*/
     }
 
 
@@ -261,8 +261,8 @@ public class MainActivity extends AppCompatActivity {
     private void animateFigure(float x, float y,User u) {
         ImageView currentRabbit =(ImageView) findViewById(rabbits[u.getCurrentRabbit().getId()-1]);
         currentRabbit.animate()
-                .x(x - (currentRabbit.getWidth()/2 )+50)
-                .y(y - (currentRabbit.getHeight() / 2))
+                .x(x - (currentRabbit.getWidth()/2 )+10)
+                .y(y - (currentRabbit.getHeight() / 2)+10)
                 .setDuration(500)
                 .start();
 

@@ -22,12 +22,6 @@
         android:layout_height="wrap_content" />
 
 
-    <include
-        layout="@layout/gamebar"
-        android:layout_width="match_parent"
-        android:layout_height="528dp" />
-
-
 </LinearLayout>
 </ScrollView>
 
