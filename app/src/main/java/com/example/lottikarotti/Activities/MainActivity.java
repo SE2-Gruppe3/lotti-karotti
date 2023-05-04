@@ -1,12 +1,6 @@
 package com.example.lottikarotti.Activities;
 
-import static com.example.lottikarotti.Network.ServerConnection.checkIfConnectionIsAlive;
-import static com.example.lottikarotti.Network.ServerConnection.createNewLobby;
-import static com.example.lottikarotti.Network.ServerConnection.getListOfConnectedPlayers;
-import static com.example.lottikarotti.Network.ServerConnection.getNumberOfConnectedPlayers;
-import static com.example.lottikarotti.Network.ServerConnection.getSocket;
-import static com.example.lottikarotti.Network.ServerConnection.joinLobby;
-import static com.example.lottikarotti.Network.ServerConnection.registerNewPlayer;
+
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,8 +24,11 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lottikarotti.Network.ServerConnection;
+import com.example.lottikarotti.PlayerListFragment;
+import com.example.lottikarotti.PlayerTEMP;
 import com.example.lottikarotti.R;
 import com.example.lottikarotti.Models.Rabbit;
 import com.example.lottikarotti.Models.User;
@@ -94,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        Socket socket = getSocket();
+      //  Socket socket = getSocket();
 
 
 
@@ -366,18 +363,18 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         Int lobbyId = (Int) getIntent().getStringExtra("lobbyID");
 
         if (lobbyId != null) {
-             joinLobby(socket, (Integer) lobbyId);
+             //joinLobby(socket, (Integer) lobbyId);
         } else {
             Random rand = new Random();
             int lobbycode = rand.nextInt(800000);
-            createNewLobby(socket,lobbycode );
+           // createNewLobby(socket,lobbycode );
         }
     }
       private void setUpNetwork(Socket socket, User u){
 
 
-          checkIfConnectionIsAlive(socket, this);
-          registerNewPlayer(socket,u.getUsername());
+      //    checkIfConnectionIsAlive(socket, this);
+       //   registerNewPlayer(socket,u.getUsername());
 
 
 

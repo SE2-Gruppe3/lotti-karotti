@@ -7,7 +7,7 @@ public class PlayerTEMP {
     private int r3Field;
     private int r4Field;
 
-    PlayerTEMP(String socketid){
+    public PlayerTEMP(String socketid){
         r1Field = 0;
         r2Field = 0;
         r3Field = 0;
