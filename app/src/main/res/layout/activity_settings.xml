@@ -1,132 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/board_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:layout_weight="1"
+    android:fillViewport="true"
+    android:orientation="vertical"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp"
     tools:context=".Activities.SettingsActivity">
 
-    <SeekBar
-        android:id="@+id/seekBar2"
-        android:layout_width="247dp"
-        android:layout_height="23dp"
-        android:layout_marginStart="34dp"
-        android:layout_marginBottom="444dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/textBrightness" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/exitMenu"
-        android:layout_width="74dp"
-        android:layout_height="45dp"
-        android:layout_marginStart="309dp"
-        android:layout_marginTop="282dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="29dp"
-        android:text="Exit"
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar2" />
+        <SeekBar
+            android:id="@+id/seekBar2"
+            android:layout_width="247dp"
+            android:layout_height="23dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="400dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    <TextView
-        android:id="@+id/menuHead"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="Settings"
-        android:textSize="30sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <Button
+            android:id="@+id/exitMenu"
+            android:layout_width="74dp"
+            android:layout_height="45dp"
+            android:text="Exit"
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.899"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.897" />
 
-    <ImageButton
-        android:id="@+id/settingVolOn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="129dp"
-        android:layout_marginBottom="85dp"
-        android:visibility="visible"
-        app:layout_constraintBottom_toTopOf="@+id/textBrightness"
-        app:layout_constraintEnd_toStartOf="@+id/seekBar"
-        app:layout_constraintStart_toEndOf="@+id/settingVolume"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_lock_silent_mode_off" />
+        <TextView
+            android:id="@+id/menuHead"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Settings"
+            android:textSize="30sp"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="137dp" />
 
-    <TextView
-        android:id="@+id/settingVolume"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="144dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="99dp"
-        android:text="Volume"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toTopOf="@+id/textBrightness"
-        app:layout_constraintEnd_toStartOf="@+id/settingVolOn"
-        app:layout_constraintStart_toStartOf="@+id/textBrightness"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageButton
+            android:id="@+id/settingVolOn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.104"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seekBar"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@android:drawable/ic_lock_silent_mode_off" />
 
-    <SeekBar
-        android:id="@+id/seekBar"
-        android:layout_width="247dp"
-        android:layout_height="23dp"
-        android:layout_marginTop="67dp"
-        android:layout_marginBottom="97dp"
-        android:max="100"
-        app:layout_constraintBottom_toTopOf="@+id/seekBar2"
-        app:layout_constraintEnd_toEndOf="@+id/seekBar2"
-        app:layout_constraintStart_toStartOf="@+id/seekBar2"
-        app:layout_constraintTop_toBottomOf="@+id/menuHead" />
+        <TextView
+            android:id="@+id/settingVolume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Volume"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.103"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.277" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="settingVolume" />
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="247dp"
+            android:layout_height="23dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginBottom="196dp"
+            android:max="100"
+            app:layout_constraintBottom_toTopOf="@+id/seekBar2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.659"
+            app:layout_constraintStart_toEndOf="@+id/settingVolOn"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.965" />
 
-    <androidx.constraintlayout.widget.Group
-        android:id="@+id/group2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:constraint_referenced_ids="settingVolume,settingVolOn" />
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="settingVolume" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="-26dp" />
+        <androidx.constraintlayout.widget.Group
+            android:id="@+id/group2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:constraint_referenced_ids="settingVolume,settingVolOn" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="-26dp" />
 
 
-    <TextView
-        android:id="@+id/textBrightness"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="25dp"
-        android:layout_marginEnd="20dp"
-        android:text="Brightness"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/seekBar2"
-        app:layout_constraintEnd_toStartOf="@+id/seekBar2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/seekBar2"
-        tools:ignore="MissingConstraints" />
+        <TextView
+            android:id="@+id/textBrightness"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Brightness"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="@+id/seekBar2"
+            app:layout_constraintEnd_toStartOf="@+id/seekBar2"
+            app:layout_constraintHorizontal_bias="0.627"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seekBar2"
+            app:layout_constraintVertical_bias="0.268"
+            tools:ignore="MissingConstraints" />
 
-    <ImageButton
-        android:id="@+id/settingsVolMute"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="129dp"
-        android:layout_marginBottom="85dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/textBrightness"
-        app:layout_constraintEnd_toStartOf="@+id/seekBar"
-        app:layout_constraintStart_toEndOf="@+id/settingVolume"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_lock_silent_mode" />
+        <ImageButton
+            android:id="@+id/settingsVolMute"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/seekBar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.098"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/seekBar"
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@android:drawable/ic_lock_silent_mode" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>
