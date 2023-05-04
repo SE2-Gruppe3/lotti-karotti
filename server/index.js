@@ -181,8 +181,16 @@ io.on('connection', (socket) => {
     socket.on('move', (steps, rabbit) =>{   
         if(registered === 1 && lobbycode !== 0 && steps < 8){
             var game = fetchGameDataInstance(gameData, socket.id);
-            game.rabbits[parseInt(rabbit)].position += parseInt(steps);
 
+            var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
+        
+            if (gameData.rabbits ) {
+                rabbitX.position = 0;
+                console.log("[Server] Rabbit "+rabbit+" is eating rabbit "+rabbitX+"!")
+              }else{
+                game.rabbits[parseInt(rabbit)].position = newpos;
+
+              }
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
             console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!");
         }else{
@@ -203,6 +211,11 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         playercounter -= 1;
         const index = clientsList.findIndex(client => client.clientId === socket.id);
+        if(lobbies) {
+            var lobbyindex = lobbies.findIndex(lobby => lobby.owner === socket.id);
+            if(lobbyindex !== -1) lobbies.splice(lobbyindex, 1);
+            console.log('[Server] Owner disconnected, lobby will be deleted!');
+        }
         if (index !== -1) { // Remove client from clientsList
             clientsList.splice(index, 1);
             console.log('[Server] Player Unregistered, id: '+socket.id);
