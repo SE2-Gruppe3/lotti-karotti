@@ -30,7 +30,7 @@ public void onCreate() {
     }
 
     public class MusicBinder extends Binder {
-        BGMusic getService() {
+        public BGMusic getService() {
             return BGMusic.this;
         }
     }

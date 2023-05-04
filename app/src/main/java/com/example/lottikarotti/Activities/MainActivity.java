@@ -29,6 +29,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.lottikarotti.Network.ServerConnection;
 import com.example.lottikarotti.PlayerListFragment;
@@ -262,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
 
-    private void moveOn(User u, int step) {
+    private void playerMove( int steps, int rabbit) {
 
         // send the steps aswell as the rabbit to the server (the server can fetch the socketid itself)
         socket.emit("move", steps, rabbit);
@@ -313,18 +314,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             // Extract the steps from the event arguments
             int moveSteps = (int) args[1];
             Log.d("move", "arg passed");
-        int currentField = u.getCurrentRabbit().getField() + step;
-      /*  if(u.getRabbit2().getField() ==currentField && u.getRabbit3().getField() == currentField && u.getRabbit4().getField()== currentField)
+        /*  if(u.getRabbit2().getField() ==currentField && u.getRabbit3().getField() == currentField && u.getRabbit4().getField()== currentField)
         {
             instructions.setText("Please choose another rabbit");
             return;
         }*/
-        u.getCurrentRabbit().setField(currentField);
 
-        Button targetButton = (Button) findViewById(fields[currentField]);
-        targetButton.setEnabled(true);
-        // targetButton.setBackgroundResource(R.drawable.deckkarte);
-        targetButton.setVisibility(View.VISIBLE);
+
 
             // Update the current field of the rabbit
             int currentField = u.getCurrentRabbit().getField() + moveSteps;
@@ -371,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         socket.emit("move", steps);
     }
 
-     */
+
 
 
     private void animateFigure(float x, float y, User u) {

@@ -17,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.Switch;
 
+import com.example.lottikarotti.BGMusic;
 import com.example.lottikarotti.R;
 
 public class SettingsActivity extends AppCompatActivity {
