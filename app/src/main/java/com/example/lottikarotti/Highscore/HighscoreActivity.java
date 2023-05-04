@@ -29,7 +29,7 @@ public class HighscoreActivity extends AppCompatActivity {
         adapter = new HighscoreAdapter();
 
         try {
-            serverConnection = new ServerConnection("http://10.2.0.141:3000/", this);
+            serverConnection = new ServerConnection("http://143.205.193.209:3000/", this);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }

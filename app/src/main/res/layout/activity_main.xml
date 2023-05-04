@@ -711,5 +711,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_menu_manage" />
 
+    <Button
+        android:id="@+id/buttonHighScore"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:text="HS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.857"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

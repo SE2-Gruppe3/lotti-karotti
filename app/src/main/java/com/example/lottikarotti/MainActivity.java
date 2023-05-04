@@ -3,6 +3,7 @@ package com.example.lottikarotti;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +25,7 @@ import io.socket.client.Socket;
 public class MainActivity extends AppCompatActivity {
     private Button carrotButton;
     private ImageButton settingsButton;
+    private Button buttonHighScore;
     private Button drawButton;
     private Button startTurn;
     private Button endTurn;
@@ -53,12 +55,13 @@ public class MainActivity extends AppCompatActivity {
             R.id.buttonField8,R.id.buttonField9,R.id.buttonField10, R.id.buttonField11, R.id.buttonField12, R.id.buttonField13, R.id.buttonField14,
     R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
     R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
+    @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String serverUrl = "http://10.2.0.141:3000";
+        String serverUrl = "http://143.205.193.209:3000";
         ServerConnection serverConnection;
 
         try {
@@ -100,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
+        buttonHighScore = (Button) findViewById(R.id.buttonHighScore);
 
 
         instructions.setText("Instructions: Choose a rabbit to play");
@@ -182,6 +186,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        buttonHighScore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, HighscoreActivity.class);
