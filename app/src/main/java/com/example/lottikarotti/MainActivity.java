@@ -409,7 +409,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         hole = Integer.parseInt(number);
         Log.d("Carrotspin", "Hole: "+hole);
         putHolesOnBoard();
-        renderBoard();
+
     }
 
 
@@ -432,21 +432,19 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     runOnUiThread(()->{
                     System.out.println("Drawing rabbit on field " + rabbit.getPosition());
                     Button rabbitbtn = findViewById(fields[rabbit.getPosition()]);
-                    rabbitbtn.setEnabled(true);
-                    rabbitbtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            PointF buttonCenter = getFieldCenter(rabbitbtn);
-                            moveRabbitOnBoard(findViewById(rabbits[currRabbit]), buttonCenter, 1000);
-                        }
+                    rabbitbtn.setOnClickListener(null);
+                    PointF buttonCenter = getFieldCenter(rabbitbtn);
+                    moveRabbitOnBoard(findViewById(rabbits[currRabbit]), buttonCenter, 1000);
+                    rabbitbtn.setEnabled(false);
+
                     });
-                    //rabbitbtn.setEnabled(false);
-                    });
+
                 }
             }
         }
         isMyTurn = false;
     }
+
 
     /**
      * Puts the holes on the board
@@ -620,17 +618,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         Log.d("Game", "Moving rabbit to: " + centerField.toString());
         int[] location = new int[2];
         rabbit.getLocationOnScreen(location);
+        float startX = location[0];
+        float startY = location[1];
 
         rabbit.setPivotX(0.5f * rabbit.getWidth());
-        rabbit.setPivotY(0.5f * rabbit.getHeight());
-
+        rabbit.setPivotY(1.35f * rabbit.getHeight());
+        ObjectAnimator animX = ObjectAnimator.ofFloat(rabbit, "x", startX, centerField.x- rabbit.getPivotX());
+        ObjectAnimator animY = ObjectAnimator.ofFloat(rabbit, "y", startY, centerField.y - rabbit.getPivotY());
         ObjectAnimator X = ObjectAnimator.ofFloat(
                 rabbit, "translationX", centerField.x - location[0] -rabbit.getPivotX());
         ObjectAnimator Y = ObjectAnimator.ofFloat(
                 rabbit, "translationY", centerField.y - location[1] - rabbit.getPivotY());
 
         AnimatorSet animatorSet = new AnimatorSet();
-        animatorSet.playTogether(X, Y);
+        animatorSet.playTogether(animX, animY);
         animatorSet.setDuration(duration);
         animatorSet.start();
     }
