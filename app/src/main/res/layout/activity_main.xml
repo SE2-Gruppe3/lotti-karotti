@@ -78,54 +78,54 @@
 
     <ImageView
         android:id="@+id/rabbit3"
-        android:layout_width="97dp"
-        android:layout_height="86dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:onClick="preventClicks"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/rabbit1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.853"
+        app:layout_constraintHorizontal_bias="0.822"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/rabbit1"
         app:layout_constraintVertical_bias="0.522"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/rabbit1"
-        android:layout_width="90dp"
-        android:layout_height="84dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:onClick="preventClicks"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.554"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/rabbit2"
+        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintStart_toStartOf="@+id/rabbit2"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.516"
+        app:layout_constraintVertical_bias="0.522"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/rabbit4"
-        android:layout_width="100dp"
-        android:layout_height="86dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:onClick="preventClicks"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.858"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/rabbit3"
+        app:layout_constraintHorizontal_bias="0.822"
+        app:layout_constraintStart_toStartOf="@+id/rabbit3"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.953"
+        app:layout_constraintVertical_bias="0.879"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView
         android:id="@+id/rabbit2"
-        android:layout_width="90dp"
-        android:layout_height="86dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:onClick="preventClicks"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@+id/rabbit4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.548"
+        app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.994"
+        app:layout_constraintTop_toTopOf="@+id/rabbit4"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/fig1" />
 
     <ImageView

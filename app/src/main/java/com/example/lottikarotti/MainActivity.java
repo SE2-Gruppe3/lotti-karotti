@@ -1,9 +1,12 @@
 package com.example.lottikarotti;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -24,7 +27,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -51,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
-   private ImageView rabbit1;
+    private ImageView rabbit1;
     private ImageView rabbit2;
     private ImageView rabbit3;
     private ImageView rabbit4;
@@ -93,6 +95,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[]rabbits={
           R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
+
+
+    PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
             R.drawable.card4 };
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.hole22,R.id.hole25,R.id.hole27};
     private int hole = -1;
 
-    final int[] fields = {    R.id.buttonField1,
+    final int[] fields = { R.id.buttonField1,
             R.id.buttonField1, R.id.buttonField2,R.id.buttonField3,R.id.buttonField4,R.id.buttonField5,R.id.buttonField6,R.id.buttonField7,
             R.id.buttonField8,R.id.buttonField9,R.id.buttonField10, R.id.buttonField11, R.id.buttonField12, R.id.buttonField13, R.id.buttonField14,
     R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
@@ -123,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             throw new RuntimeException(e);
         }
 
-        ServerConnection.registerNewPlayer("Bro");
+        ServerConnection.registerNewPlayer("Brooooooo");
         ServerConnection.fetchUnique();
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
@@ -148,6 +153,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
+        getRabbitStartPos();
+
         instructions= (TextView) findViewById(R.id.textViewInstructions);
 
         //  Initialize PlayerList Fragment and Layout
@@ -318,6 +325,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
 
+
     /**
      * Override the onSensorChanged method to detect the shake gesture
      */
@@ -400,10 +408,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         Log.d("Carrotspin", "Field: "+fieldid);
         hole = Integer.parseInt(number);
         Log.d("Carrotspin", "Hole: "+hole);
-        renderBoard();
         putHolesOnBoard();
-
-
+        renderBoard();
     }
 
 
@@ -426,9 +432,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     runOnUiThread(()->{
                     System.out.println("Drawing rabbit on field " + rabbit.getPosition());
                     Button rabbitbtn = findViewById(fields[rabbit.getPosition()]);
-                    rabbitbtn.setOnClickListener(null);
-                    rabbitbtn.setBackgroundColor(Color.RED);
                     rabbitbtn.setEnabled(true);
+                    rabbitbtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            PointF buttonCenter = getFieldCenter(rabbitbtn);
+                            moveRabbitOnBoard(findViewById(rabbits[currRabbit]), buttonCenter, 1000);
+                        }
+                    });
+                    //rabbitbtn.setEnabled(false);
                     });
                 }
             }
@@ -450,6 +462,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 img.setVisibility(View.VISIBLE);
                 carrotButton.setEnabled(false);
         });
+    }
+    private boolean checkForHoles(){
+        if( hole != -1) {
+
+        }
+        return false;
     }
 
 
@@ -496,6 +514,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             currRabbit = num;
             instructions.setText("Instructions: You are playing with Rabbit"+currRabbit);
             drawButton.setEnabled(true);
+
         }
         else
             instructions.setText("Fuck you");
@@ -576,6 +595,45 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }, 5000);
     }
 
+    private void getRabbitStartPos() {
+        for (int i = 0; i < rabbits.length; i++) {
+            int r = rabbits[i];
+            ImageView rabbit = findViewById(r);
+            int[] location = new int[2];
+            rabbit.getLocationOnScreen(location);
+
+            float centerX = location[0] + rabbit.getWidth() / 2.0f;
+            float centerY = location[1] + rabbit.getHeight() / 2.0f;
+            rabbitStartPos[i] = new PointF(centerX, centerY);
+        }
+    }
+    private PointF getFieldCenter(Button field) {
+        int[] location = new int[2];
+        field.getLocationOnScreen(location);
+
+        float X = location[0]+field.getWidth() / 2.0f;
+        float Y = location[1]+field.getHeight() / 2.0f;
+
+        return new PointF(X, Y);
+    }
+    private void moveRabbitOnBoard(ImageView rabbit, PointF centerField, long duration) {
+        Log.d("Game", "Moving rabbit to: " + centerField.toString());
+        int[] location = new int[2];
+        rabbit.getLocationOnScreen(location);
+
+        rabbit.setPivotX(0.5f * rabbit.getWidth());
+        rabbit.setPivotY(0.5f * rabbit.getHeight());
+
+        ObjectAnimator X = ObjectAnimator.ofFloat(
+                rabbit, "translationX", centerField.x - location[0] -rabbit.getPivotX());
+        ObjectAnimator Y = ObjectAnimator.ofFloat(
+                rabbit, "translationY", centerField.y - location[1] - rabbit.getPivotY());
+
+        AnimatorSet animatorSet = new AnimatorSet();
+        animatorSet.playTogether(X, Y);
+        animatorSet.setDuration(duration);
+        animatorSet.start();
+    }
 
 
 }

@@ -81,6 +81,8 @@ class Rabbit {
     private String name; // Name of the rabbit
     private int position; // Position of the rabbit on the game board
 
+
+
     /**
      Default constructor for Rabbit class.
      */
@@ -113,5 +115,6 @@ class Rabbit {
     public int getPosition() {
         return position;
     }
+
 }
 
