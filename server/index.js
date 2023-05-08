@@ -198,6 +198,13 @@ io.on('connection', (socket) => {
         io.to(lobbycode).emit('shake', socket.id);
     });
 
+    //Carrotspin, notifying Client the carrot has been spun
+    socket.on('carrotspin', args=>{
+        const randomField = Math.floor(Math.random() * 10);
+        console.log('Random Field (hole):', randomField);
+        io.to(lobbycode).emit('carrotspin', socket.id, randomField);
+    });
+
 
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            

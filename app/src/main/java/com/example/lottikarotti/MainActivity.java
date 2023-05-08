@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -98,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     final int[] holes = {
        R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
+    private int hole = -1;
 
     final int[] fields = {    R.id.buttonField1,
             R.id.buttonField1, R.id.buttonField2,R.id.buttonField3,R.id.buttonField4,R.id.buttonField5,R.id.buttonField6,R.id.buttonField7,
@@ -114,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
+            socket = ServerConnection.getInstance("http://10.0.0.6:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
@@ -194,6 +196,16 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
+
+        socket.on("carrotspin", args -> {
+            Log.println(Log.INFO, "Carrot", "carrotspin received");
+            try {
+                handleCarrotspin(args[0].toString(), args[1].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle carrotspin \n" + e.toString());
+            }
+        });
+
         /**
          * Clouds for the Sensor
          */
@@ -261,24 +273,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
-        /**
-         * Turn Carrot
-         */
+
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 drawButton.setEnabled(true);
-                Random rand = new Random();
-                int random = rand.nextInt(10);
-                for (int hole : holes) {
-                    ImageView img = (ImageView) findViewById(hole);
-                    img.setVisibility(View.GONE);
-                }
 
-                ImageView img=(ImageView)findViewById(holes[random]);
-                img.setVisibility(View.VISIBLE);
-                boolean carrotClicked = false;
-                carrotButton.setEnabled(carrotClicked);
+               ServerConnection.carrotSpin();
+
+                carrotButton.setEnabled(false);
 
             }
         });
@@ -362,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Annotate JSON Values to @Class Player and @Class Rabbit
      */
     private void handleMove(String json) throws JsonProcessingException {
-        System.out.println("Recieved move from gerver!");
+        System.out.println("Received move from server!");
         ObjectMapper mapper = new ObjectMapper();
         players = Arrays.asList(mapper.readValue(json, Player[].class));
 
@@ -389,7 +392,23 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     /**
-     * Renders the board to a pulp will get updatet, shitcode is temporary
+     * Handle Carrotclick (Carrotspin)
+     */
+    private void handleCarrotspin(String socketId, String number) throws JsonProcessingException {
+        Log.d("Carrotspin", "Carrotspin received from server");
+        String fieldid = "buttonfield"+number;
+        Log.d("Carrotspin", "Field: "+fieldid);
+        hole = Integer.parseInt(number);
+        Log.d("Carrotspin", "Hole: "+hole);
+        renderBoard();
+        putHolesOnBoard();
+
+
+    }
+
+
+    /**
+     * Renders the board to a pulp will get updated, shitcode is temporary
      */
     private void renderBoard() {
         for (int x:fields) {
@@ -415,6 +434,22 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         }
         isMyTurn = false;
+    }
+
+    /**
+     * Puts the holes on the board
+     **/
+    private void putHolesOnBoard() {
+        runOnUiThread(()-> {
+            for (int hole : holes) {
+                    ImageView img = (ImageView) findViewById(hole);
+                    img.setVisibility(View.GONE);
+                }
+
+                ImageView img=(ImageView)findViewById(holes[hole]);
+                img.setVisibility(View.VISIBLE);
+                carrotButton.setEnabled(false);
+        });
     }
 
 

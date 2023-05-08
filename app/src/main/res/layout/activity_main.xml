@@ -303,14 +303,11 @@
         android:id="@+id/buttonField12"
         android:layout_width="41dp"
         android:layout_height="49dp"
-        android:layout_marginStart="344dp"
-        android:layout_marginEnd="36dp"
-        android:layout_marginBottom="53dp"
         android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintBottom_toBottomOf="@+id/buttonField13"
+        app:layout_constraintEnd_toEndOf="@+id/buttonField11"
+        app:layout_constraintStart_toStartOf="@+id/buttonField11"
+        app:layout_constraintTop_toTopOf="@+id/buttonField13" />
 
     <Button
         android:id="@+id/buttonField13"
@@ -409,15 +406,13 @@
         android:id="@+id/buttonField24"
         android:layout_width="40dp"
         android:layout_height="43dp"
-        android:layout_marginStart="226dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="114dp"
-        android:layout_marginEnd="76dp"
-        android:layout_marginBottom="296dp"
         android:background="@android:color/transparent"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintEnd_toStartOf="@+id/hole7"
+        app:layout_constraintBottom_toBottomOf="@+id/buttonField23"
+        app:layout_constraintEnd_toStartOf="@+id/buttonField25"
         app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/buttonField23"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
         app:layout_constraintVertical_bias="0.0" />
@@ -717,12 +712,12 @@
         android:layout_height="47dp"
         android:layout_marginEnd="37dp"
         android:layout_marginBottom="428dp"
+        android:onClick="openFragmentPlayerList"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_compass"
-        android:onClick="openFragmentPlayerList"/>
+        app:srcCompat="@android:drawable/ic_menu_compass" />
 
     <FrameLayout
         android:id="@+id/container_playerList"
@@ -742,11 +737,11 @@
         android:id="@+id/cloudLeft"
         android:layout_width="985dp"
         android:layout_height="370dp"
-        app:layout_constraintEnd_toStartOf="parent"
+        android:layout_marginTop="-90dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"
-        android:layout_marginTop="-90dp"
         app:srcCompat="@drawable/cloudleft" />
 
     <ImageView
@@ -759,14 +754,14 @@
         app:layout_constraintVertical_bias="0.4"
         app:srcCompat="@drawable/cloudright" />
 
-<!--    <Button-->
-<!--        android:id="@+id/buttontest"-->
-<!--        android:layout_width="36dp"-->
-<!--        android:layout_height="22dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/imageViewCard"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/textViewAvailableRabbits"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/drawCard" />-->
+    <!--    <Button-->
+    <!--        android:id="@+id/buttontest"-->
+    <!--        android:layout_width="36dp"-->
+    <!--        android:layout_height="22dp"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/imageViewCard"-->
+    <!--        app:layout_constraintEnd_toStartOf="@+id/textViewAvailableRabbits"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/drawCard" />-->
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
