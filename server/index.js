@@ -110,7 +110,7 @@ io.on('connection', (socket) => {
     //                          ***Lobby and Online Logic below here***                                          */
     //********************************************************************************************************** */
 
-    // Create sub lobby on this gerver with a code
+    // Create sub lobby on this server with a code
     socket.on('createlobby', code => {
         if (code.length !== 6 || playerExist(clientsList, socket.id) === 0 || lobbyExist(lobbies, code) === 1) {
             io.to(socket.id).emit('error', 300);

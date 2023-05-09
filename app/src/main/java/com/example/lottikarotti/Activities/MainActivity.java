@@ -135,12 +135,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         lobbyID = (TextView) findViewById(R.id.lobbyID);
         lobbyID.setText("Lobby ID: " + lobbyId);
-
-
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://143.205.194.98:3000");
+            socket = ServerConnection.getInstance("http://192.168.68.56:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
@@ -149,12 +147,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
-        if(info == "start"){
+        if(info.equals("start")){
             ServerConnection.createNewLobby(lobbyId);
             ServerConnection.joinLobby(lobbyId);
         }
         else{
-            ServerConnection.joinLobby(lobbyId);
+           ServerConnection.joinLobby(lobbyId);
         }
 
         players = new ArrayList<>();

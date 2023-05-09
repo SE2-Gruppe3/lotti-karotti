@@ -2,7 +2,9 @@ package com.example.lottikarotti.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
@@ -30,9 +32,12 @@ import io.socket.client.Socket;
 public class LobbyActivity extends AppCompatActivity {
     @BindView(R.id.etLobbyId)
     EditText etlobbyId;
-
+    @BindView(R.id.usernameTextView)
+    EditText etUsername;
     Button startBtn;
     Button joinBtn;
+    Boolean setUsername;
+    Boolean setLobbyId;
 
 
 
@@ -46,11 +51,37 @@ public class LobbyActivity extends AppCompatActivity {
 
         joinBtn = (Button) findViewById(R.id.btnJoinGame);
         joinBtn.setEnabled(false);
-
-
-
-
         ButterKnife.bind(this);
+        setLobbyId = false;
+        setUsername = false;
+
+
+        etlobbyId.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(final CharSequence s, final int start, final int count, final int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(final CharSequence s, final int start, final int before, final int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(final Editable s) {
+                if(s.toString().length() < 6){
+                    joinBtn.setEnabled(false);
+                }
+                if(s.toString().length() == 6){
+
+                    setLobbyId = true;
+                    if(setLobbyId && setUsername){
+                        joinBtn.setEnabled(true);
+                    }
+
+                }
+            }
+        });
     }
 
 
@@ -63,31 +94,32 @@ public class LobbyActivity extends AppCompatActivity {
          if(TextUtils.isEmpty(strUserName)) {
              etUserName.setError("username must be set");
              startBtn.setEnabled(false);
+             joinBtn.setEnabled(false);
 
          }else{
+             setUsername= true;
+             if(setLobbyId && setUsername){
+                 joinBtn.setEnabled(true);
+             }
              startBtn.setEnabled(true);
          }
      }
-    @OnTextChanged(R.id.etLobbyId)
-    void checkJoin(){
-        EditText etlobbyId = (EditText) findViewById(R.id.etLobbyId);
 
-        String id = etlobbyId.getText().toString();
+     @OnClick(R.id.etLobbyId)
+     void checkLobbyId(){
 
-        if(TextUtils.isEmpty(id)) {
-            etlobbyId.setError("lobby id must be set to join");
-            joinBtn.setEnabled(false);
 
-        }else{
-            joinBtn.setEnabled(true);
-        }
-    }
+         if( etlobbyId.getText().toString().length()<6) {
+
+             Toast.makeText(getBaseContext(), "ID must have 6 digits", Toast.LENGTH_SHORT).show();
+         }
+     }
     @OnClick(R.id.btnStartGame)
     void onBtnStartGameClick() {
 
         Random rand = new Random();
-        int lobbycode = rand.nextInt(800000);
-         startGameActivity(lobbycode, etlobbyId.getText().toString(),"start");
+        int lobbycode = new Random().nextInt(900000) + 100000;
+         startGameActivity(lobbycode, etUsername.getText().toString(),"start");
     }
     private void startGameActivity(Integer lobbyId, String username, String info) {
         Intent intent = new Intent(this, MainActivity.class);
@@ -102,7 +134,7 @@ public class LobbyActivity extends AppCompatActivity {
 
         try{final int id = Integer.parseInt(etlobbyId.getText().toString());
 
-            startGameActivity(id,etlobbyId.getText().toString(),"join");
+            startGameActivity(id,etUsername.getText().toString(),"join");
 
         }
         catch (Exception ex){
