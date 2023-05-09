@@ -110,4 +110,7 @@ public class ServerConnection {
     public static void carrotSpin(){
         socket.emit("carrotspin");
     }
+    public static void reset(int pos){
+        socket.emit("reset", pos);
+    }
 }

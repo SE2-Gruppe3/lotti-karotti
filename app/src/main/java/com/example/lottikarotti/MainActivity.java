@@ -5,7 +5,6 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -40,7 +39,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 
 import io.socket.client.Socket;
@@ -66,6 +64,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int touchCounter;
     private int touchCntLimit;
     private int currRabbit;
+    private int rabbit1Pos = 0;
+    private int rabbit2Pos = 0;
+    private int rabbit3Pos = 0;
+    private int rabbit4Pos = 0;
     private final String TAG = "MainActivity";
 
     //  Container for the Player List Fragment (Placeholder Container)
@@ -129,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             throw new RuntimeException(e);
         }
 
-        ServerConnection.registerNewPlayer("Broo2");
+        ServerConnection.registerNewPlayer("Broo3");
         ServerConnection.fetchUnique();
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
@@ -143,18 +145,29 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+
         /** Initialize Sensor**/
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
         isMyTurn = false;
 
-
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
-        getRabbitStartPos();
+//        while (players.size() == 0) {
+//            Log.d(TAG, "onCreate: Waiting for players");
+//        }
+        rabbit1.setImageResource(R.drawable.fig11);
+        rabbit2.setImageResource(R.drawable.fig11);
+        rabbit3.setImageResource(R.drawable.fig11);
+        rabbit4.setImageResource(R.drawable.fig11);
+
+
+
+
+
 
         instructions= (TextView) findViewById(R.id.textViewInstructions);
 
@@ -164,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
         for (int field : fields) {
-           Button button= (Button)findViewById(field);
+           ImageButton button= (ImageButton)findViewById(field);
            button.setEnabled(false);
         }
 
@@ -252,7 +265,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
 
-
+        setColorForRabbits();
         /**
          * Rabbit Selection
          */
@@ -326,6 +339,44 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
 
+    private void setColorForRabbits() {
+        Log.d("Rabbit", "setColorForRabbits: " + players.size());
+        for (Player players : players) {
+            if (players.getSid().equals(socket.id())) {
+                    switch (players.getColor()) {
+                        case "white":
+                            rabbit1.setImageResource(R.drawable.fig11);
+                            rabbit2.setImageResource(R.drawable.fig11);
+                            rabbit3.setImageResource(R.drawable.fig11);
+                            rabbit4.setImageResource(R.drawable.fig11);
+                            Log.d("Rabbit", "setColorForRabbits: " + players.getColor());
+                            break;
+                        case "red":
+                            rabbit1.setImageResource(R.drawable.fig88);
+                            rabbit2.setImageResource(R.drawable.fig88);
+                            rabbit3.setImageResource(R.drawable.fig88);
+                            rabbit4.setImageResource(R.drawable.fig88);
+                            break;
+                        case "pink":
+                            rabbit1.setImageResource(R.drawable.fig22);
+                            rabbit2.setImageResource(R.drawable.fig22);
+                            rabbit3.setImageResource(R.drawable.fig22);
+                            rabbit4.setImageResource(R.drawable.fig22);
+                            break;
+                        case "green":
+                            rabbit1.setImageResource(R.drawable.fig77);
+                            rabbit2.setImageResource(R.drawable.fig77);
+                            rabbit3.setImageResource(R.drawable.fig77);
+                            rabbit4.setImageResource(R.drawable.fig77);
+                            break;
+                    }
+
+            }
+        }
+
+    }
+
+
 
     /**
      * Override the onSensorChanged method to detect the shake gesture
@@ -356,14 +407,22 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         }
         // activating field to press
-        Button field = (Button) findViewById(fields[steps+add]);
-
+        ImageButton field = (ImageButton) findViewById(fields[steps+add]);
         field.setEnabled(true);
+        int puffer = steps+add;
         field.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("Sending move to gerver");
-                ServerConnection.move(steps, rabbit);
+                System.out.println("Sending move to server");
+                ImageButton fieldtest = (ImageButton) findViewById(fields[puffer]);
+                int delay = 0;
+                while(fieldtest.getDrawable() != null){
+                    System.out.println("Field is taken, steps + 1");
+                    ++delay;
+                    fieldtest =findViewById(fields[puffer+delay]);
+                }
+                final int finalDelay = delay;
+                ServerConnection.move(steps+finalDelay, rabbit);
                 field.setEnabled(false);
             }
         });
@@ -420,33 +479,70 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void renderBoard() {
         for (int x:fields) {
             runOnUiThread(()-> {
-                Button btn = findViewById(x);
+                ImageButton btn = findViewById(x);
                 btn.setBackgroundColor(0);
+                btn.setImageResource(0);
                 btn.setEnabled(false);
             });
         }
+        Log.d("Rabbit", "Renderboard: " + players.size());
         for (Player gayer: players) {
             String color = gayer.getColor();    // get color of player TODO: when implementing animations and stuff please use this
             List<Rabbit> tempRabbits = gayer.getRabbits();
+            Log.d("Rabbit", "Renderboard: Rabbit color: " + color);
+            if(!(gayer.getSid().equals(socket.id()))) {
+                for (Rabbit rabbit : tempRabbits) {
+                    if (rabbit.getPosition() > 0) {
+                        runOnUiThread(() -> {
+                            ImageButton rabbitBtn = findViewById(fields[rabbit.getPosition()]);
+                            rabbitBtn.setOnClickListener(null);
+                            setColorForRabbitsRender(rabbitBtn, color);
+                            rabbitBtn.setEnabled(false);
+                        });
+                    }
+                }
+            } else if (gayer.getSid().equals(socket.id())){
+                for (Rabbit rabbit:tempRabbits) {
+                    if (rabbit.getPosition() > 0) {
+                        Log.d("Rabbit", "Renderboard.Rabbit: " + rabbit.getName());
+                        runOnUiThread(()->{
 
-            for (Rabbit rabbit:tempRabbits) {
-                if (rabbit.getPosition() > 0) {
-                    Log.d("Rabbit", "Renderboard.Rabbit: " + rabbit.getName());
-                    runOnUiThread(()->{
-                    System.out.println("Renderboard.Drawing rabbit on field " + rabbit.getPosition());
-                    Button rabbitbtn = findViewById(fields[rabbit.getPosition()]);
-                    rabbitbtn.setOnClickListener(null);
-                    PointF buttonCenter = getFieldCenter(rabbitbtn);
-                    moveRabbitOnBoard(findViewById(rabbits[currRabbit]), buttonCenter, 0);
-                    rabbitbtn.setEnabled(false);
-
-                    });
-
+                            System.out.println("Renderboard.Drawing rabbit on field " + rabbit.getPosition());
+                            ImageButton rabbitbtn = findViewById(fields[rabbit.getPosition()]);
+                            rabbitbtn.setOnClickListener(null);
+                            setColorForRabbitsRender(rabbitbtn, color);
+                            rabbitbtn.setEnabled(false);
+                        });
+                    }
                 }
             }
         }
         isMyTurn = false;
     }
+    private void setColorForRabbitsRender(ImageButton rabbitbtn, String color) {
+                switch (color) {
+                    case "white":
+                        rabbitbtn.setImageResource(R.drawable.fig11);
+                        Log.d("Rabbit", "setColorForRabbits: " + color);
+                        break;
+                    case "red":
+                        rabbitbtn.setImageResource(R.drawable.fig88);
+                        Log.d("Rabbit", "setColorForRabbits: " + color);
+                        break;
+                    case "pink":
+                        rabbitbtn.setImageResource(R.drawable.fig22);
+                        Log.d("Rabbit", "setColorForRabbits: " + color);
+                        break;
+                    case "green":
+                        rabbitbtn.setImageResource(R.drawable.fig77);
+                        Log.d("Rabbit", "setColorForRabbits: " + color);
+                        break;
+                }
+
+            }
+
+
+
 
 
     /**
@@ -461,9 +557,91 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
                 ImageView img=(ImageView)findViewById(holes[hole]);
                 img.setVisibility(View.VISIBLE);
+                checkForRabbit();
                 carrotButton.setEnabled(false);
         });
     }
+
+    private void checkForRabbit() {
+        ImageButton puffer;
+//        R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
+//                R.id.hole22,R.id.hole25,R.id.hole27};
+        switch (hole) {
+            case -1:
+                break;
+            case 0:
+                puffer = findViewById(fields[3]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(3);
+                }
+                break;
+            case 1:
+                puffer = findViewById(fields[5]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(5);
+                }
+                break;
+            case 2:
+                puffer = findViewById(fields[7]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(7);
+                }
+                break;
+            case 3:
+                puffer = findViewById(fields[9]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(9);
+                }
+                break;
+            case 4:
+                puffer = findViewById(fields[12]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(12);
+                }
+                break;
+            case 5:
+                puffer = findViewById(fields[17]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(17);
+                }
+                break;
+            case 6:
+                puffer = findViewById(fields[19]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(19);
+                }
+                break;
+            case 7:
+                puffer = findViewById(fields[22]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(22);
+                }
+                break;
+            case 8:
+                puffer = findViewById(fields[25]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(25);
+                }
+                break;
+            case 9:
+                puffer = findViewById(fields[27]);
+                if (puffer.getDrawable() != null) {
+                    puffer.setImageResource(0);
+                    ServerConnection.reset(27);
+                }
+                break;
+        }
+    }
+
     private boolean checkForHoles(){
         if( hole != -1) {
 
@@ -640,6 +818,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         animatorSet.playTogether(animX, animY);
         animatorSet.setDuration(duration);
         animatorSet.start();
+        int[] location2 = new int[2];
+        rabbit.getLocationOnScreen(location);
+        float startXx = location[0];
+        float startYy = location[1];
+        Log.d("Game", "Moved rabbit to: " + startXx + " " + startYy);
+
     }
 
 
