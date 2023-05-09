@@ -29,4 +29,34 @@
 
 
 
+    <ImageView
+        android:id="@+id/cloudLeft"
+        android:layout_width="985dp"
+        android:layout_height="370dp"
+        app:layout_constraintEnd_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0"
+        android:layout_marginTop="-90dp"
+        app:srcCompat="@drawable/cloudleft" />
+
+    <ImageView
+        android:id="@+id/cloudRight"
+        android:layout_width="756dp"
+        android:layout_height="395dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.4"
+        app:srcCompat="@drawable/cloudright" />
+
+<!--    <Button-->
+<!--        android:id="@+id/buttontest"-->
+<!--        android:layout_width="36dp"-->
+<!--        android:layout_height="22dp"-->
+<!--        app:layout_constraintBottom_toTopOf="@+id/imageViewCard"-->
+<!--        app:layout_constraintEnd_toStartOf="@+id/textViewAvailableRabbits"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/drawCard" />-->
+
 

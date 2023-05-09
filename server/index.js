@@ -1,7 +1,13 @@
-//********************************************************************************************************** */
-//               ***Gerver for Lotti Karotti, please use PM2 if launching Gerver professionally***           */
-//                                   ***Imports section***                                                   */
-//********************************************************************************************************** */
+/**
+ * @file index.js is the main file of the server. It handles all the connections and the logic behind the game.
+ * @version 1.0.0
+ * @module index
+ * 
+ * @requires express
+ * @requires socket.io
+ *  
+ */
+
 const server = require('./utils/server.js');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
@@ -11,7 +17,10 @@ const playerExist = require('./utils/checkPlayerExists.js');
 const lobbyExist = require('./utils/checkLobbyExists.js');
 const fetchClientInstance = require('./utils/fetchClient.js');
 const fetchLobbyInstance = require('./utils/fetchLobby.js');
-
+const storeGameData = require('./utils/storeGameData.js');
+const fetchGameDataInstance = require('./utils/fetchGame.js');
+const fetchLobbyGameData = require('./utils/fetchLobbyGame.js');
+const positionAvail = require('./utils/positionUpdate.js');
 // Print a message to the console indicating that the gerver is running
 console.log('Server is running');
 
@@ -20,6 +29,7 @@ const io = socket(server);
 var playercounter = 0;
 var clientsList = [];
 var lobbies = [];
+var gameData = [];
 
 //********************************************************************************************************** */
 //                          ***Connection Handling begins here***                                            */
@@ -42,12 +52,12 @@ io.on('connection', (socket) => {
     }
     //********************************************************************************************************** */
     //  CURRENT LISTENERS:
-    //      "alive"         -   serves as a ping to the server, may be used by the client
-    //      "register"      -   registers client on server with a name (lets see how this is going in the future)
+    //      "alive"         -   serves as a ping to the gerver, may be used by the client
+    //      "register"      -   registers client on gerver with a name (lets see how this is going in the future)
     //      "getplayers"    -   get playercount
-    //      "createlobby"   -   create a lobby with a code
-    //      "getplayerlist" -   gerver sends all clients of the server
-    //      "joinlobby"     -   join a lobby with a code
+    //      "createlobby"   -   create a lobby with a code(six digit number)
+    //      "getplayerlist" -   gerver sends all clients of the gerver
+    //      "joinlobby"     -   join a lobby with a code (six digit number)
     //      "playonline"    -   check if playing online is possible for the client(ambigious, may be removed in the future)
     //      "move"          -   handle movement(may get bigger in the future, currently only handles movement of rabbits)
     //********************************************************************************************************** */
@@ -90,6 +100,7 @@ io.on('connection', (socket) => {
 
     });
 
+
     socket.on('getplayerlist', () => {
         console.log('[Server] Sending player list information!');
         io.to(lobbycode).emit('getplayerlist', clientsList);
@@ -112,6 +123,7 @@ io.on('connection', (socket) => {
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t"+JSON.stringify(lobbies));
             socket.join(code);
             lobbycode = code;
+            saveGameData(socket.id, lobbycode);
             io.to(socket.id).emit("createlobby", 1);
         }
     });
@@ -132,6 +144,7 @@ io.on('connection', (socket) => {
                 console.log(JSON.stringify(lobbies[0])),
                 socket.join(code),
                 lobbycode = code,
+                saveGameData(socket.id, lobbycode),
                 console.log("[Server] Player " + socket.id + " joins lobby " + code)
             );
         }
@@ -164,15 +177,27 @@ io.on('connection', (socket) => {
     //********************************************************************************************************** */
 
     // Move logic, Client must handle the logic accordingly
-    socket.on('move', (steps, rabbit) =>{
+    // Please don't forget rabbit1 = 0, rabbit2 = 1, rabbit3 = 2, rabbit4 = 3
+    socket.on('move', (steps, rabbit) =>{   
         if(registered === 1 && lobbycode !== 0 && steps < 8){
-            io.to(lobbycode).emit("move", socket.id, steps, rabbit);
-            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!")
+            var game = fetchGameDataInstance(gameData, socket.id);
+
+            var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
+            gameData = positionAvail(gameData, newpos);
+            game.rabbits[parseInt(rabbit)].position = newpos;
+
+            io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
+            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!");
         }else{
             console.error("[Server] Invalid move!")
             io.to(socket.id).emit("error", 500);
         }
     });
+    //Shake-Sensor, notifying each player once event occurs.
+    socket.on('shake', args=>{
+        io.to(lobbycode).emit('shake', socket.id);
+    });
+
 
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
@@ -181,10 +206,58 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         playercounter -= 1;
         const index = clientsList.findIndex(client => client.clientId === socket.id);
-        if (index !== -1) {
+
+        // unregister lobby if owner disconnects
+        if(lobbies) {
+            var lobbyindex = lobbies.findIndex(lobby => lobby.owner === socket.id);
+            if(lobbyindex !== -1) {
+                lobbies.splice(lobbyindex, 1);  // splice lobby from lobbies
+                for(var i = 0; i<gameData.length; i++){
+                    if(gameData[i].lobbycode === lobbycode){
+                        gameData.splice(i, 1);  // splice gameData of lobby from gameData
+                    }
+                }
+            console.log('[Server] Owner disconnected, lobby deleted!\n\t'+JSON.stringify(lobbies));
+            }
+        }
+        if (index !== -1) { // Remove client from clientsList
             clientsList.splice(index, 1);
             console.log('[Server] Player Unregistered, id: '+socket.id);
         }
         console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
 });
+
+    //********************************************************************************************************** */
+    //                          ***Functions below here***                                                       */
+    //********************************************************************************************************** */
+
+    // Function to save the game data with log of what is happening, may be removed in the future
+    function saveGameData(socketid, lobbycode){
+        var gdCurr = fetchLobbyGameData(gameData, lobbycode);
+        const usedColors = [];
+        rabbitcolor = 'white';
+        gdCurr.forEach(game => {
+            // Check if the game's color property is already in the usedColors array
+            if (!usedColors.includes(game.color)) {
+              // If not, add it to the usedColors array
+              usedColors.push(game.color);
+            }
+          });
+          console.log("[Server] Game data sucessfully created"+usedColors.toString());
+          // Fowler would be proud
+          if (!usedColors.includes('white')) {
+            rabbitcolor = 'white';
+          }else if (!usedColors.includes('red')) {
+            rabbitcolor = 'red';
+          }else if (!usedColors.includes('blue')) {
+            rabbitcolor = 'blue';
+          }else if (!usedColors.includes('green')) {
+            rabbitcolor = 'green';
+          }
+
+        gameDataTemp = (storeGameData(socketid, lobbycode, rabbitcolor));
+        console.log("[Server] Game data sucessfully created"+JSON.stringify(gameDataTemp));
+        gameData.push(gameDataTemp);
+        console.log("[Server] Game data saved!\n");
+    }

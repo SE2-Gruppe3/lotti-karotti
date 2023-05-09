@@ -1,3 +1,9 @@
+/**
+ * Stores the lobby information in an object
+ * @param {*} code 
+ * @param {*} owner 
+ * @returns lobby object
+ */
 function storeLobbyInfo(code, owner){
 
     var lobby = new Object();

@@ -61,7 +61,6 @@ public class PlayerListFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment fragment_playerList.
      */
-    // TODO: Rename and change types and number of parameters
     public static PlayerListFragment newInstance(String param1, String param2) {
         PlayerListFragment fragment = new PlayerListFragment();
         Bundle args = new Bundle();
@@ -71,7 +70,8 @@ public class PlayerListFragment extends Fragment {
         return fragment;
     }
     private  String[] names;
-    ServerConnection socket;
+    private final String TAG = "FragmentPlayerList";
+    Socket socket;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -79,14 +79,17 @@ public class PlayerListFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-    /*
-        socket = bruh
+        try {
+            socket = ServerConnection.getInstance("X");
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
         socket.on("getplayerslobby", jsonlist->{
+            System.out.println(jsonlist[0].toString());
             names = DisectJSON.getNames(jsonlist[0].toString());
         });
         socket.emit("getplayerslobby", "");
-        */
     }
 
     @Override
@@ -98,12 +101,22 @@ public class PlayerListFragment extends Fragment {
         btnclose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                delegateClose();
+                    delegateClose();
             }
         });
 
         TableLayout tableLayout = view.findViewById(R.id.tblayout_players);
+        if (names == null){
+            do {
+                try {
+                    Thread.sleep(50);
 
+                } catch (Exception ex) {
+                    Log.w(TAG, "Threading Error");
+                    break;
+                }
+            }while (names == null);
+        }
 // Loop through the array
         for (String name : names) {
             // Create a new TableRow
