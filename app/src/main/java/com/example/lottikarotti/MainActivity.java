@@ -107,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     final int[] holes = {
        R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
-    private int hole = -1;
+    private static int hole = -1;
 
     final int[] fields = { R.id.buttonField1,
             R.id.buttonField1, R.id.buttonField2,R.id.buttonField3,R.id.buttonField4,R.id.buttonField5,R.id.buttonField6,R.id.buttonField7,
@@ -131,10 +131,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             throw new RuntimeException(e);
         }
 
-        ServerConnection.registerNewPlayer("Broo3");
+        ServerConnection.registerNewPlayer("Bro");
         ServerConnection.fetchUnique();
-        ServerConnection.createNewLobby("123456");
-        ServerConnection.joinLobby("123456");
+        ServerConnection.createNewLobby("123458");
+        ServerConnection.joinLobby("123458");
 
         players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
@@ -410,6 +410,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ImageButton field = (ImageButton) findViewById(fields[steps+add]);
         field.setEnabled(true);
         int puffer = steps+add;
+          int addPuff = add;
         field.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -422,8 +423,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     fieldtest =findViewById(fields[puffer+delay]);
                 }
                 final int finalDelay = delay;
-                ServerConnection.move(steps+finalDelay, rabbit);
-                field.setEnabled(false);
+                if(checkForHoles(puffer+finalDelay)){
+                    Log.d("Hole", "onClick: " + finalDelay);
+                    ServerConnection.reset(addPuff);
+                    field.setEnabled(false);
+                } else {
+                    Log.d("Move", "onClick: " + finalDelay);
+                    ServerConnection.move(steps + finalDelay, rabbit);
+                    field.setEnabled(false);
+                }
             }
         });
     }
@@ -506,12 +514,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     if (rabbit.getPosition() > 0) {
                         Log.d("Rabbit", "Renderboard.Rabbit: " + rabbit.getName());
                         runOnUiThread(()->{
-
                             System.out.println("Renderboard.Drawing rabbit on field " + rabbit.getPosition());
                             ImageButton rabbitbtn = findViewById(fields[rabbit.getPosition()]);
                             rabbitbtn.setOnClickListener(null);
                             setColorForRabbitsRender(rabbitbtn, color);
                             rabbitbtn.setEnabled(false);
+                            //}
                         });
                     }
                 }
@@ -559,6 +567,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 img.setVisibility(View.VISIBLE);
                 checkForRabbit();
                 carrotButton.setEnabled(false);
+                renderBoard();
         });
     }
 
@@ -642,11 +651,85 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }
     }
 
-    private boolean checkForHoles(){
+    private boolean checkForHoles(int position){
+        Log.d("Rabbit", "checkForHoles: " + position);
         if( hole != -1) {
+            switch (position) {
+                case 3:
+                    if (hole == 0) {
+                        return true;
+//                        rabbitBtn.setImageResource(0);
+//                                ServerConnection.reset(position);
+                    }
+                    return false;
 
-        }
-        return false;
+                case 5:
+                    if (hole == 1) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+
+                case 7:
+                    if (hole == 2) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+                case 9:
+                    if (hole == 3) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+                case 12:
+                    if (hole == 4) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+                case 17:
+                    if (hole == 5) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+                case 19:
+                    if (hole == 6) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+                case 22:
+                    if (hole == 7) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+                case 25:
+                    if (hole == 8) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+                case 27:
+                    if (hole == 9) {
+//                        rabbitBtn.setImageResource(0);
+//                        ServerConnection.reset(position);
+                        return true;
+                    }
+                    return false;
+            }
+        } return false;
+
     }
 
 
