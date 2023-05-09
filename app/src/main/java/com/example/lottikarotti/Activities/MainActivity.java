@@ -32,29 +32,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.util.Log;
-
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.example.lottikarotti.Network.ServerConnection;
+import com.example.lottikarotti.Models.Player;
 import com.example.lottikarotti.PlayerListFragment;
-import com.example.lottikarotti.PlayerTEMP;
+
 import com.example.lottikarotti.R;
-import com.example.lottikarotti.Models.User;
 
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
-import com.example.lottikarotti.Listeners.IOnDataSentListener;
-import com.example.lottikarotti.Network.ServerConnection;
+import com.example.lottikarotti.Models.Rabbit;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -141,27 +126,30 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-       Socket socket ;
+        Socket socket;
 
         Intent intent = getIntent();
         String lobbyId = intent.getStringExtra("lobbyId");
-        lobbyID= (TextView)findViewById(R.id.lobbyID);
-        lobbyID.setText("Lobby ID: "+lobbyId);
+        String username = intent.getStringExtra("username");
 
-        String serverUrl = "http://143.205.186.74:3000";
-        ServerConnection serverConnection;
+        lobbyID = (TextView) findViewById(R.id.lobbyID);
+        lobbyID.setText("Lobby ID: " + lobbyId);
+
+
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
+            socket = ServerConnection.getInstance("http://143.205.194.98:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
 
-        ServerConnection.registerNewPlayer("Bro");
+        ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
+
+
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
 
@@ -185,7 +173,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
-        instructions= (TextView) findViewById(R.id.textViewInstructions);
+        instructions = (TextView) findViewById(R.id.textViewInstructions);
 
         //  Initialize PlayerList Fragment and Layout
         containerplayerList = findViewById(R.id.container_playerList);
@@ -193,13 +181,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
         for (int field : fields) {
-            Button button= (Button)findViewById(field);
+            Button button = (Button) findViewById(field);
             button.setEnabled(false);
         }
 
-        carrotButton= (Button) findViewById(R.id.carrotButton);
+        carrotButton = (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
-       // settingsButton = (ImageButton) findViewById(R.id.settings);
+        // settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
@@ -212,7 +200,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         myTurn = false;
         touchCounter = 0;
         touchCntLimit = -1;
-        corX = -1; corY = -1;
+        corX = -1;
+        corY = -1;
         radius = 180;
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
@@ -220,7 +209,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         socket.on("move", args -> {
             try {
                 handleMove(args[0].toString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
         });
@@ -229,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.println(Log.INFO, "Shake", "Shake received");
             try {
                 handleShake(args[0].toString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
@@ -259,17 +248,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ViewGroup.LayoutParams cloudLeftParam = cloudL.getLayoutParams();
         ViewGroup.LayoutParams cloudRightParam = cloudR.getLayoutParams();
 
-        cloudLeftParam.width = screenWidth*2;
-        cloudLeftParam.height = screenHeight/2;
+        cloudLeftParam.width = screenWidth * 2;
+        cloudLeftParam.height = screenHeight / 2;
         cloudL.setLayoutParams(cloudLeftParam);
 
         cloudRightParam.width = screenWidth * 2;
         cloudRightParam.height = screenHeight / 2;
         cloudR.setLayoutParams(cloudRightParam);
-
-
-
-
 
 
         /**
@@ -314,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     img.setVisibility(View.GONE);
                 }
 
-                ImageView img=(ImageView)findViewById(holes[random]);
+                ImageView img = (ImageView) findViewById(holes[random]);
                 img.setVisibility(View.VISIBLE);
                 boolean carrotClicked = false;
                 carrotButton.setEnabled(carrotClicked);
@@ -327,17 +312,31 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             public void onClick(View view) {
 
 
-
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
 
-                switch(random) {
-                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, currRabbit); break;
-                    case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
+                switch (random) {
+                    case 0:
+                        drawButton.setEnabled(false);
+                        instructions.setText("Instructions: Move three fields with your rabbit on the game board");
+                        playerMove(3, currRabbit);
                         break;
-                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, currRabbit); break;
-                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, currRabbit); break;
+                    case 1:
+                        carrotButton.setEnabled(true);
+                        drawButton.setEnabled(false);
+                        instructions.setText("Instructions: Click the carrot on the game board");
+                        break;
+                    case 2:
+                        drawButton.setEnabled(false);
+                        instructions.setText("Instructions: Move one field with your rabbit on the game board");
+                        playerMove(1, currRabbit);
+                        break;
+                    case 3:
+                        drawButton.setEnabled(false);
+                        instructions.setText("Instructions: Move two fields with your rabbit on the game board");
+                        playerMove(2, currRabbit);
+                        break;
                 }
 
 
@@ -357,6 +356,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Override the onSensorChanged method to detect the shake gesture
      */
+    }
     @Override
     protected void onResume() {
         super.onResume();

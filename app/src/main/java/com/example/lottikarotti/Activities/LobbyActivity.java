@@ -29,11 +29,13 @@ import io.socket.client.Socket;
 
 public class LobbyActivity extends AppCompatActivity {
     @BindView(R.id.etLobbyId)
-    TextView lobbId;
+    EditText etlobbyId;
+
     Button startBtn;
     Button joinBtn;
+
     Socket socket ;
-    String serverUrl = "http://143.205.186.74:3000";
+    String serverUrl = "http://143.205.194.98:3000";
     ServerConnection serverConnection;
 
 
@@ -41,7 +43,7 @@ public class LobbyActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
-
+        EditText etlobbyId = (EditText) findViewById(R.id.etLobbyId);
        startBtn = (Button) findViewById(R.id.btnStartGame);
        startBtn.setEnabled(false);
 
@@ -89,26 +91,22 @@ public class LobbyActivity extends AppCompatActivity {
     void onBtnStartGameClick() {
 
         Random rand = new Random();
-
         int lobbycode = rand.nextInt(800000);
-        serverConnection.registerNewPlayer("Amar");
-        serverConnection.createNewLobby(String.valueOf(lobbycode));
-        startGameActivity(lobbycode);
+         startGameActivity(lobbycode, etlobbyId.getText().toString());
     }
-    private void startGameActivity(Integer lobbyId) {
+    private void startGameActivity(Integer lobbyId, String username) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("lobbyId", String.valueOf(lobbyId));
+        intent.putExtra("username", String.valueOf(username));
         startActivity(intent);
     }
 
     @OnClick(R.id.btnJoinGame)
     void onBtnJoinGameClick() {
 
-        try{final int id = Integer.parseInt(lobbId.getText().toString());
+        try{final int id = Integer.parseInt(etlobbyId.getText().toString());
 
-            serverConnection.registerNewPlayer("Amar");
-            serverConnection.joinLobby("123456");
-            startGameActivity(id);
+            startGameActivity(id,etlobbyId.getText().toString());
 
         }
         catch (Exception ex){
@@ -121,14 +119,7 @@ public class LobbyActivity extends AppCompatActivity {
 
     private void setUpNetwork(Socket socket){
 
-        try {
-            serverConnection = new ServerConnection(serverUrl);
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
 
-        serverConnection.connect();
-        socket = serverConnection.getSocket();
 
 
 

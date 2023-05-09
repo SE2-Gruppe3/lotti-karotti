@@ -25,10 +25,6 @@
 
 
 </LinearLayout>
-</ScrollView>
-
-
-
     <ImageView
         android:id="@+id/cloudLeft"
         android:layout_width="985dp"
@@ -49,6 +45,11 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.4"
         app:srcCompat="@drawable/cloudright" />
+</ScrollView>
+
+
+
+
 
 <!--    <Button-->
 <!--        android:id="@+id/buttontest"-->
