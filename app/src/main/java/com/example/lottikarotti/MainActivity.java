@@ -40,6 +40,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import io.socket.client.Socket;
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             throw new RuntimeException(e);
         }
 
-        ServerConnection.registerNewPlayer("Brooooooo");
+        ServerConnection.registerNewPlayer("Broo2");
         ServerConnection.fetchUnique();
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
@@ -427,14 +428,16 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         for (Player gayer: players) {
             String color = gayer.getColor();    // get color of player TODO: when implementing animations and stuff please use this
             List<Rabbit> tempRabbits = gayer.getRabbits();
+
             for (Rabbit rabbit:tempRabbits) {
                 if (rabbit.getPosition() > 0) {
+                    Log.d("Rabbit", "Renderboard.Rabbit: " + rabbit.getName());
                     runOnUiThread(()->{
-                    System.out.println("Drawing rabbit on field " + rabbit.getPosition());
+                    System.out.println("Renderboard.Drawing rabbit on field " + rabbit.getPosition());
                     Button rabbitbtn = findViewById(fields[rabbit.getPosition()]);
                     rabbitbtn.setOnClickListener(null);
                     PointF buttonCenter = getFieldCenter(rabbitbtn);
-                    moveRabbitOnBoard(findViewById(rabbits[currRabbit]), buttonCenter, 1000);
+                    moveRabbitOnBoard(findViewById(rabbits[currRabbit]), buttonCenter, 0);
                     rabbitbtn.setEnabled(false);
 
                     });
@@ -622,13 +625,16 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         float startY = location[1];
 
         rabbit.setPivotX(0.5f * rabbit.getWidth());
-        rabbit.setPivotY(1.35f * rabbit.getHeight());
-        ObjectAnimator animX = ObjectAnimator.ofFloat(rabbit, "x", startX, centerField.x- rabbit.getPivotX());
-        ObjectAnimator animY = ObjectAnimator.ofFloat(rabbit, "y", startY, centerField.y - rabbit.getPivotY());
-        ObjectAnimator X = ObjectAnimator.ofFloat(
-                rabbit, "translationX", centerField.x - location[0] -rabbit.getPivotX());
-        ObjectAnimator Y = ObjectAnimator.ofFloat(
-                rabbit, "translationY", centerField.y - location[1] - rabbit.getPivotY());
+        rabbit.setPivotY(1.7f * rabbit.getHeight());
+        ObjectAnimator animX = ObjectAnimator.ofFloat(
+                rabbit, "x", startX, centerField.x- rabbit.getPivotX());
+        ObjectAnimator animY = ObjectAnimator.ofFloat(
+                rabbit, "y", startY, centerField.y - rabbit.getPivotY());
+
+//        ObjectAnimator X = ObjectAnimator.ofFloat(
+//                rabbit, "translationX", centerField.x - location[0] -rabbit.getPivotX());
+//        ObjectAnimator Y = ObjectAnimator.ofFloat(
+//                rabbit, "translationY", centerField.y - location[1] - rabbit.getPivotY());
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animX, animY);
