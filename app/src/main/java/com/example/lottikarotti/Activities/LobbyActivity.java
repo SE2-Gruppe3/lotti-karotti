@@ -34,9 +34,6 @@ public class LobbyActivity extends AppCompatActivity {
     Button startBtn;
     Button joinBtn;
 
-    Socket socket ;
-    String serverUrl = "http://143.205.194.98:3000";
-    ServerConnection serverConnection;
 
 
     @Override
@@ -50,8 +47,6 @@ public class LobbyActivity extends AppCompatActivity {
         joinBtn = (Button) findViewById(R.id.btnJoinGame);
         joinBtn.setEnabled(false);
 
-
-       setUpNetwork(socket);
 
 
 
@@ -118,11 +113,5 @@ public class LobbyActivity extends AppCompatActivity {
 
     }
 
-    private void setUpNetwork(Socket socket){
 
-
-
-
-
-    }
 }
