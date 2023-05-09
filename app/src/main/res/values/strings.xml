@@ -2,7 +2,7 @@
     <string name="app_name">Lotti Karotti</string>
     <string name="logo">Lotti Karotti Extreme</string>
     <string name="start_game">Start game</string>
-    <string name="username">Please type in username</string>
+    <string name="username">Type in username</string>
     <string name="lobbyCode">Lobby code</string>
     <string name="join_game">Join game</string>
     <!-- TODO: Remove or change this placeholder text -->

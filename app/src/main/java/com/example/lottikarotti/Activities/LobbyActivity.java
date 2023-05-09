@@ -58,7 +58,7 @@ public class LobbyActivity extends AppCompatActivity {
 
 
      @OnTextChanged(R.id.usernameTextView)
-     void check(){
+     void checkStart(){
          EditText etUserName = (EditText) findViewById(R.id.usernameTextView);
 
          String strUserName = etUserName.getText().toString();
@@ -71,6 +71,20 @@ public class LobbyActivity extends AppCompatActivity {
              startBtn.setEnabled(true);
          }
      }
+    @OnTextChanged(R.id.etLobbyId)
+    void checkJoin(){
+        EditText etlobbyId = (EditText) findViewById(R.id.etLobbyId);
+
+        String id = etlobbyId.getText().toString();
+
+        if(TextUtils.isEmpty(id)) {
+            etlobbyId.setError("lobby id must be set to join");
+            joinBtn.setEnabled(false);
+
+        }else{
+            joinBtn.setEnabled(true);
+        }
+    }
     @OnClick(R.id.btnStartGame)
     void onBtnStartGameClick() {
 
