@@ -8,20 +8,11 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 
-import android.view.MotionEvent;
-
-import android.content.Intent;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -35,14 +26,10 @@ import com.example.lottikarotti.Network.ServerConnection;
 import com.example.lottikarotti.PlayerListFragment;
 import com.example.lottikarotti.PlayerTEMP;
 import com.example.lottikarotti.R;
-import com.example.lottikarotti.Models.Rabbit;
 import com.example.lottikarotti.Models.User;
 
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
 
-import com.example.lottikarotti.Network.ServerConnection;
-
-import java.io.Console;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
