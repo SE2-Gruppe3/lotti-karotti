@@ -92,12 +92,13 @@ public class LobbyActivity extends AppCompatActivity {
 
         Random rand = new Random();
         int lobbycode = rand.nextInt(800000);
-         startGameActivity(lobbycode, etlobbyId.getText().toString());
+         startGameActivity(lobbycode, etlobbyId.getText().toString(),"start");
     }
-    private void startGameActivity(Integer lobbyId, String username) {
+    private void startGameActivity(Integer lobbyId, String username, String info) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("lobbyId", String.valueOf(lobbyId));
         intent.putExtra("username", String.valueOf(username));
+        intent.putExtra("info", String.valueOf(info));
         startActivity(intent);
     }
 
@@ -106,7 +107,7 @@ public class LobbyActivity extends AppCompatActivity {
 
         try{final int id = Integer.parseInt(etlobbyId.getText().toString());
 
-            startGameActivity(id,etlobbyId.getText().toString());
+            startGameActivity(id,etlobbyId.getText().toString(),"join");
 
         }
         catch (Exception ex){

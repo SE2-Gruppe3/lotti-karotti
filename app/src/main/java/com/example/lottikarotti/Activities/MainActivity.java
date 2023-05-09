@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         Intent intent = getIntent();
         String lobbyId = intent.getStringExtra("lobbyId");
         String username = intent.getStringExtra("username");
+        String info = intent.getStringExtra("info");
 
         lobbyID = (TextView) findViewById(R.id.lobbyID);
         lobbyID.setText("Lobby ID: " + lobbyId);
@@ -148,10 +149,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
-
-
-        ServerConnection.createNewLobby("123456");
-        ServerConnection.joinLobby("123456");
+        if(info == "start"){
+            ServerConnection.createNewLobby(lobbyId);
+            ServerConnection.joinLobby(lobbyId);
+        }
+        else{
+            ServerConnection.joinLobby(lobbyId);
+        }
 
         players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
