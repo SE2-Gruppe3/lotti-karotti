@@ -3,6 +3,8 @@ package com.example.lottikarotti.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,6 +22,9 @@ import java.util.Random;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnFocusChange;
+import butterknife.OnTextChanged;
+import butterknife.OnTouch;
 import io.socket.client.Socket;
 
 public class LobbyActivity extends AppCompatActivity {
@@ -43,19 +48,29 @@ public class LobbyActivity extends AppCompatActivity {
         joinBtn = (Button) findViewById(R.id.btnJoinGame);
         joinBtn.setEnabled(false);
 
-        EditText etUserName = (EditText) findViewById(R.id.usernameTextView);
-        String strUserName = etUserName.getText().toString();
 
-        if(TextUtils.isEmpty(strUserName)) {
-            etUserName.setError("Username must be set");
-            return;
-        }
        setUpNetwork(socket);
+
+
 
         ButterKnife.bind(this);
     }
 
 
+     @OnTextChanged(R.id.usernameTextView)
+     void check(){
+         EditText etUserName = (EditText) findViewById(R.id.usernameTextView);
+
+         String strUserName = etUserName.getText().toString();
+
+         if(TextUtils.isEmpty(strUserName)) {
+             etUserName.setError("username must be set");
+             startBtn.setEnabled(false);
+
+         }else{
+             startBtn.setEnabled(true);
+         }
+     }
     @OnClick(R.id.btnStartGame)
     void onBtnStartGameClick() {
 
