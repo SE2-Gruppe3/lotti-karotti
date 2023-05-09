@@ -1,6 +1,5 @@
 package com.example.lottikarotti;
 
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -16,28 +15,12 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
-import static com.example.lottikarotti.Network.ServerConnection.checkIfConnectionIsAlive;
-import static com.example.lottikarotti.Network.ServerConnection.createNewLobby;
-import static com.example.lottikarotti.Network.ServerConnection.getListOfConnectedPlayers;
-import static com.example.lottikarotti.Network.ServerConnection.getNumberOfConnectedPlayers;
-import static com.example.lottikarotti.Network.ServerConnection.getSocket;
-import static com.example.lottikarotti.Network.ServerConnection.registerNewPlayer;
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -59,6 +42,7 @@ import java.util.Random;
 import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener {
+
 
     private Button carrotButton;
     private ImageButton settingsButton;
@@ -107,20 +91,19 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private List<Player> players;
     private String sid;
     final int[]rabbits={
-          R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-          
+            R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
     final int[] cards = {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
-            R.drawable.card4};
+            R.drawable.card4 };
     final int[] holes = {
-       R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
+            R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
 
     final int[] fields = {    R.id.buttonField1,
             R.id.buttonField1, R.id.buttonField2,R.id.buttonField3,R.id.buttonField4,R.id.buttonField5,R.id.buttonField6,R.id.buttonField7,
             R.id.buttonField8,R.id.buttonField9,R.id.buttonField10, R.id.buttonField11, R.id.buttonField12, R.id.buttonField13, R.id.buttonField14,
-    R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
-    R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
+            R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
+            R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
     private Socket socket;
     @SuppressLint("MissingInflatedId")
@@ -163,7 +146,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
-
         instructions= (TextView) findViewById(R.id.textViewInstructions);
 
         //  Initialize PlayerList Fragment and Layout
@@ -172,13 +154,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
         for (int field : fields) {
-            Button button = (Button) findViewById(field);
+            Button button= (Button)findViewById(field);
             button.setEnabled(false);
         }
 
-
         carrotButton= (Button) findViewById(R.id.carrotButton);
-
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
@@ -193,8 +173,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         myTurn = false;
         touchCounter = 0;
         touchCntLimit = -1;
-        corX = -1;
-        corY = -1;
+        corX = -1; corY = -1;
         radius = 180;
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
@@ -205,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }catch (Exception e){
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
-                });
+        });
 
         socket.on("shake", args -> {
             Log.println(Log.INFO, "Shake", "Shake received");
@@ -297,7 +276,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 }
 
                 ImageView img=(ImageView)findViewById(holes[random]);
-
                 img.setVisibility(View.VISIBLE);
                 boolean carrotClicked = false;
                 carrotButton.setEnabled(carrotClicked);
@@ -310,6 +288,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             public void onClick(View view) {
 
 
+
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
@@ -320,7 +299,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                         break;
                     case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, currRabbit); break;
                     case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, currRabbit); break;
-
                 }
 
 
@@ -364,6 +342,21 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 add = payer.getRabbits().get(rabbit).getPosition();
             }
 
+        }
+        // activating field to press
+        Button field = (Button) findViewById(fields[steps+add]);
+
+        field.setEnabled(true);
+        field.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("Sending move to gerver");
+                ServerConnection.move(steps, rabbit);
+                field.setEnabled(false);
+            }
+        });
+    }
+
     /**
      * Movement handler
      * Annotate JSON Values to @Class Player and @Class Rabbit
@@ -372,16 +365,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         System.out.println("Recieved move from gerver!");
         ObjectMapper mapper = new ObjectMapper();
         players = Arrays.asList(mapper.readValue(json, Player[].class));
-
-        int currentField = u.getCurrentRabbit().getField() + step;
-      
-        u.getCurrentRabbit().setField(currentField);
-
-        Button targetButton = (Button) findViewById(fields[currentField]);
-        targetButton.setEnabled(true);
-        // targetButton.setBackgroundResource(R.drawable.deckkarte);
-        targetButton.setVisibility(View.VISIBLE);
-
 
         renderBoard();
     }
@@ -395,7 +378,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             @Override
             public void run() {
                 //Toast.makeText(MainActivity.this, "Shake detected!", Toast.LENGTH_SHORT).show();
-
 
                 animateClouds(screenWidth);
 
@@ -423,11 +405,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             for (Rabbit rabbit:tempRabbits) {
                 if (rabbit.getPosition() > 0) {
                     runOnUiThread(()->{
-                    System.out.println("Drawing rabbit on field " + rabbit.getPosition());
-                    Button rabbitbtn = findViewById(fields[rabbit.getPosition()]);
-                    rabbitbtn.setOnClickListener(null);
-                    rabbitbtn.setBackgroundColor(Color.RED);
-                    rabbitbtn.setEnabled(true);
+                        System.out.println("Drawing rabbit on field " + rabbit.getPosition());
+                        Button rabbitbtn = findViewById(fields[rabbit.getPosition()]);
+                        rabbitbtn.setOnClickListener(null);
+                        rabbitbtn.setBackgroundColor(Color.RED);
+                        rabbitbtn.setEnabled(true);
                     });
                 }
             }
@@ -435,12 +417,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         isMyTurn = false;
     }
 
-    private void animateFigure(float x, float y, User u) {
-        ImageView currentRabbit = (ImageView) findViewById(rabbits[u.getCurrentRabbit().getId() - 1]);
 
+    private void animateFigure(float x, float y) {
+        ImageView currentRabbit =(ImageView) findViewById(rabbits[currRabbit-1]);
         currentRabbit.animate()
-                .x(x - (currentRabbit.getWidth() / 2) + 50)
-                .y(y - (currentRabbit.getHeight() / 2) - 60)
+                .x(x - (currentRabbit.getWidth()/2 )+50)
+                .y(y - (currentRabbit.getHeight() / 2))
                 .setDuration(500)
                 .start();
 
@@ -518,8 +500,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ServerConnection.shake();
 
         //Debugging
-       // animateClouds(screenWidth);
-      //  handleShake("socketid");
+        // animateClouds(screenWidth);
+        //  handleShake("socketid");
     }
 
     private void animateClouds(Integer screenWidth) {
@@ -562,32 +544,3 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
 }
-
-    @Override
-    public void onDestroy() {
-//       Intent intent = new Intent(this, BGMusic.class);
-//        stopService(intent);
-        super.onDestroy();
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateBrightness();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-    }
-
-    private void updateBrightness() {
-        SharedPreferences sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
-        int brightness = sharedBrightness.getInt("brightness", 100);
-        WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
-        layoutPar.screenBrightness = brightness / 255f;
-        getWindow().setAttributes(layoutPar);
-    }
-
