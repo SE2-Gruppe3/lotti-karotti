@@ -2,6 +2,9 @@ package com.example.lottikarotti.Activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,24 +25,40 @@ import io.socket.client.Socket;
 public class LobbyActivity extends AppCompatActivity {
     @BindView(R.id.etLobbyId)
     TextView lobbId;
-
+    Button startBtn;
+    Button joinBtn;
     Socket socket ;
     String serverUrl = "http://143.205.186.74:3000";
     ServerConnection serverConnection;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lobby);
 
+       startBtn = (Button) findViewById(R.id.btnStartGame);
+       startBtn.setEnabled(false);
 
+        joinBtn = (Button) findViewById(R.id.btnJoinGame);
+        joinBtn.setEnabled(false);
+
+        EditText etUserName = (EditText) findViewById(R.id.usernameTextView);
+        String strUserName = etUserName.getText().toString();
+
+        if(TextUtils.isEmpty(strUserName)) {
+            etUserName.setError("Username must be set");
+            return;
+        }
        setUpNetwork(socket);
 
         ButterKnife.bind(this);
     }
 
+
     @OnClick(R.id.btnStartGame)
     void onBtnStartGameClick() {
+
         Random rand = new Random();
 
         int lobbycode = rand.nextInt(800000);

@@ -117,10 +117,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         serverConnection.connect();
         socket = serverConnection.getSocket();
 
-        serverConnection.registerNewPlayer("Amar");
-        serverConnection.createNewLobby("123456");
-        serverConnection.joinLobby("123456");
-
 
         /// Example of getting server response using callbacks - We get here online player count back
         serverConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {

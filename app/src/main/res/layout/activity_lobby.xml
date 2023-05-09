@@ -28,11 +28,11 @@
 
         <Button
             android:id="@+id/btnStartGame"
-            android:onClick="onBtnStartGameClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             android:background="@drawable/buttonstyle"
+            android:onClick="onBtnStartGameClick"
             android:text="@string/start_game"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -55,30 +55,44 @@
             android:id="@+id/etLobbyId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="116dp"
             android:layout_weight="5"
             android:ems="10"
             android:hint="@string/lobbyCode"
-            android:inputType="textPersonName"
-            app:layout_constraintBottom_toTopOf="@+id/btnJoinGame"
+            android:inputType="number"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.495"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/btnStartGame"
-            app:layout_constraintVertical_bias="0.706" />
+            app:layout_constraintTop_toBottomOf="@+id/usernameTextView" />
 
         <Button
             android:id="@+id/btnJoinGame"
-            android:onClick="onBtnJoinGameClick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
             android:layout_weight="1"
             android:background="@drawable/buttonstyle"
+            android:onClick="onBtnJoinGameClick"
             android:text="@string/join_game"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.463"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-            app:layout_constraintVertical_bias="0.47" />
+            app:layout_constraintTop_toBottomOf="@+id/etLobbyId"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <EditText
+            android:id="@+id/usernameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="132dp"
+            android:ems="10"
+            android:hint="@string/username"
+            android:inputType="text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.504"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
