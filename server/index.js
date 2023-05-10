@@ -20,7 +20,7 @@ const fetchLobbyInstance = require('./utils/fetchLobby.js');
 const storeGameData = require('./utils/storeGameData.js');
 const fetchGameDataInstance = require('./utils/fetchGame.js');
 const fetchLobbyGameData = require('./utils/fetchLobbyGame.js');
-
+const positionAvail = require('./utils/positionUpdate.js');
 // Print a message to the console indicating that the gerver is running
 console.log('Server is running');
 
@@ -181,7 +181,10 @@ io.on('connection', (socket) => {
     socket.on('move', (steps, rabbit) =>{   
         if(registered === 1 && lobbycode !== 0 && steps < 8){
             var game = fetchGameDataInstance(gameData, socket.id);
-            game.rabbits[parseInt(rabbit)].position += parseInt(steps);
+
+            var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
+            gameData = positionAvail(gameData, newpos);
+            game.rabbits[parseInt(rabbit)].position = newpos;
 
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
             console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!");
@@ -195,6 +198,27 @@ io.on('connection', (socket) => {
         io.to(lobbycode).emit('shake', socket.id);
     });
 
+    //Carrotspin, notifying Client the carrot has been spun
+    socket.on('carrotspin', args=>{
+        const randomField = Math.floor(Math.random() * 10);
+        console.log('Random Field (hole):', randomField);
+        io.to(lobbycode).emit('carrotspin', socket.id, randomField);
+    });
+    //Hole appears below Rabbit logic
+    socket.on('reset', (pos) => {
+        var game = fetchGameDataInstance(gameData, socket.id);
+        var targetPos = parseInt(pos);
+       
+        for (var i = 0; i < game.rabbits.length; i++) {
+            if (game.rabbits[i].position === targetPos) {
+                gameData = positionAvail(gameData, 0);
+                game.rabbits[parseInt(i)].position = 0;
+                break;
+            }
+        }
+        io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
+    });
+
 
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
@@ -203,6 +227,20 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         playercounter -= 1;
         const index = clientsList.findIndex(client => client.clientId === socket.id);
+
+        // unregister lobby if owner disconnects
+        if(lobbies) {
+            var lobbyindex = lobbies.findIndex(lobby => lobby.owner === socket.id);
+            if(lobbyindex !== -1) {
+                lobbies.splice(lobbyindex, 1);  // splice lobby from lobbies
+                for(var i = 0; i<gameData.length; i++){
+                    if(gameData[i].lobbycode === lobbycode){
+                        gameData.splice(i, 1);  // splice gameData of lobby from gameData
+                    }
+                }
+            console.log('[Server] Owner disconnected, lobby deleted!\n\t'+JSON.stringify(lobbies));
+            }
+        }
         if (index !== -1) { // Remove client from clientsList
             clientsList.splice(index, 1);
             console.log('[Server] Player Unregistered, id: '+socket.id);
@@ -219,7 +257,7 @@ io.on('connection', (socket) => {
     function saveGameData(socketid, lobbycode){
         var gdCurr = fetchLobbyGameData(gameData, lobbycode);
         const usedColors = [];
-        rabbitcolor = 'white';
+       // rabbitcolor = 'white';
         gdCurr.forEach(game => {
             // Check if the game's color property is already in the usedColors array
             if (!usedColors.includes(game.color)) {
@@ -233,8 +271,8 @@ io.on('connection', (socket) => {
             rabbitcolor = 'white';
           }else if (!usedColors.includes('red')) {
             rabbitcolor = 'red';
-          }else if (!usedColors.includes('blue')) {
-            rabbitcolor = 'blue';
+          }else if (!usedColors.includes('pink')) {
+            rabbitcolor = 'pink';
           }else if (!usedColors.includes('green')) {
             rabbitcolor = 'green';
           }
