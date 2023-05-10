@@ -10,14 +10,17 @@ import static com.example.lottikarotti.Network.ServerConnection.getNumberOfConne
 import static com.example.lottikarotti.Network.ServerConnection.registerNewPlayer;
 
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -154,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://10.0.0.6:3000");
+            socket = ServerConnection.getInstance("http://10.2.0.60:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
@@ -357,6 +360,32 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
                 startActivity(intent);
+            }
+        });
+
+        ImageButton votingButton = findViewById(R.id.button_vote);
+
+        votingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                View dialogView = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_voting, null);
+                builder.setTitle("Cheater selection: ")
+                        .setView(dialogView)
+                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(getApplicationContext(), "Works!", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(getApplicationContext(), "Voting aborted!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
             }
         });
 
