@@ -31,13 +31,13 @@
 
 
 
-<!--    <Button-->
-<!--        android:id="@+id/buttontest"-->
-<!--        android:layout_width="36dp"-->
-<!--        android:layout_height="22dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/imageViewCard"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/textViewAvailableRabbits"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/drawCard" />-->
+    <!--    <Button-->
+    <!--        android:id="@+id/buttontest"-->
+    <!--        android:layout_width="36dp"-->
+    <!--        android:layout_height="22dp"-->
+    <!--        app:layout_constraintBottom_toTopOf="@+id/imageViewCard"-->
+    <!--        app:layout_constraintEnd_toStartOf="@+id/textViewAvailableRabbits"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/drawCard" />-->
 
 
