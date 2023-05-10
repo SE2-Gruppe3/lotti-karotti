@@ -127,6 +127,44 @@ public class ServerConnection{
         void onHighScoreBoardReceived(List<String> usernames, List<Integer> scores);
     }
 
+    public void updateHighScoreBoard(String winnerUsername) {
+        socket.on("gethighscore", args -> {
+            JSONArray highScore = (JSONArray) args[0];
+            JSONArray updatedHighScore = new JSONArray();
+
+            boolean newPlayer = false;
+            for(int i=0; i<highScore.length(); i++){
+                try {
+                    JSONObject object = highScore.getJSONObject(i);
+                    if(object.getString("username").equals(winnerUsername)) {
+                        int newScore = object.getInt("score") + 1;
+                        object.put("score", newScore);
+                    }
+
+                    else if(!object.getString("username").contains(winnerUsername)) {
+                        newPlayer = true;
+                    }
+
+                    updatedHighScore.put(object);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if(newPlayer){
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("username", winnerUsername);
+                    object.put("score", 1);
+                    updatedHighScore.put(object);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            socket.emit("saveupdatedhighscore", updatedHighScore);
+        });
+    }
+
     public void drawCard(DrawCardCallback callback){
         socket.on("drawcard", args -> {
             int number = (Integer) args[0];

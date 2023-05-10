@@ -29,7 +29,7 @@ public class HighscoreActivity extends AppCompatActivity {
         adapter = new HighscoreAdapter();
 
         try {
-            serverConnection = new ServerConnection("http://143.205.193.209:3000/", this);
+            serverConnection = new ServerConnection("http://10.2.0.60:3000/", this);
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -40,9 +40,10 @@ public class HighscoreActivity extends AppCompatActivity {
             @Override
             public void onHighScoreBoardReceived(List<String> usernames, List<Integer> scores) {
                 adapter.setData(usernames, scores);
-                Toast.makeText(getApplicationContext(), "Username:" + usernames.get(0) + " Score: " + scores.get(0), Toast.LENGTH_SHORT).show();
             }
         });
+
+        serverConnection.updateHighScoreBoard("Amar");
 
         recyclerView.setAdapter(adapter);
     }

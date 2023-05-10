@@ -102,6 +102,19 @@ io.on('connection', (socket) => {
         });
     });
 
+    socket.on('saveupdatedhighscore', (jsonArray) => {
+        try {
+            fs.writeFile('highscore.json', JSON.stringify(jsonArray), (err) => {
+                if (err) throw err;
+                console.log('[Server] Successfully saved updated Highscore list');
+                socket.emit('saveJsonSuccess');
+            });
+        } catch (err) {
+            console.error('[Server] Error while updating highscore list');
+            socket.emit('saveJsonError', 'Invalid JSON array');
+        }
+    });    
+
     //********************************************************************************************************** */
     //                          ***Lobby and Online Logic below here***                                          */
     //********************************************************************************************************** */

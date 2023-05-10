@@ -61,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String serverUrl = "http://143.205.193.209:3000";
+        String serverUrl = "http://10.2.0.60:3000";
         ServerConnection serverConnection;
 
         try {
