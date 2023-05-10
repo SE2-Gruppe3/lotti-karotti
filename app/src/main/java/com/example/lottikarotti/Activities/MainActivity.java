@@ -78,10 +78,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int touchCounter;
     private int touchCntLimit;
     private int currRabbit;
-    private int rabbit1Pos = 0;
-    private int rabbit2Pos = 0;
-    private int rabbit3Pos = 0;
-    private int rabbit4Pos = 0;
     private final String TAG = "MainActivity";
 
     //  Container for the Player List Fragment (Placeholder Container)
@@ -186,10 +182,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
-        instructions = (TextView) findViewById(R.id.textViewInstructions);
-//        while (players.size() == 0) {
-//            Log.d(TAG, "onCreate: Waiting for players");
-//        }
+
+
         rabbit1.setImageResource(R.drawable.fig11);
         rabbit2.setImageResource(R.drawable.fig11);
         rabbit3.setImageResource(R.drawable.fig11);
@@ -297,7 +291,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
 
-        setColorForRabbits();
         /**
          * Rabbit Selection
          */
