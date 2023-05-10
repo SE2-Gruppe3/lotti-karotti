@@ -136,6 +136,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onProgressChanged(SeekBar barBrightness, int amount, boolean isUser) {
                 SharedPreferences.Editor editor = getPreferences().edit();
+
                 editor.putInt("brightness", amount);
                 editor.apply();
                 setBrightness(amount);
@@ -149,8 +150,6 @@ public class SettingsActivity extends AppCompatActivity {
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
         });
-
-
 
         getExitSettings().setOnClickListener(new View.OnClickListener() {
             @Override
@@ -172,8 +171,8 @@ public class SettingsActivity extends AppCompatActivity {
             checkingMuteBar();
         }
 
-        @Override
-        public void onServiceDisconnected(ComponentName compName) {
+   @Override
+    public void onServiceDisconnected(ComponentName compName) {
             setBound(false);
         }
     };
@@ -191,17 +190,15 @@ public class SettingsActivity extends AppCompatActivity {
             unbindService(getServiceConnection());
             setBound(false);
         }
-
-        //Can be removed in case we decide to storage the volume changes-information
-//        isBarZero = false;
-//        muted = false;
-
+      
         super.onDestroy();
     }
+  
     @Override
     protected void onResume() {
         super.onResume();
         updateBrightness();
+      
         if (muted) {
             getSettingsVolOn().setVisibility(View.INVISIBLE);
             getSettingsVolMute().setVisibility(View.VISIBLE);
@@ -226,6 +223,7 @@ public class SettingsActivity extends AppCompatActivity {
         layoutPar.screenBrightness = brightness / 255f;
         getWindow().setAttributes(layoutPar);
     }
+  
     private void checkingMuteBar() {
         if (getBgMusicService().isMuted()) {
             Log.d("Muted?", "It works?");

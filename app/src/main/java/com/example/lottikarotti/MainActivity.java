@@ -29,6 +29,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PointF;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -41,6 +43,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -124,21 +127,22 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     PointF[] rabbitStartPos = new PointF[8];
 
+
     final int[] cards = {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
             R.drawable.card4};
     final int[] holes = {
-
        R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
+  
     private static int hole = -1;
 
 
     final int[] fields = { R.id.buttonField1,
             R.id.buttonField1, R.id.buttonField2,R.id.buttonField3,R.id.buttonField4,R.id.buttonField5,R.id.buttonField6,R.id.buttonField7,
             R.id.buttonField8,R.id.buttonField9,R.id.buttonField10, R.id.buttonField11, R.id.buttonField12, R.id.buttonField13, R.id.buttonField14,
-    R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
-    R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
+            R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
+            R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
     private Socket socket;
     @SuppressLint("MissingInflatedId")
@@ -231,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }catch (Exception e){
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
-                });
+        });
 
         socket.on("shake", args -> {
             Log.println(Log.INFO, "Shake", "Shake received");
@@ -803,8 +807,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     @Override
     public void onDestroy() {
-//       Intent intent = new Intent(this, BGMusic.class);
-//        stopService(intent);
         super.onDestroy();
 
     }
@@ -893,10 +895,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         float startXx = location[0];
         float startYy = location[1];
         Log.d("Game", "Moved rabbit to: " + startXx + " " + startYy);
-
     }
-
-
 }
-
 
