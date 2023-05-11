@@ -28,6 +28,7 @@ console.log('Server is running');
 const io = socket(server);
 var playercounter = 0;
 var clientsList = [];
+var cheaterList = [];
 var lobbies = [];
 var gameData = [];
 
@@ -207,6 +208,37 @@ io.on('connection', (socket) => {
         io.to(lobbycode).emit('shake', socket.id);
     });
 
+    //Carrotspin, notifying Client the carrot has been spun
+    socket.on('carrotspin', args=>{
+        const randomField = Math.floor(Math.random() * 10);
+        console.log('Random Field (hole):', randomField);
+        io.to(lobbycode).emit('carrotspin', socket.id, randomField);
+    });
+    //Cheating, remark someone has cheated
+        socket.on('cheat', args=>{
+
+            console.log('User: ', args, "cheated");
+            if(playerExist(cheaterList,socket.id)==0){
+            clientsList.push(storeClientInfo(socket.id, args));
+            }
+            io.to(lobbycode).emit('cheat', socket.id);
+        });
+    //Hole appears below Rabbit logic
+    socket.on('reset', (pos) => {
+        var game = fetchGameDataInstance(gameData, socket.id);
+        var targetPos = parseInt(pos);
+       
+        for (var i = 0; i < game.rabbits.length; i++) {
+            if (game.rabbits[i].position === targetPos) {
+                gameData = positionAvail(gameData, 0);
+                game.rabbits[parseInt(i)].position = 0;
+                break;
+            }
+        }
+        io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
+    });
+
+
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
     //********************************************************************************************************** */
@@ -244,7 +276,7 @@ io.on('connection', (socket) => {
     function saveGameData(socketid, lobbycode){
         var gdCurr = fetchLobbyGameData(gameData, lobbycode);
         const usedColors = [];
-        rabbitcolor = 'white';
+       // rabbitcolor = 'white';
         gdCurr.forEach(game => {
             // Check if the game's color property is already in the usedColors array
             if (!usedColors.includes(game.color)) {
@@ -258,8 +290,8 @@ io.on('connection', (socket) => {
             rabbitcolor = 'white';
           }else if (!usedColors.includes('red')) {
             rabbitcolor = 'red';
-          }else if (!usedColors.includes('blue')) {
-            rabbitcolor = 'blue';
+          }else if (!usedColors.includes('pink')) {
+            rabbitcolor = 'pink';
           }else if (!usedColors.includes('green')) {
             rabbitcolor = 'green';
           }

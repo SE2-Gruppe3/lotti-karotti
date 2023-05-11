@@ -104,5 +104,16 @@ public class ServerConnection {
     public static void shake() {
         socket.emit("shake");
     }
-    public static void fetchUnique(){socket.emit("fetchuniqueid");}
+    public static void fetchUnique(){
+        socket.emit("fetchuniqueid");
+    }
+    public static void carrotSpin(){
+        socket.emit("carrotspin");
+    }
+    public static void cheat(String name){
+        socket.emit("cheat",name);
+    }
+    public static void reset(int pos){
+        socket.emit("reset", pos);
+    }
 }
