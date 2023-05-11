@@ -196,7 +196,23 @@ io.on('connection', (socket) => {
             io.to(socket.id).emit("error", 500);
         }
     });
+     socket.on('moveCheat', (pos, rabbit) =>{
+            if(registered === 1 && lobbycode !== 0 ){
+                var game = fetchGameDataInstance(gameData, socket.id);
+                var newpos = pos;
+                gameData = positionAvail(gameData, newpos);
+                game.rabbits[parseInt(rabbit)].position= parseInt(pos);
 
+
+                io.to(lobbycode).emit("moveCheat", fetchLobbyGameData(gameData, lobbycode));
+                console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" moved to the "+pos+" position with rabbit "+rabbit+"!");
+                   console.log("[Server] Player is on "+parseInt(pos)+"!");
+
+            }else{
+                console.error("[Server] Invalid move!")
+                io.to(socket.id).emit("error", 500);
+            }
+        });
     //Shake-Sensor, notifying each player once event occurs.
     socket.on('shake', args=>{
         io.to(lobbycode).emit('shake', socket.id);

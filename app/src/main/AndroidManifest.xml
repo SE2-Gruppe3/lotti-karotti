@@ -35,6 +35,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".LobbyActivity"
+            android:exported="false"/> >
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
     </application>

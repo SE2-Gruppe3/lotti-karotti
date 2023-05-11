@@ -101,6 +101,10 @@ public class ServerConnection {
     public static void move(int steps, int rabbitNo) {
         socket.emit("move", steps, rabbitNo);
     }
+    public static void cheatMove(int pos, int rabbitNo) {
+        socket.emit("moveCheat", pos, rabbitNo);
+    }
+
     public static void shake() {
         socket.emit("shake");
     }
