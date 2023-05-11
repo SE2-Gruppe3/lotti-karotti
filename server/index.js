@@ -11,7 +11,6 @@
 const server = require('./utils/server.js');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
-const fs = require('fs');
 const storeClientInfo = require('./utils/storeClient.js');
 const storeLobbyInfo = require('./utils/storeLobby.js');
 const playerExist = require('./utils/checkPlayerExists.js');
@@ -103,30 +102,6 @@ io.on('connection', (socket) => {
         console.log('[Server] Sending player list information!');
         io.to(lobbycode).emit('getplayerlist', clientsList);
     });
-
-    socket.on('gethighscore', () => {
-        fs.readFile('highscore.json', 'utf8', (err, data) => {
-            if(err) {
-                console.log("Error loading file!");
-            }
-            const jsonData = JSON.parse(data);
-            console.log('[Server] Sending players highscore information!');
-        io.emit('gethighscore', jsonData);
-        });
-    });
-
-    socket.on('saveupdatedhighscore', (jsonArray) => {
-        try {
-            fs.writeFile('highscore.json', JSON.stringify(jsonArray), (err) => {
-                if (err) throw err;
-                console.log('[Server] Successfully saved updated Highscore list');
-                socket.emit('saveJsonSuccess');
-            });
-        } catch (err) {
-            console.error('[Server] Error while updating highscore list');
-            socket.emit('saveJsonError', 'Invalid JSON array');
-        }
-    });    
 
     //********************************************************************************************************** */
     //                          ***Lobby and Online Logic below here***                                          */
@@ -278,12 +253,6 @@ io.on('connection', (socket) => {
         setTurn();
     });
 
-
-    socket.on('drawcard', () => {
-        let card = Math.floor(Math.random() * 4);
-        console.log("[Server] Player drawed a card number " + card);
-        io.to(lobbycode).emit('drawcard', card);
-    });
 
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            

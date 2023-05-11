@@ -31,7 +31,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.lottikarotti.Highscore.HighscoreActivity;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     private Button carrotButton;
     private ImageButton settingsButton;
-    private Button buttonHighScore;
     private Button drawButton;
     private Button startTurn;
     private Button endTurn;
@@ -125,9 +123,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     final int[] fields = { R.id.buttonField1,
             R.id.buttonField1, R.id.buttonField2,R.id.buttonField3,R.id.buttonField4,R.id.buttonField5,R.id.buttonField6,R.id.buttonField7,
             R.id.buttonField8,R.id.buttonField9,R.id.buttonField10, R.id.buttonField11, R.id.buttonField12, R.id.buttonField13, R.id.buttonField14,
-    R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
-    R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
-    @SuppressLint("MissingInflatedId")
             R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
             R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
@@ -212,7 +207,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
-        buttonHighScore = (Button) findViewById(R.id.buttonHighScore);
 
 
         instructions.setText("Instructions: Choose a rabbit to play");
