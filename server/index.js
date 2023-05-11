@@ -198,6 +198,11 @@ io.on('connection', (socket) => {
         io.to(lobbycode).emit('shake', socket.id);
     });
 
+    //Notify each player when voting starts
+    socket.on('createvotingpopup', args=> {
+        io.to(lobbycode).emit('createvotingpopup', socket.id);
+    })
+
     //Carrotspin, notifying Client the carrot has been spun
     socket.on('carrotspin', args=>{
         const randomField = Math.floor(Math.random() * 10);
