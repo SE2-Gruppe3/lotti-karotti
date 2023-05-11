@@ -10,6 +10,7 @@ function storeLobbyInfo(code, owner){
     lobby.code = code;
     lobby.owner = owner;
     lobby.players = [];
+    lobby.socket_turn = 0;
 
     return lobby;
 }

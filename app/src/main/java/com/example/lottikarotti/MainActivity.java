@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setContentView(R.layout.activity_main);
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
+
         try {
             socket = ServerConnection.getInstance("http://192.168.178.22:3000");
             ServerConnection.connect();
@@ -122,11 +123,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-
-        ServerConnection.registerNewPlayer("Bro");
-        ServerConnection.fetchUnique();
-        ServerConnection.createNewLobby("123456");
-        ServerConnection.joinLobby("123456");
 
         players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
@@ -140,8 +136,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         /** Initialize Sensor**/
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-
-        isMyTurn = false;
 
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
@@ -196,6 +190,21 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
+
+        socket.on("move", args -> {
+            try {
+                handleMove(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle move \n" + e.toString());
+            }
+        });
+
+        socket.on("turn", id -> {
+            Log.println(Log.INFO, "Turn", "Turn received" +id[0].toString()+"<-gerver - l0cal->"+socket.id().toString());
+            if (id[0].toString().equals(socket.id().toString())) setMyTurn(true);
+
+        });
+
         /**
          * Clouds for the Sensor
          */
@@ -263,6 +272,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+        // Toggle Player rabbits (disable if not own turn initially)
+        togglePlayerRabbits();
+
         /**
          * Turn Carrot
          */
@@ -289,8 +301,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             @Override
             public void onClick(View view) {
 
-
-
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
@@ -314,6 +324,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 startActivity(intent);
             }
         });
+        setMyTurn(false);
+
+        // Connect after everything else is done
+        ServerConnection.registerNewPlayer("Bro2");
+        ServerConnection.fetchUnique();
+        ServerConnection.createNewLobby("123456");
+        ServerConnection.joinLobby("123456");
 
     }
 
@@ -336,14 +353,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * @param steps
      */
     private void playerMove(int steps, int rabbit){
-        isMyTurn = true;
+        if (!isMyTurn) return;
+
         System.out.println(steps+" steps with rabbit "+rabbit);
         int add = 0;
         for (Player payer:players) {
             if (socket.id().equals(payer.getSid())){
                 add = payer.getRabbits().get(rabbit).getPosition();
             }
-
         }
         // activating field to press
         Button field = (Button) findViewById(fields[steps+add]);
@@ -416,7 +433,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 }
             }
         }
-        isMyTurn = false;
+        setMyTurn(false);
     }
 
 
@@ -548,5 +565,28 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
         layoutPar.screenBrightness = brightness / 255f;
         getWindow().setAttributes(layoutPar);
+    }
+
+    public void setMyTurn(boolean myTurn) {
+        isMyTurn = myTurn;
+        togglePlayerRabbits();
+    }
+    private void togglePlayerRabbits(){
+        Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
+        runOnUiThread(()->{
+            if (isMyTurn){
+                rabbit1.setEnabled(true);
+                rabbit2.setEnabled(true);
+                rabbit3.setEnabled(true);
+                rabbit4.setEnabled(true);
+            }
+            else {
+                rabbit1.setEnabled(false);
+                rabbit2.setEnabled(false);
+                rabbit3.setEnabled(false);
+                rabbit4.setEnabled(false);
+            }
+        });
+
     }
 }
