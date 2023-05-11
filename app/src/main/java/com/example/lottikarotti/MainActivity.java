@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
         try {
-            socket = ServerConnection.getInstance("http://143.205.195.218:3000");
+            socket = ServerConnection.getInstance("http://143.205.196.98:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {

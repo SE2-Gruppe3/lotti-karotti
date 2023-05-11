@@ -19,7 +19,6 @@ public class HighscoreActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;
     private HighscoreAdapter adapter;
-    private ServerConnection serverConnection;
     Socket socket;
 
     @Override
@@ -32,14 +31,12 @@ public class HighscoreActivity extends AppCompatActivity {
         adapter = new HighscoreAdapter();
 
         try {
-            socket = ServerConnection.getInstance("xxx");
+            socket = ServerConnection.getInstance("http://143.205.196.98:3000");
+            ServerConnection.connect();
         } catch (Exception ex) {
         }
 
-
-        serverConnection.connect();
-
-        serverConnection.getHighScoreBoard(HighscoreActivity.this, new ServerConnection.HighScoreBoardCallback() {
+        ServerConnection.getHighScoreBoard(HighscoreActivity.this, new ServerConnection.HighScoreBoardCallback() {
             @Override
             public void onHighScoreBoardReceived(List<String> usernames, List<Integer> scores) {
                 adapter.setData(usernames, scores);
@@ -47,7 +44,7 @@ public class HighscoreActivity extends AppCompatActivity {
         });
 
 
-        serverConnection.updateHighScoreBoard("Amar");
+        ServerConnection.updateHighScoreBoard("Amar");
 
         recyclerView.setAdapter(adapter);
     }

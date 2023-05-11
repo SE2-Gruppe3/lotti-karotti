@@ -98,7 +98,7 @@ public class ServerConnection {
         socket.emit("joinlobby", lobbyCode);
     }
 
-    public void getHighScoreBoard(Activity activity, HighScoreBoardCallback callback){
+    public static void getHighScoreBoard(Activity activity, HighScoreBoardCallback callback){
         socket.on("gethighscore", args -> {
             JSONArray highScore = (JSONArray) args[0];
             List<String> usernames = new ArrayList<>();
@@ -122,7 +122,7 @@ public class ServerConnection {
         void onHighScoreBoardReceived(List<String> usernames, List<Integer> scores);
     }
 
-    public void updateHighScoreBoard(String winnerUsername) {
+    public static void updateHighScoreBoard(String winnerUsername) {
         socket.on("gethighscore", args -> {
             JSONArray highScore = (JSONArray) args[0];
             JSONArray updatedHighScore = new JSONArray();
