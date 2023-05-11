@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
         try {
-            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
+            socket = ServerConnection.getInstance("http://143.205.194.174:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
@@ -381,11 +381,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
         setMyTurn(false);
 
-        // Connect after everything else is done
-        ServerConnection.registerNewPlayer("Bro2");
-        ServerConnection.fetchUnique();
-        ServerConnection.createNewLobby("123456");
-        ServerConnection.joinLobby("123456");
+
 
     }
 
