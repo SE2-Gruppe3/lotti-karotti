@@ -529,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                                         field.setEnabled(false);
                                     } else {
                                         Log.d("Cheat Move", "onClick: " + finalDelay);
-                                        ServerConnection.cheatMove(6, currRabbit);
+                                        ServerConnection.cheatMove(position, currRabbit);
                                         field.setEnabled(false);
                                     }
                                 }

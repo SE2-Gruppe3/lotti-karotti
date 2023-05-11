@@ -197,13 +197,14 @@ io.on('connection', (socket) => {
      socket.on('moveCheat', (pos, rabbit) =>{
             if(registered === 1 && lobbycode !== 0 ){
                 var game = fetchGameDataInstance(gameData, socket.id);
-                game.rabbits[parseInt(rabbit)].position= parseInt(pos);
-                var newpos = game.rabbits[parseInt(rabbit)].position;
+                var newpos = pos;
                 gameData = positionAvail(gameData, newpos);
+                game.rabbits[parseInt(rabbit)].position= parseInt(pos);
+
 
                 io.to(lobbycode).emit("moveCheat", fetchLobbyGameData(gameData, lobbycode));
                 console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" moved to the "+pos+" position with rabbit "+rabbit+"!");
-                   console.log("[Server] Player is on "+game.rabbits[parseInt(rabbit)].position+"!");
+                   console.log("[Server] Player is on "+parseInt(pos)+"!");
 
             }else{
                 console.error("[Server] Invalid move!")
