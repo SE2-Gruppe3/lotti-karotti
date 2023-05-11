@@ -78,10 +78,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int touchCounter;
     private int touchCntLimit;
     private int currRabbit;
-    private int rabbit1Pos = 0;
-    private int rabbit2Pos = 0;
-    private int rabbit3Pos = 0;
-    private int rabbit4Pos = 0;
     private final String TAG = "MainActivity";
 
     //  Container for the Player List Fragment (Placeholder Container)
@@ -109,6 +105,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     //--------------------------------
     private boolean isMyTurn;
+    private boolean isCheating;
     private List<Player> players;
     private String sid;
     final int[]rabbits={
@@ -149,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://192.168.68.56:3000");
+            socket = ServerConnection.getInstance("http://143.205.194.174:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
@@ -186,10 +183,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
-        instructions = (TextView) findViewById(R.id.textViewInstructions);
-//        while (players.size() == 0) {
-//            Log.d(TAG, "onCreate: Waiting for players");
-//        }
+
+
         rabbit1.setImageResource(R.drawable.fig11);
         rabbit2.setImageResource(R.drawable.fig11);
         rabbit3.setImageResource(R.drawable.fig11);
@@ -297,7 +292,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
 
-        setColorForRabbits();
         /**
          * Rabbit Selection
          */
@@ -431,7 +425,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if(!myTurn) {
+            sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
     @Override
     protected void onPause() {
@@ -504,10 +500,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             @Override
             public void run() {
                 //Toast.makeText(MainActivity.this, "Shake detected!", Toast.LENGTH_SHORT).show();
+                if (!socketid.equals(socket.id())) {
+                    animateClouds(screenWidth);
+                    resetClouds(cloudLX, cloudRX);
+                } else {
+                        instructions.setText("You are noe able to cheat, others cant see you");
+                        isCheating = true;
+                }
 
-                animateClouds(screenWidth);
-
-                resetClouds(cloudLX, cloudRX);
             }
         });
 
@@ -860,7 +860,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
     private void onShakeDetected() {
-        ServerConnection.shake();
+        if(!isMyTurn) {
+            ServerConnection.shake();}
+
 
         //Debugging
         // animateClouds(screenWidth);

@@ -28,6 +28,7 @@ console.log('Server is running');
 const io = socket(server);
 var playercounter = 0;
 var clientsList = [];
+var cheaterList = [];
 var lobbies = [];
 var gameData = [];
 
@@ -204,6 +205,15 @@ io.on('connection', (socket) => {
         console.log('Random Field (hole):', randomField);
         io.to(lobbycode).emit('carrotspin', socket.id, randomField);
     });
+    //Cheating, remark someone has cheated
+        socket.on('cheat', args=>{
+
+            console.log('User: ', args, "cheated");
+            if(playerExist(cheaterList,socket.id)==0){
+            clientsList.push(storeClientInfo(socket.id, args));
+            }
+            io.to(lobbycode).emit('cheat', socket.id);
+        });
     //Hole appears below Rabbit logic
     socket.on('reset', (pos) => {
         var game = fetchGameDataInstance(gameData, socket.id);
