@@ -102,7 +102,7 @@ public class ServerConnection {
         socket.emit("move", steps, rabbitNo);
     }
     public static void cheatMove(int pos, int rabbitNo) {
-        socket.emit("cheatMove", pos, rabbitNo);
+        socket.emit("moveCheat", pos, rabbitNo);
     }
 
     public static void shake() {

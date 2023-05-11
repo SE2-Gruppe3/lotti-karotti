@@ -206,11 +206,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
                 });
-        socket.on("move", args -> {
+        socket.on("moveCheat", args -> {
             try {
                 handleMove(args[0].toString());
             }catch (Exception e){
-                Log.w(TAG, "Can't handle move \n" + e.toString());
+                Log.w(TAG, "Can't handle move cheat \n" + e.toString());
             }
         });
 
@@ -496,7 +496,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                         instructions.setTextColor(Color.RED);
 
                         isCheating = true;
-                        ServerConnection.cheat("ghost");
+                        ServerConnection.cheat("Brooo");
 
                    /*  for (Player p: players) {
                         if (!(p.getSid().equals(socket.id()))) {
@@ -529,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                                         field.setEnabled(false);
                                     } else {
                                         Log.d("Cheat Move", "onClick: " + finalDelay);
-                                        ServerConnection.cheatMove(position, currRabbit);
+                                        ServerConnection.cheatMove(6, currRabbit);
                                         field.setEnabled(false);
                                     }
                                 }
