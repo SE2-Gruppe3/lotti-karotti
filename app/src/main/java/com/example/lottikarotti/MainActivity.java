@@ -147,6 +147,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         String lobbyId = intent.getStringExtra("lobbyId");
         String username = intent.getStringExtra("username");
         String info = intent.getStringExtra("info");
+        TextView lobbyID = (TextView) findViewById(R.id.lobbyID);
+        lobbyID.setText("Lobby ID: " + lobbyId);
 
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();

@@ -7,6 +7,17 @@
 
     tools:context=".MainActivity">
 
+    <TextView
+        android:id="@+id/lobbyID"
+        android:layout_width="158dp"
+        android:layout_height="31dp"
+        android:text="LobbyID:"
+        app:layout_constraintBottom_toTopOf="@+id/imageView"
+        app:layout_constraintEnd_toStartOf="@+id/button_playerList"
+        app:layout_constraintHorizontal_bias="0.053"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <ImageView
         android:id="@+id/imageView"
