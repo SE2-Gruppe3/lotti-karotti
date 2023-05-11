@@ -459,6 +459,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     resetClouds(cloudLX, cloudRX);
                 } else {
                         instructions.setText("You are noe able to cheat, others cant see you");
+                        isCheating = true;
                 }
 
             }
