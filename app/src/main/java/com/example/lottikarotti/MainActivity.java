@@ -822,7 +822,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     private void onShakeDetected() {
-        ServerConnection.shake();
+        if (!isMyTurn) ServerConnection.shake();
     }
 
     private void animateClouds(Integer screenWidth) {
