@@ -119,9 +119,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     //--------------------------------
     private boolean isMyTurn;
+    private boolean isCheating;
     private List<Player> players;
     private String sid;
     final int[]rabbits={
+          R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
           R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
 
 
@@ -153,18 +155,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setContentView(R.layout.activity_main);
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
+
         try {
-            socket = ServerConnection.getInstance("http://10.0.0.6:3000");
+            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-
-        ServerConnection.registerNewPlayer("Brooo");
-        ServerConnection.fetchUnique();
-        ServerConnection.createNewLobby("123456");
-        ServerConnection.joinLobby("123456");
 
         players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
@@ -180,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        isMyTurn = false;
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
@@ -245,7 +242,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
-
         socket.on("carrotspin", args -> {
             Log.println(Log.INFO, "Carrot", "carrotspin received");
             try {
@@ -254,7 +250,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle carrotspin \n" + e.toString());
             }
         });
+        socket.on("turn", id -> {
+            Log.println(Log.INFO, "Turn", "Turn received" +id[0].toString()+"<-gerver - l0cal->"+socket.id().toString());
+            if (id[0].toString().equals(socket.id().toString())) setMyTurn(true);
 
+        });
         /**
          * Clouds for the Sensor
          */
@@ -321,15 +321,21 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+        // Toggle Player rabbits (disable if not own turn initially)
+        togglePlayerRabbits();
 
         /**
          * Turn Carrot
          */
+
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawButton.setEnabled(true);
-                 ServerConnection.carrotSpin();
+                drawButton.setEnabled(false);
+                setMyTurn(false);
+
+               ServerConnection.carrotSpin();
+
                 carrotButton.setEnabled(false);
             }
         });
@@ -337,6 +343,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         drawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+
+
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
@@ -359,6 +368,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 startActivity(intent);
             }
         });
+        setMyTurn(false);
+
+        // Connect after everything else is done
+        ServerConnection.registerNewPlayer("Bro");
+        ServerConnection.fetchUnique();
+        ServerConnection.createNewLobby("123456");
+        ServerConnection.joinLobby("123456");
 
     }
 
@@ -400,19 +416,37 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
 
+
+
+    /**
+     * Override the onSensorChanged method to detect the shake gesture
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!isMyTurn) {
+            sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
     /**
      * This method sends an emit to the Server signalising "move"
      * @param steps
      */
     private void playerMove(int steps, int rabbit){
-        isMyTurn = true;
+        if (!isMyTurn) return;
+
         System.out.println(steps+" steps with rabbit "+rabbit);
         int add = 0;
         for (Player payer:players) {
             if (socket.id().equals(payer.getSid())){
                 add = payer.getRabbits().get(rabbit).getPosition();
             }
-
         }
         // activating field to press
         ImageButton field = (ImageButton) findViewById(fields[steps+add]);
@@ -425,11 +459,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 System.out.println("Sending move to server");
                 ImageButton fieldtest = (ImageButton) findViewById(fields[puffer]);
                 int delay = 0;
-                while(fieldtest.getDrawable() != null){
-                    System.out.println("Field is taken, steps + 1");
-                    ++delay;
-                    fieldtest =findViewById(fields[puffer+delay]);
-                }
+//                while(fieldtest.getDrawable() != null){
+//                    System.out.println("Field is taken, steps + 1");
+//                    ++delay;
+//                    fieldtest =findViewById(fields[puffer+delay]);
+//                }
                 final int finalDelay = delay;
                 if(checkForHoles(puffer+finalDelay)){
                     Log.d("Hole", "onClick: " + finalDelay);
@@ -526,7 +560,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 }
             }
         }
-        isMyTurn = false;
+        setMyTurn(false);
     }
     private void setColorForRabbitsRender(ImageButton rabbitbtn, String color) {
                 switch (color) {
@@ -563,7 +597,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 img.setVisibility(View.VISIBLE);
                 checkForRabbit();
                 carrotButton.setEnabled(false);
-                renderBoard();
+                playerMove(0, 0);
         });
     }
 
@@ -851,7 +885,29 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }, 5000);
     }
 
-    private void getRabbitStartPos() {
+    public void setMyTurn(boolean myTurn) {
+        isMyTurn = myTurn;
+        togglePlayerRabbits();
+        Log.d("Game", "setMyTurn: " + isMyTurn);
+    }
+    private void togglePlayerRabbits() {
+        Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
+        runOnUiThread(() -> {
+            if (isMyTurn) {
+                rabbit1.setEnabled(true);
+                rabbit2.setEnabled(true);
+                rabbit3.setEnabled(true);
+                rabbit4.setEnabled(true);
+            } else {
+                drawButton.setEnabled(false);
+                rabbit1.setEnabled(false);
+                rabbit2.setEnabled(false);
+                rabbit3.setEnabled(false);
+                rabbit4.setEnabled(false);
+            }
+        });
+    }
+        private void getRabbitStartPos() {
         for (int i = 0; i < rabbits.length; i++) {
             int r = rabbits[i];
             ImageView rabbit = findViewById(r);
