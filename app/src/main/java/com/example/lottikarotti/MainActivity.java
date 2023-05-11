@@ -129,11 +129,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+        Intent intent = getIntent();
+        String lobbyId = intent.getStringExtra("lobbyId");
+        String username = intent.getStringExtra("username");
+        String info = intent.getStringExtra("info");
 
-        ServerConnection.registerNewPlayer("Brooo");
+        ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
-        ServerConnection.createNewLobby("123456");
-        ServerConnection.joinLobby("123456");
+        if(info.equals("start")){
+            ServerConnection.createNewLobby(lobbyId);
+            ServerConnection.joinLobby(lobbyId);
+        }
+        else{
+            ServerConnection.joinLobby(lobbyId);
+        }
 
         players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
