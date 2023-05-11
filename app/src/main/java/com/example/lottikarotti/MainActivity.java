@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://10.0.0.6:3000");
+            socket = ServerConnection.getInstance("http://143.205.194.174:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
@@ -378,7 +378,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     @Override
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        if(!myTurn) {
+            sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
     @Override
     protected void onPause() {
@@ -807,7 +809,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
     private void onShakeDetected() {
-        ServerConnection.shake();
+        if(!isMyTurn) {
+            ServerConnection.shake();}
+
 
         //Debugging
        // animateClouds(screenWidth);
