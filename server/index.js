@@ -35,7 +35,7 @@ var gameData = [];
 //                          ***Connection Handling begins here***                                            */
 //********************************************************************************************************** */
 io.on('connection', (socket) => {
-    var lobbycode = 0, registered = 0;
+    var lobbycode = 0, registered = 0, socket_turn = 0;
 
     // Increment the player counter and log a message to the console (player counter does not indicate registered, just client connected to the server)
     playercounter++;
@@ -120,6 +120,9 @@ io.on('connection', (socket) => {
             lobbies.push(storeLobbyInfo(code, socket.id));
             lobbies[lobbies.length-1].players.push(fetchClientInstance(clientsList, socket.id));
 
+            // Set initial turn to true for lobbyowner
+            socket_turn = 0;
+
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t"+JSON.stringify(lobbies));
             socket.join(code);
             lobbycode = code;
@@ -178,14 +181,23 @@ io.on('connection', (socket) => {
 
     // Move logic, Client must handle the logic accordingly
     // Please don't forget rabbit1 = 0, rabbit2 = 1, rabbit3 = 2, rabbit4 = 3
-    socket.on('move', (steps, rabbit) =>{   
-        if(registered === 1 && lobbycode !== 0 && steps < 8){
+
+    // TODO: Handle cheating, socket.id == socket_turn needs exception
+    socket.on('move', (steps, rabbit) =>{
+        if(registered === 1 && lobbycode !== 0 && steps < 8 && socket.id == socket_turn){
             var game = fetchGameDataInstance(gameData, socket.id);
 
             var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
             gameData = positionAvail(gameData, newpos);
             game.rabbits[parseInt(rabbit)].position = newpos;
+            var lobbygame = fetchLobbyGameData(gameData,lobbycode);
 
+            socket_turn+=1;
+            if(socket_turn == lobbygame.length) socket_turn = 0;
+            
+            socket.emit('turn', lobbygame[socket_turn].sid);
+            console.log("[Server] Next turn is id "+lobbygame[socket_turn].sid);     
+            
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
             console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!");
         }else{
