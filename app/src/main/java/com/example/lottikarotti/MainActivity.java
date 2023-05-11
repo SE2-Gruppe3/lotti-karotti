@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[]rabbits={
           R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-          R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
+
 
 
     PointF[] rabbitStartPos = new PointF[8];
@@ -371,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setMyTurn(false);
 
         // Connect after everything else is done
-        ServerConnection.registerNewPlayer("Bro");
+        ServerConnection.registerNewPlayer("Bro2");
         ServerConnection.fetchUnique();
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
@@ -843,17 +843,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public void onDestroy() {
         super.onDestroy();
 
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateBrightness();
-        sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
     }
 
 
