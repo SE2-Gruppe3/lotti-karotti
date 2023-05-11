@@ -1,33 +1,13 @@
 package com.example.lottikarotti;
 
-
-
-import static com.example.lottikarotti.Network.ServerConnection.checkIfConnectionIsAlive;
-import static com.example.lottikarotti.Network.ServerConnection.createNewLobby;
-import static com.example.lottikarotti.Network.ServerConnection.getListOfConnectedPlayers;
-import static com.example.lottikarotti.Network.ServerConnection.getNumberOfConnectedPlayers;
-//import static com.example.lottikarotti.Network.ServerConnection.getSocket;
-import static com.example.lottikarotti.Network.ServerConnection.registerNewPlayer;
-
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.view.View;
-import android.view.WindowManager;
-
-
+import org.apache.commons.lang3.ArrayUtils;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -163,6 +143,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+        Intent intent = getIntent();
+        String lobbyId = intent.getStringExtra("lobbyId");
+        String username = intent.getStringExtra("username");
+        String info = intent.getStringExtra("info");
+
+        ServerConnection.registerNewPlayer(username);
+        ServerConnection.fetchUnique();
+        if(info.equals("start")){
+            ServerConnection.createNewLobby(lobbyId);
+            ServerConnection.joinLobby(lobbyId);
+        }
+        else{
+            ServerConnection.joinLobby(lobbyId);
+        }
 
         players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
@@ -232,6 +226,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }catch (Exception e){
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
+                });
+        socket.on("moveCheat", args -> {
+            try {
+                handleMove(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle move cheat \n" + e.toString());
+            }
         });
 
         socket.on("shake", args -> {
@@ -242,6 +243,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
+        socket.on("cheat", args -> {
+            Log.println(Log.INFO, "Cheat", "CHEAT received");
+            try {
+                handleCheating(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't cheating \n" + e.toString());
+            }
+        });
+
         socket.on("carrotspin", args -> {
             Log.println(Log.INFO, "Carrot", "carrotspin received");
             try {
@@ -349,6 +359,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
+                instructions.setTextColor(Color.BLACK);
 
                 switch(random) {
                     case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, currRabbit); break;
@@ -490,6 +501,23 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         renderBoard();
     }
     /**
+     * Handle the Cheating
+     */
+    private void handleCheating(String socketid){
+
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.post( new Runnable() {
+
+            @Override
+            public void run() {
+                //Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+    }
+
+    /**
      * Handle the shake event
      */
     private void handleShake(String socketid)  {
@@ -497,8 +525,61 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                animateClouds(screenWidth);
-                resetClouds(cloudLX, cloudRX);
+                //Toast.makeText(MainActivity.this, "Shake detected!", Toast.LENGTH_SHORT).show();
+                if (!socketid.equals(socket.id())) {
+                    animateClouds(screenWidth);
+                    resetClouds(cloudLX, cloudRX);
+                } else {
+                        instructions.setText("You are noe able to cheat, others cant see you !!");
+                        instructions.setTextColor(Color.RED);
+
+                        isCheating = true;
+                        ServerConnection.cheat("Brooo");
+
+                   /*  for (Player p: players) {
+                        if (!(p.getSid().equals(socket.id()))) {
+                            for (Rabbit r: p.getRabbits()) {
+
+                            }
+                        }
+                    }*/
+                        for (int i = 1; i < fields.length; i++) {
+                            ImageButton field = (ImageButton) findViewById(fields[i]);
+                            field.setEnabled(true);
+
+                            field.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    int position = ArrayUtils.indexOf(fields, field.getId()) ;
+                                    System.out.println("Sending move to server");
+                                    ImageButton fieldtest = (ImageButton) findViewById(fields[position]);
+                                    int delay = 0;
+                                    while (fieldtest.getDrawable() != null) {
+                                        System.out.println("Field is taken, steps + 1");
+                                        ++delay;
+                                        fieldtest = findViewById(fields[delay]);
+                                    }
+                                    final int finalDelay = delay;
+                                    if (checkForHoles(finalDelay)) {
+                                        Log.d("Hole", "onClick: " + finalDelay);
+                                        ServerConnection.reset(0);
+                                        field.setEnabled(false);
+                                    } else {
+                                        Log.d("Cheat Move", "onClick: " + finalDelay);
+                                        ServerConnection.cheatMove(position, currRabbit);
+                                        field.setEnabled(false);
+                                        isCheating=false;
+                                    }
+                                }
+
+                            });
+
+                        }
+                        Toast.makeText(MainActivity.this, "Please choose field you want to move", Toast.LENGTH_LONG).show();
+
+                }
+
             }
         });
     }
@@ -822,7 +903,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     private void onShakeDetected() {
-        if (!isMyTurn) ServerConnection.shake();
+        if(!isMyTurn) {
+            ServerConnection.shake();}
+
+        //Debugging
+       // animateClouds(screenWidth);
+      //  handleShake("socketid");
     }
 
     private void animateClouds(Integer screenWidth) {
@@ -830,12 +916,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         // Animate Left Cloud
         cloudL.animate()
                 .translationX(finalPosition / 0.7f)
-                .setDuration(1000)
+                .setDuration(2000)
                 .start();
         // Animate Right Cloud
         cloudR.animate()
                 .translationX(-finalPosition / 0.7f)
-                .setDuration(1000)
+                .setDuration(2000)
                 .start();
     }
 
