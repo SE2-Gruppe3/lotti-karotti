@@ -5,6 +5,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.hardware.Sensor;
@@ -54,7 +55,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
-    private ImageView rabbit1;
     private ImageView rabbit1;
     private ImageView rabbit2;
     private ImageView rabbit3;
@@ -887,22 +887,22 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         isMyTurn = myTurn;
         togglePlayerRabbits();
     }
-    private void togglePlayerRabbits(){
+    private void togglePlayerRabbits() {
         Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
-        runOnUiThread(()->{
-            if (isMyTurn){
+        runOnUiThread(() -> {
+            if (isMyTurn) {
                 rabbit1.setEnabled(true);
                 rabbit2.setEnabled(true);
                 rabbit3.setEnabled(true);
                 rabbit4.setEnabled(true);
-            }
-            else {
+            } else {
                 rabbit1.setEnabled(false);
                 rabbit2.setEnabled(false);
                 rabbit3.setEnabled(false);
                 rabbit4.setEnabled(false);
             }
-        });    
+        });
+    }
         private void getRabbitStartPos() {
         for (int i = 0; i < rabbits.length; i++) {
             int r = rabbits[i];
@@ -952,9 +952,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         float startXx = location[0];
         float startYy = location[1];
         Log.d("Game", "Moved rabbit to: " + startXx + " " + startYy);
-
-    }
-
 
     }
 }
