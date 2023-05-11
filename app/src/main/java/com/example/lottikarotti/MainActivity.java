@@ -213,6 +213,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
+        socket.on("cheat", args -> {
+            Log.println(Log.INFO, "Cheat", "CHEAT received");
+            try {
+                handleCheating(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't cheating \n" + e.toString());
+            }
+        });
 
         socket.on("carrotspin", args -> {
             Log.println(Log.INFO, "Carrot", "carrotspin received");
@@ -443,6 +451,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         players = Arrays.asList(mapper.readValue(json, Player[].class));
 
         renderBoard();
+    }
+    /**
+     * Handle the Cheating
+     */
+    private void handleCheating(String socketid){
+
     }
     /**
      * Handle the shake event
