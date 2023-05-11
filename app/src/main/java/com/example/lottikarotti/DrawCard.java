@@ -1,5 +1,6 @@
 package com.example.lottikarotti;
 
+import android.app.Activity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -13,8 +14,8 @@ public class DrawCard {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
             R.drawable.card4 };
 
-    public static void draw(ServerConnection serverConnection, View drawButton, TextView instructions, Button carrotButton, ImageView cardView, User user) {
-        serverConnection.drawCard(new ServerConnection.DrawCardCallback() {
+    public static void draw(Activity activity, ServerConnection serverConnection, View drawButton, TextView instructions, Button carrotButton, ImageView cardView, User user) {
+        serverConnection.drawCard(activity, new ServerConnection.DrawCardCallback() {
             @Override
             public void onCardDrawn(int random) {
                 cardView.setImageResource(cards[random]);

@@ -98,7 +98,7 @@ public class ServerConnection {
         socket.emit("joinlobby", lobbyCode);
     }
 
-    public void getHighScoreBoard(HighScoreBoardCallback callback){
+    public void getHighScoreBoard(Activity activity, HighScoreBoardCallback callback){
         socket.on("gethighscore", args -> {
             JSONArray highScore = (JSONArray) args[0];
             List<String> usernames = new ArrayList<>();
@@ -160,7 +160,7 @@ public class ServerConnection {
         });
     }
 
-    public void drawCard(DrawCardCallback callback){
+    public void drawCard(Activity activity, DrawCardCallback callback){
         socket.on("drawcard", args -> {
             int number = (Integer) args[0];
             activity.runOnUiThread(() -> callback.onCardDrawn(number));
@@ -171,6 +171,7 @@ public class ServerConnection {
 
     public interface DrawCardCallback {
         void onCardDrawn(int random);
+    }
     public static void move(int steps, int rabbitNo) {
         socket.emit("move", steps, rabbitNo);
     }

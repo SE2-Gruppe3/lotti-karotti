@@ -1,6 +1,5 @@
 package com.example.lottikarotti;
 
-import org.apache.commons.lang3.ArrayUtils;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 
@@ -11,6 +10,7 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import org.apache.commons.lang3.ArrayUtils;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -44,6 +44,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URISyntaxException;
+import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -127,13 +128,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.buttonField8,R.id.buttonField9,R.id.buttonField10, R.id.buttonField11, R.id.buttonField12, R.id.buttonField13, R.id.buttonField14,
     R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
     R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
-    @SuppressLint("MissingInflatedId")
-            R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
-            R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
     private Socket socket;
     @SuppressLint("MissingInflatedId")
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,30 +139,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
         try {
-            socket = ServerConnection.getInstance("http://143.205.194.174:3000");
+            socket = ServerConnection.getInstance("http://143.205.195.218:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
         Intent intent = getIntent();
-        String lobbyId = intent.getStringExtra("lobbyId");
-        String username = intent.getStringExtra("username");
-        String info = intent.getStringExtra("info");
-        TextView lobbyID = (TextView) findViewById(R.id.lobbyID);
-        lobbyID.setText("Lobby ID: " + lobbyId);
-
-        ServerConnection.registerNewPlayer(username);
-        ServerConnection.fetchUnique();
-        if(info.equals("start")){
-            ServerConnection.createNewLobby(lobbyId);
-            ServerConnection.joinLobby(lobbyId);
-        }
-        else{
-            ServerConnection.joinLobby(lobbyId);
-        }
-
-        players = new ArrayList<>();
+                players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
         ServerConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
             @Override
@@ -212,8 +193,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
-        buttonHighScore = (Button) findViewById(R.id.buttonHighScore);
-
 
         instructions.setText("Instructions: Choose a rabbit to play");
 
@@ -390,7 +369,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setMyTurn(false);
 
 
-
+        // Connect after everything else is done
+        ServerConnection.registerNewPlayer("Bro2");
+        ServerConnection.fetchUnique();
+        ServerConnection.createNewLobby("123456");
+        ServerConnection.joinLobby("123456");
     }
 
 
@@ -553,7 +536,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
                             field.setOnClickListener(new View.OnClickListener() {
                                 @Override
-                                public void onClick(View view) {
+                                public void onClick(View view){
 
                                     int position = ArrayUtils.indexOf(fields, field.getId()) ;
                                     System.out.println("Sending move to server");
