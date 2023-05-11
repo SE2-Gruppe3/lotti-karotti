@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     //--------------------------------
     private boolean isMyTurn;
+    private boolean isCheating;
     private List<Player> players;
     private String sid;
     final int[]rabbits={
@@ -453,10 +454,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             @Override
             public void run() {
                 //Toast.makeText(MainActivity.this, "Shake detected!", Toast.LENGTH_SHORT).show();
+                if (!socketid.equals(socket.id())) {
+                    animateClouds(screenWidth);
+                    resetClouds(cloudLX, cloudRX);
+                } else {
+                        instructions.setText("You are noe able to cheat, others cant see you");
+                }
 
-                animateClouds(screenWidth);
-
-                resetClouds(cloudLX, cloudRX);
             }
         });
 
