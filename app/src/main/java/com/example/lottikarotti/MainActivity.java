@@ -125,17 +125,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
         try {
-            socket = ServerConnection.getInstance("http://143.205.194.174:3000");
+            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
-
-        ServerConnection.registerNewPlayer("Brooo");
-        ServerConnection.fetchUnique();
-        ServerConnection.createNewLobby("123456");
-        ServerConnection.joinLobby("123456");
 
         players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
@@ -304,7 +299,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawButton.setEnabled(true);
+                drawButton.setEnabled(false);
+                setMyTurn(false);
 
                ServerConnection.carrotSpin();
 
@@ -343,7 +339,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setMyTurn(false);
 
         // Connect after everything else is done
-        ServerConnection.registerNewPlayer("Bro2");
+        ServerConnection.registerNewPlayer("Bro");
         ServerConnection.fetchUnique();
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
@@ -430,11 +426,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 System.out.println("Sending move to server");
                 ImageButton fieldtest = (ImageButton) findViewById(fields[puffer]);
                 int delay = 0;
-                while(fieldtest.getDrawable() != null){
-                    System.out.println("Field is taken, steps + 1");
-                    ++delay;
-                    fieldtest =findViewById(fields[puffer+delay]);
-                }
+//                while(fieldtest.getDrawable() != null){
+//                    System.out.println("Field is taken, steps + 1");
+//                    ++delay;
+//                    fieldtest =findViewById(fields[puffer+delay]);
+//                }
                 final int finalDelay = delay;
                 if(checkForHoles(puffer+finalDelay)){
                     Log.d("Hole", "onClick: " + finalDelay);
@@ -584,7 +580,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 img.setVisibility(View.VISIBLE);
                 checkForRabbit();
                 carrotButton.setEnabled(false);
-                renderBoard();
+                playerMove(0, 0);
         });
     }
 
@@ -886,6 +882,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public void setMyTurn(boolean myTurn) {
         isMyTurn = myTurn;
         togglePlayerRabbits();
+        Log.d("Game", "setMyTurn: " + isMyTurn);
     }
     private void togglePlayerRabbits() {
         Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
@@ -896,6 +893,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 rabbit3.setEnabled(true);
                 rabbit4.setEnabled(true);
             } else {
+                drawButton.setEnabled(false);
                 rabbit1.setEnabled(false);
                 rabbit2.setEnabled(false);
                 rabbit3.setEnabled(false);
