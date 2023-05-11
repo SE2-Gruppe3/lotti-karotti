@@ -328,6 +328,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Random rand = new Random();
                 int random = rand.nextInt(4);
                 cardView.setImageResource(cards[random]);
+                instructions.setTextColor(Color.BLACK);
 
                 switch(random) {
                     case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, currRabbit); break;
@@ -513,7 +514,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                                 @Override
                                 public void onClick(View view) {
 
-                                    int position = ArrayUtils.indexOf(fields, field.getId()) + 1;
+                                    int position = ArrayUtils.indexOf(fields, field.getId()) ;
                                     System.out.println("Sending move to server");
                                     ImageButton fieldtest = (ImageButton) findViewById(fields[position]);
                                     int delay = 0;
@@ -531,6 +532,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                                         Log.d("Cheat Move", "onClick: " + finalDelay);
                                         ServerConnection.cheatMove(position, currRabbit);
                                         field.setEnabled(false);
+                                        isCheating=false;
                                     }
                                 }
 
@@ -907,13 +909,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         // Animate Left Cloud
         cloudL.animate()
                 .translationX(finalPosition / 0.7f)
-                .setDuration(1000)
+                .setDuration(2000)
                 .start();
 
         // Animate Right Cloud
         cloudR.animate()
                 .translationX(-finalPosition / 0.7f)
-                .setDuration(1000)
+                .setDuration(2000)
                 .start();
 
     }
