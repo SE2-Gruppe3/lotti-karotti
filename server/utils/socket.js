@@ -1,4 +1,4 @@
-// Maybe something will be added later on, so I have just created a own file and export for this LOC
+// Maybe something will be added later on, so I have just created a own file and export for this Line of Code
 
 // Import the 'socket.io' module
 const socket = require('socket.io');

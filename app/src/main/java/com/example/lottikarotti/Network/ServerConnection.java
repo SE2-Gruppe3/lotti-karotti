@@ -1,6 +1,7 @@
 package com.example.lottikarotti.Network;
 
 import android.app.Activity;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -13,36 +14,30 @@ import java.util.List;
 import io.socket.client.IO;
 import io.socket.client.Socket;
 
-public class ServerConnection{
-    private final Socket socket;
-    private final Activity activity;
+public class ServerConnection {
+    private static final String TAG = ServerConnection.class.getSimpleName();
+    private static Socket socket;
 
-    public ServerConnection(String serverUrl, Activity activity) throws URISyntaxException {
-        this(IO.socket(serverUrl), activity);
-    }
-
-    public ServerConnection(Socket socket, Activity activity) {
-        this.socket = socket;
-        this.activity = activity;
-    }
-
-    public Socket getSocket(){
+    public static synchronized Socket getInstance(String serverUrl) throws URISyntaxException {
+        if (socket == null) {
+            socket = IO.socket(serverUrl);
+        }
         return socket;
     }
 
-    public void connect(){
-        if(!socket.connected()) {
+    public static void connect() {
+        if (!socket.connected()) {
             socket.connect();
         }
     }
 
-    public void disconnect() {
-        if(socket.connected()) {
+    public static void disconnect() {
+        if (socket.connected()) {
             socket.disconnect();
         }
     }
 
-    public void checkIfConnectionIsAlive(ConnectionCallback callback){
+    public static void checkIfConnectionIsAlive(Activity activity, ConnectionCallback callback) {
         socket.on("alive", args -> {
             int number = (Integer) args[0];
             boolean alive = (number == 1);
@@ -56,7 +51,7 @@ public class ServerConnection{
         void onConnectionChecked(boolean isAlive);
     }
 
-    public void getNumberOfConnectedPlayers(PlayerCountCallback callback){
+    public static void getNumberOfConnectedPlayers(Activity activity, PlayerCountCallback callback) {
         socket.on("getplayers", args -> {
             int number = (Integer) args[0];
             activity.runOnUiThread(() -> callback.onPlayerCountReceived(number));
@@ -69,11 +64,11 @@ public class ServerConnection{
         void onPlayerCountReceived(int count);
     }
 
-    public void getListOfConnectedPlayers(PlayerListCallback callback){
+    public static void getListOfConnectedPlayers(Activity activity, PlayerListCallback callback) {
         socket.on("getplayerlist", args -> {
             JSONArray playerList = (JSONArray) args[0];
             List<String> names = new ArrayList<>();
-            for(int i=0; i<playerList.length(); i++){
+            for (int i = 0; i < playerList.length(); i++) {
                 try {
                     JSONObject object = playerList.getJSONObject(i);
                     names.add(object.getString("name"));
@@ -91,15 +86,15 @@ public class ServerConnection{
         void onPlayerListReceived(List<String> playerList);
     }
 
-    public void registerNewPlayer(String name){
+    public static void registerNewPlayer(String name) {
         socket.emit("register", name);
     }
 
-    public void createNewLobby(String lobbyCode){
+    public static void createNewLobby(String lobbyCode) {
         socket.emit("createlobby", lobbyCode);
     }
 
-    public void joinLobby(String lobbyCode){
+    public static void joinLobby(String lobbyCode) {
         socket.emit("joinlobby", lobbyCode);
     }
 
@@ -176,5 +171,26 @@ public class ServerConnection{
 
     public interface DrawCardCallback {
         void onCardDrawn(int random);
+    public static void move(int steps, int rabbitNo) {
+        socket.emit("move", steps, rabbitNo);
+    }
+    public static void cheatMove(int pos, int rabbitNo) {
+        socket.emit("moveCheat", pos, rabbitNo);
+    }
+
+    public static void shake() {
+        socket.emit("shake");
+    }
+    public static void fetchUnique(){
+        socket.emit("fetchuniqueid");
+    }
+    public static void carrotSpin(){
+        socket.emit("carrotspin");
+    }
+    public static void cheat(String name){
+        socket.emit("cheat",name);
+    }
+    public static void reset(int pos){
+        socket.emit("reset", pos);
     }
 }

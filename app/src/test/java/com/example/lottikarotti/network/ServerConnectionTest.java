@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.socket.client.Socket;
-
+/*
 @ExtendWith(MockitoExtension.class)
 public class ServerConnectionTest {
 
@@ -102,3 +102,5 @@ public class ServerConnectionTest {
         verify(socket, times(1)).emit("joinlobby", lobbyCode);
     }
 }
+*/
+

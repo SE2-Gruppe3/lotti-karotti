@@ -2,4 +2,15 @@
     <string name="app_name">Lotti Karotti</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="fragment_playerlist_intro">Current Players</string>
+
+
+
+        <string name="logo">Lotti Karotti Extreme</string>
+        <string name="start_game">Start game</string>
+        <string name="username">Type in username</string>
+        <string name="lobbyCode">Lobby code</string>
+        <string name="join_game">Join game</string>
+        <!-- TODO: Remove or change this placeholder text -->
+
 </resources>
