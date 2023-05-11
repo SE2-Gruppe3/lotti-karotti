@@ -1,10 +1,12 @@
 package com.example.lottikarotti;
 
+import org.apache.commons.lang3.ArrayUtils;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -204,6 +206,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
                 });
+        socket.on("move", args -> {
+            try {
+                handleMove(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle move \n" + e.toString());
+            }
+        });
 
         socket.on("shake", args -> {
             Log.println(Log.INFO, "Shake", "Shake received");
@@ -457,7 +466,18 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     private void handleCheating(String socketid){
 
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.post( new Runnable() {
+
+            @Override
+            public void run() {
+                //Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
     }
+
     /**
      * Handle the shake event
      */
@@ -472,8 +492,53 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     animateClouds(screenWidth);
                     resetClouds(cloudLX, cloudRX);
                 } else {
-                        instructions.setText("You are noe able to cheat, others cant see you");
+                        instructions.setText("You are noe able to cheat, others cant see you !!");
+                        instructions.setTextColor(Color.RED);
+
                         isCheating = true;
+                        ServerConnection.cheat("ghost");
+
+                   /*  for (Player p: players) {
+                        if (!(p.getSid().equals(socket.id()))) {
+                            for (Rabbit r: p.getRabbits()) {
+
+                            }
+                        }
+                    }*/
+                        for (int i = 1; i < fields.length; i++) {
+                            ImageButton field = (ImageButton) findViewById(fields[i]);
+                            field.setEnabled(true);
+
+                            field.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                    int position = ArrayUtils.indexOf(fields, field.getId()) + 1;
+                                    System.out.println("Sending move to server");
+                                    ImageButton fieldtest = (ImageButton) findViewById(fields[position]);
+                                    int delay = 0;
+                                    while (fieldtest.getDrawable() != null) {
+                                        System.out.println("Field is taken, steps + 1");
+                                        ++delay;
+                                        fieldtest = findViewById(fields[delay]);
+                                    }
+                                    final int finalDelay = delay;
+                                    if (checkForHoles(finalDelay)) {
+                                        Log.d("Hole", "onClick: " + finalDelay);
+                                        ServerConnection.reset(0);
+                                        field.setEnabled(false);
+                                    } else {
+                                        Log.d("Cheat Move", "onClick: " + finalDelay);
+                                        ServerConnection.cheatMove(position, currRabbit);
+                                        field.setEnabled(false);
+                                    }
+                                }
+
+                            });
+
+                        }
+                        Toast.makeText(MainActivity.this, "Please choose field you want to move", Toast.LENGTH_LONG).show();
+
                 }
 
             }
@@ -830,7 +895,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void onShakeDetected() {
         if(!isMyTurn) {
             ServerConnection.shake();}
-
 
         //Debugging
        // animateClouds(screenWidth);
