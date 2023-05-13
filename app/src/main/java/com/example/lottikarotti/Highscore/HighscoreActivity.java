@@ -43,9 +43,6 @@ public class HighscoreActivity extends AppCompatActivity {
             }
         });
 
-
-        ServerConnection.updateHighScoreBoard("Amar");
-
         recyclerView.setAdapter(adapter);
     }
 }
