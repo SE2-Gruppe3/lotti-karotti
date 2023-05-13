@@ -200,7 +200,7 @@ io.on('connection', (socket) => {
 
     //Notify each player when voting starts
     socket.on('createvotingpopup', args=> {
-        io.to(lobbycode).emit('createvotingpopup', socket.id);
+        io.to(lobbycode).emit('createvotingpopup', args);
     })
 
     //Carrotspin, notifying Client the carrot has been spun

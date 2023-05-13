@@ -2,24 +2,17 @@ package com.example.lottikarotti;
 
 
 
-import static com.example.lottikarotti.Network.ServerConnection.checkIfConnectionIsAlive;
-import static com.example.lottikarotti.Network.ServerConnection.createNewLobby;
-import static com.example.lottikarotti.Network.ServerConnection.getListOfConnectedPlayers;
-import static com.example.lottikarotti.Network.ServerConnection.getNumberOfConnectedPlayers;
 //import static com.example.lottikarotti.Network.ServerConnection.getSocket;
-import static com.example.lottikarotti.Network.ServerConnection.registerNewPlayer;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+        import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.SharedPreferences;
+        import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,34 +23,25 @@ import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.PointF;
-import android.content.SharedPreferences;
-import android.graphics.Color;
-import android.hardware.Sensor;
+        import android.graphics.PointF;
+        import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Bundle;
-import android.os.Handler;
+        import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
+        import android.view.ViewGroup;
 
-import android.view.WindowManager;
-import android.widget.Button;
+        import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+        import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -80,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
     private Button carrotButton;
+    private String accusedPlayer;
     private ImageButton settingsButton;
     private Button drawButton;
     private Button startTurn;
@@ -158,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://143.205.196.98:3000");
+            socket = ServerConnection.getInstance("http://10.2.0.60:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
@@ -253,7 +238,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         socket.on("createvotingpopup", args -> {
             Log.println(Log.INFO, "Voting", "Voting startet");
             try {
-                createVotingPopup(args[0].toString(), MainActivity.this);
+                createVotingPopup((String) args[0], MainActivity.this);
             }catch (Exception e){
                 Log.w(TAG, "Can't start voting process \n" + e.toString());
             }
@@ -380,12 +365,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 View dialogView = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_voting, null);
-                builder.setTitle("Cheater voting system")
+                builder.setTitle("Enter the username of the suspected cheater: ")
                         .setView(dialogView)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 TextView username = dialogView.findViewById(R.id.txt_VotingUsername);
+                                accusedPlayer = username.getText().toString();
                                 Toast.makeText(getApplicationContext(), "Works! " + username.getText().toString(), Toast.LENGTH_SHORT).show();
                                 socket.emit("createvotingpopup");
                             }
@@ -400,8 +386,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 dialog.show();
             }
         });
-
-
     }
 
 
@@ -522,20 +506,21 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             @Override
             public void run() {
                 AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                View dialogView = LayoutInflater.from(activity).inflate(R.layout.popup_voting, null);
-                builder.setTitle("Cheater voting system")
+                View dialogView = LayoutInflater.from(activity).inflate(R.layout.popup_voting2, null);
+                TextView accusedPlayerTxt = dialogView.findViewById(R.id.txt_AccusedPlayer);
+                accusedPlayerTxt.setText(accusedPlayer);
+                builder.setTitle("")
                         .setView(dialogView)
-                        .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                TextView username = dialogView.findViewById(R.id.txt_VotingUsername);
-                                Toast.makeText(MainActivity.this.getApplicationContext(), "Works! " + username.getText().toString(), Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this.getApplicationContext(), "Voted yes!" + accusedPlayer, Toast.LENGTH_SHORT).show();
                             }
                         })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(MainActivity.this.getApplicationContext(), "Voting aborted!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this.getApplicationContext(), "Voted no!", Toast.LENGTH_SHORT).show();
                             }
                         });
                 AlertDialog dialog = builder.create();
