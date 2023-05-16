@@ -172,6 +172,18 @@ public class ServerConnection {
     public interface DrawCardCallback {
         void onCardDrawn(int random);
     }
+    public static void registerNewPlayer(String name) {
+        socket.emit("register", name);
+    }
+
+    public static void createNewLobby(String lobbyCode) {
+        socket.emit("createlobby", lobbyCode);
+    }
+
+    public static void joinLobby(String lobbyCode) {
+        socket.emit("joinlobby", lobbyCode);
+    }
+
     public static void move(int steps, int rabbitNo) {
         socket.emit("move", steps, rabbitNo);
     }
