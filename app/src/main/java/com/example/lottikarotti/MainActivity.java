@@ -10,7 +10,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -31,7 +30,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.lottikarotti.Highscore.HighscoreActivity;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -44,7 +42,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.net.URISyntaxException;
-import java.sql.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -54,9 +51,7 @@ import io.socket.client.Socket;
 
 
 public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener {
-
-
-
+    private String lobbyid;
     private Button carrotButton;
     private ImageButton settingsButton;
     private Button buttonHighScore;
@@ -117,10 +112,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
             R.drawable.card4};
     final int[] holes = {
-       R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
+       R.id.hole0, R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
   
-    private static int hole = -1;
+    private static int hole;
 
 
     final int[] fields = { R.id.buttonField1,
@@ -147,21 +142,21 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }
 
         Intent intent = getIntent();
-        String lobbyId = intent.getStringExtra("lobbyId");
+        lobbyid = intent.getStringExtra("lobbyId");
         String username = intent.getStringExtra("username");
         String info = intent.getStringExtra("info");
 
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
         if(info.equals("start")){
-            ServerConnection.createNewLobby(lobbyId);
-            ServerConnection.joinLobby(lobbyId);
+            ServerConnection.createNewLobby(lobbyid);
+            ServerConnection.joinLobby(lobbyid);
         }
         else{
-            ServerConnection.joinLobby(lobbyId);
+            ServerConnection.joinLobby(lobbyid);
         }
         TextView LobbyIDView = findViewById(R.id.lobbyID);
-        LobbyIDView.setText(lobbyId);
+        LobbyIDView.setText(lobbyid);
        // Intent intent = getIntent();
                 players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
@@ -215,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         gameBoard = (ImageView) findViewById(R.id.imageView);
         figOne = (ImageView) findViewById(R.id.rabbit1);
-        myTurn = false;
         touchCounter = 0;
         touchCntLimit = -1;
         corX = -1;
@@ -348,7 +342,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 drawButton.setEnabled(false);
                 setMyTurn(false);
 
-               ServerConnection.carrotSpin();
+
+                ServerConnection.carrotSpin(lobbyid);
 
                 carrotButton.setEnabled(false);
             }
@@ -468,6 +463,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         field.setEnabled(true);
         int puffer = steps+add;
         int addPuff = add;
+
         field.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -595,9 +591,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         Log.d("Carrotspin", "Carrotspin received from server");
         String fieldid = "buttonfield"+number;
         Log.d("Carrotspin", "Field: "+fieldid);
-        hole = Integer.parseInt(number);
-        Log.d("Carrotspin", "Hole: "+hole);
-        putHolesOnBoard();
+        Log.d("Carrotspin", "Hole: "+ Integer.parseInt(number));
+        putHolesOnBoard(Integer.parseInt(number));
     }
 
 
@@ -671,90 +666,90 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Puts the holes on the board
      **/
-    private void putHolesOnBoard() {
+    private void putHolesOnBoard(int holer) {
         runOnUiThread(()-> {
-            for (int hole : holes) {
-                    ImageView img = (ImageView) findViewById(hole);
+            for (int h : holes) {
+                    ImageView img = (ImageView) findViewById(h);
                     img.setVisibility(View.GONE);
                 }
 
-                ImageView img=(ImageView)findViewById(holes[hole]);
+                ImageView img=(ImageView)findViewById(holes[holer]);
                 img.setVisibility(View.VISIBLE);
-                checkForRabbit();
+                checkForRabbit(holer);
                 carrotButton.setEnabled(false);
-               // playerMove(0, 0);
+                playerMove(0, 0);
         });
     }
 
-    private void checkForRabbit() {
+    private void checkForRabbit(int hole) {
         ImageButton puffer;
         switch (hole) {
-            case -1:
-                break;
             case 0:
+                break;
+            case 1:
                 puffer = findViewById(fields[3]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(3);
                 }
                 break;
-            case 1:
+            case 2:
                 puffer = findViewById(fields[5]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(5);
                 }
                 break;
-            case 2:
+            case 3:
                 puffer = findViewById(fields[7]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(7);
                 }
                 break;
-            case 3:
+            case 4:
                 puffer = findViewById(fields[9]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(9);
                 }
                 break;
-            case 4:
+            case 5:
                 puffer = findViewById(fields[12]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(12);
                 }
                 break;
-            case 5:
+            case 6:
                 puffer = findViewById(fields[17]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(17);
                 }
                 break;
-            case 6:
+            case 7:
                 puffer = findViewById(fields[19]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(19);
                 }
                 break;
-            case 7:
+            case 8:
                 puffer = findViewById(fields[22]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(22);
                 }
                 break;
-            case 8:
+            case 9:
                 puffer = findViewById(fields[25]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
                     ServerConnection.reset(25);
                 }
                 break;
-            case 9:
+            case 10:
                 puffer = findViewById(fields[27]);
                 if (puffer.getDrawable() != null) {
                     puffer.setImageResource(0);
@@ -766,6 +761,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     private boolean checkForHoles(int position){
         Log.d("Rabbit", "checkForHoles: " + position);
+        //int hole = -1;
         if( hole != -1) {
             switch (position) {
                 case 3:

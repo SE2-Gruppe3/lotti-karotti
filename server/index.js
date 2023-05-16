@@ -11,7 +11,6 @@
 const server = require('./utils/server.js');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
-const fs = require('fs');
 const storeClientInfo = require('./utils/storeClient.js');
 const storeLobbyInfo = require('./utils/storeLobby.js');
 const playerExist = require('./utils/checkPlayerExists.js');
@@ -65,6 +64,8 @@ io.on('connection', (socket) => {
     //********************************************************************************************************** */
     //                          ***PLEASE PUT YOUR LISTENERS/EMITTERS BELOW HERE***                              */
     //********************************************************************************************************** */
+
+    //********************************************************************************************************** */
     //                          ***Basic gerver functions below here***                                          */
     //********************************************************************************************************** */
 
@@ -97,36 +98,14 @@ io.on('connection', (socket) => {
             // Emit errorCode 400 - Name already taken
             socket.to(socket.id).emit('error', 400);
         }
+
     });
+
 
     socket.on('getplayerlist', () => {
         console.log('[Server] Sending player list information!');
         io.to(lobbycode).emit('getplayerlist', clientsList);
     });
-
-    socket.on('gethighscore', () => {
-        fs.readFile('highscore.json', 'utf8', (err, data) => {
-            if(err) {
-                console.log("Error loading file!");
-            }
-            const jsonData = JSON.parse(data);
-            console.log('[Server] Sending players highscore information!');
-        io.emit('gethighscore', jsonData);
-        });
-    });
-
-    socket.on('saveupdatedhighscore', (jsonArray) => {
-        try {
-            fs.writeFile('highscore.json', JSON.stringify(jsonArray), (err) => {
-                if (err) throw err;
-                console.log('[Server] Successfully saved updated Highscore list');
-                socket.emit('saveJsonSuccess');
-            });
-        } catch (err) {
-            console.error('[Server] Error while updating highscore list');
-            socket.emit('saveJsonError', 'Invalid JSON array');
-        }
-    });    
 
     //********************************************************************************************************** */
     //                          ***Lobby and Online Logic below here***                                          */
@@ -139,16 +118,14 @@ io.on('connection', (socket) => {
             console.error("[Server] Error while creating lobby (error 300)");
         } else {
             console.log("[Server] Lobby creation");
-            lobbies.push(storeLobbyInfo(code, socket.id));
+            lobbies.push(storeLobbyInfo(code, socket.id, 0));
             lobbies[lobbies.length-1].players.push(fetchClientInstance(clientsList, socket.id));
-            
+
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t"+JSON.stringify(lobbies));
             socket.join(code);
             lobbycode = code;
             saveGameData(socket.id, lobbycode);
             io.to(socket.id).emit("createlobby", 1);
-            // Set turn true for owner
-            io.to(socket.id).emit('turn', socket.id);
         }
     });
 
@@ -202,20 +179,16 @@ io.on('connection', (socket) => {
 
     // Move logic, Client must handle the logic accordingly
     // Please don't forget rabbit1 = 0, rabbit2 = 1, rabbit3 = 2, rabbit4 = 3
-    socket.on('move', (steps, rabbit) =>{
+    socket.on('move', (steps, rabbit) =>{   
         if(registered === 1 && lobbycode !== 0 && steps < 8){
             var game = fetchGameDataInstance(gameData, socket.id);
-            
+
             var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
             gameData = positionAvail(gameData, newpos);
             game.rabbits[parseInt(rabbit)].position = newpos;
-            var lobbygame = fetchLobbyGameData(gameData,lobbycode);
-            
+
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
-            console.log("[Server] Player "+JSON.stringify(fetchClientInstance(clientsList, socket.id))+" is moving "+steps+" steps with rabbit "+rabbit+"!");
-
-
-           setTurn();
+            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!");
         }else{
             console.error("[Server] Invalid move!")
             io.to(socket.id).emit("error", 500);
@@ -244,14 +217,23 @@ io.on('connection', (socket) => {
     });
 
     //Carrotspin, notifying Client the carrot has been spun
-    socket.on('carrotspin', args=>{
-        const randomField = Math.floor(Math.random() * 10);
-        console.log('Random Field (hole):', randomField);
-        io.to(lobbycode).emit('carrotspin', socket.id, randomField);
-
-        setTurn();
+    //socket.on('carrotspinning', args=>{
+        //const randomField = Math.floor(Math.random() * 10);
+       // console.log('Random Field (hole):', randomField);
+        //io.to(lobbycode).emit('carrotspinning', socket.id, randomField);
+   // });
+    socket.on('carrotspin', (lobbycode) => {
+        const randomhole = Math.floor(Math.random() * 11);
+        let lobbyIndex = lobbies.findIndex(lobby => lobby.code === lobbycode);
+        if (lobbyIndex !== -1) {
+            lobbies[lobbyIndex].hole = randomhole;
+            console.log(`[Server] Lobby ${lobbycode}'s hole updated to ${randomhole}`);
+            io.to(lobbycode).emit('carrotspin', socket.id, randomhole);
+        } else {
+            console.error(`[Server] Lobby with code ${lobbycode} not found`);
+        }
     });
-
+    
     //Cheating, remark someone has cheated
         socket.on('cheat', args=>{
 
@@ -261,7 +243,6 @@ io.on('connection', (socket) => {
             }
             io.to(lobbycode).emit('cheat', socket.id);
         });
-
     //Hole appears below Rabbit logic
     socket.on('reset', (pos) => {
         var game = fetchGameDataInstance(gameData, socket.id);
@@ -275,30 +256,12 @@ io.on('connection', (socket) => {
             }
         }
         io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
-        setTurn();
     });
 
-
-    socket.on('drawcard', () => {
-        let card = Math.floor(Math.random() * 4);
-        console.log("[Server] Player drawed a card number " + card);
-        io.to(lobbycode).emit('drawcard', card);
-    });
 
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
     //********************************************************************************************************** */
-
-    function setTurn(){
-        var lobby = fetchLobbyInstance(lobbies, lobbycode);
-        // Sending out turn to next player
-        lobby.socket_turn++;
-        if(lobby.socket_turn == lobby.players.length) lobby.socket_turn = 0;
-
-        io.to(lobby.players[lobby.socket_turn].clientId).emit('turn', lobby.players[lobby.socket_turn].clientId);
-        console.log("[Server] Next turn is id "+lobby.players[lobby.socket_turn].clientId);
-    }
-
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
         playercounter -= 1;
@@ -358,4 +321,3 @@ io.on('connection', (socket) => {
         gameData.push(gameDataTemp);
         console.log("[Server] Game data saved!\n");
     }
-
