@@ -86,17 +86,6 @@ public class ServerConnection {
         void onPlayerListReceived(List<String> playerList);
     }
 
-    public static void registerNewPlayer(String name) {
-        socket.emit("register", name);
-    }
-
-    public static void createNewLobby(String lobbyCode) {
-        socket.emit("createlobby", lobbyCode);
-    }
-
-    public static void joinLobby(String lobbyCode) {
-        socket.emit("joinlobby", lobbyCode);
-    }
 
     public static void getHighScoreBoard(Activity activity, HighScoreBoardCallback callback){
         socket.on("gethighscore", args -> {
