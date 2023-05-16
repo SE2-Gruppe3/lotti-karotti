@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int cloudRX;
 
     //--------------------------------
-    private boolean isMyTurn;
+    private boolean isMyTurn = true;
     private boolean isCheating;
     private List<Player> players;
     private String sid;
@@ -156,7 +156,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             ServerConnection.joinLobby(lobbyid);
         }
         TextView LobbyIDView = findViewById(R.id.lobbyID);
-        LobbyIDView.setText(lobbyid);
+        LobbyIDView.setText("LobbyID: " + lobbyid);
        // Intent intent = getIntent();
                 players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
