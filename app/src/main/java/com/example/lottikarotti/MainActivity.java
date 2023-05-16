@@ -155,11 +155,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ServerConnection.fetchUnique();
         if(info.equals("start")){
             ServerConnection.createNewLobby(lobbyId);
-            ServerConnection.joinLobby(lobbyId);
+            //ServerConnection.joinLobby(lobbyId);
         }
         else{
             ServerConnection.joinLobby(lobbyId);
         }
+        TextView LobbyIDView = findViewById(R.id.lobbyID);
+        LobbyIDView.setText(lobbyId);
        // Intent intent = getIntent();
                 players = new ArrayList<>();
         /// Example of getting server response using callbacks - We get here online player count back
