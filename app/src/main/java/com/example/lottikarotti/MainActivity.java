@@ -502,7 +502,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     animateClouds(screenWidth);
                     resetClouds(cloudLX, cloudRX);
                 } else {
-                        instructions.setText("You are noe able to cheat, others cant see you !!");
+                        instructions.setText("You are now able to cheat, others cant see you !!");
                         instructions.setTextColor(Color.RED);
 
                         isCheating = true;
@@ -530,9 +530,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                                     while (fieldtest.getDrawable() != null) {
                                         System.out.println("Field is taken, steps + 1");
                                         ++delay;
-                                        fieldtest = findViewById(fields[delay]);
+                                        fieldtest = findViewById(fields[delay+position]);
                                     }
-                                    final int finalDelay = delay;
+                                    final int finalDelay = delay+position;
                                     if (checkForHoles(finalDelay)) {
                                         Log.d("Hole", "onClick: " + finalDelay);
                                         ServerConnection.reset(0);
