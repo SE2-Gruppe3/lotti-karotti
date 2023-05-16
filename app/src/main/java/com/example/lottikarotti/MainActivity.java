@@ -1,5 +1,6 @@
 package com.example.lottikarotti;
 
+import org.apache.commons.lang3.ArrayUtils;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 
@@ -10,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.PointF;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import org.apache.commons.lang3.ArrayUtils;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
         try {
-            socket = ServerConnection.getInstance("http://143.205.196.98:3000");
+            socket = ServerConnection.getInstance("http://10.0.0.6:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
