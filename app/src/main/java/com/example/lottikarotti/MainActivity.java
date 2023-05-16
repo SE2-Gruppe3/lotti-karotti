@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     final int[] cards = {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
             R.drawable.card4 };
-    final int[] holes = { 0,
+    final int[] holes = { R.id.hole0,
             R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
     private static int hole = -1;
