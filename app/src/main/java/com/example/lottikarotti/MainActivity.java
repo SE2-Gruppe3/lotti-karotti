@@ -155,7 +155,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ServerConnection.fetchUnique();
         if(info.equals("start")){
             ServerConnection.createNewLobby(lobbyId);
-            //ServerConnection.joinLobby(lobbyId);
+            ServerConnection.joinLobby(lobbyId);
         }
         else{
             ServerConnection.joinLobby(lobbyId);
@@ -682,7 +682,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 img.setVisibility(View.VISIBLE);
                 checkForRabbit();
                 carrotButton.setEnabled(false);
-                playerMove(0, 0);
+               // playerMove(0, 0);
         });
     }
 
