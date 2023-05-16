@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://143.205.194.174:3000");
+            socket = ServerConnection.getInstance("http://10.0.0.6:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
