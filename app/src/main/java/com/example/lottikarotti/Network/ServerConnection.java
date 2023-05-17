@@ -195,5 +195,5 @@ public class ServerConnection {
     public static void reset(int pos){
         socket.emit("reset", pos);
     }
-    public static void checkHole(String lobbyCode) { socket.emit ("checkhole", lobbyCode); }
+    public static void getHole(String lobbyCode, int desiredPos, int rabbit) { socket.emit ("gethole", lobbyCode, desiredPos, rabbit); }
 }

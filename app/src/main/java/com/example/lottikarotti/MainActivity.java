@@ -52,7 +52,7 @@ import io.socket.client.Socket;
 
 public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener {
 
-
+    private String lobbyId;
     private Button carrotButton;
     private ImageButton settingsButton;
     private Button drawButton;
@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     final int[] holes = { R.id.hole0,
             R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
-    private static int hole = -1;
+    private static int currHole = -1;
 
     final int[] fields = { R.id.buttonField1,
             R.id.buttonField1, R.id.buttonField2,R.id.buttonField3,R.id.buttonField4,R.id.buttonField5,R.id.buttonField6,R.id.buttonField7,
@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             throw new RuntimeException(e);
         }
         Intent intent = getIntent();
-        String lobbyId = intent.getStringExtra("lobbyId");
+        lobbyId = intent.getStringExtra("lobbyId");
         String username = intent.getStringExtra("username");
         String info = intent.getStringExtra("info");
 
@@ -250,6 +250,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 handleCarrotspin(args[0].toString(), args[1].toString());
             }catch (Exception e){
                 Log.w(TAG, "Can't handle carrotspin \n" + e.toString());
+            }
+        });
+
+        socket.on("gethole", args -> {
+            Log.println(Log.INFO, "Hole", "gethole received");
+            try {
+                handleGetHole(args[0].toString(), args[1].toString(), args[2].toString(), args[3].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle gethole \n" + e.toString());
             }
         });
 
@@ -376,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         setMyTurn(false);
     }
 
+
     private void setColorForRabbits() {
         Log.d("Rabbit", "setColorForRabbits: " + players.size());
         for (Player players : players) {
@@ -451,7 +461,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ImageButton field = (ImageButton) findViewById(fields[steps+add]);
         field.setEnabled(true);
         int puffer = steps+add;
-        int addPuff = add;
+        //int addPuff = add;
         field.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -464,15 +474,16 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     fieldtest =findViewById(fields[puffer+delay]);
                 }
                 final int finalDelay = delay;
-                if(checkForHoles(puffer+finalDelay)){
-                    Log.d("Hole", "onClick: " + finalDelay);
-                    ServerConnection.reset(addPuff);
+                ServerConnection.getHole(lobbyId, puffer+finalDelay, rabbit);
+//                if(checkForHoles(puffer+finalDelay)){
+//                    Log.d("Hole", "onClick: " + finalDelay);
+//                    ServerConnection.reset(addPuff);
+//                    field.setEnabled(false);
+//                } else {
+//                    Log.d("Move", "onClick: " + finalDelay);
+//                    ServerConnection.move(steps + finalDelay, rabbit);
                     field.setEnabled(false);
-                } else {
-                    Log.d("Move", "onClick: " + finalDelay);
-                    ServerConnection.move(steps + finalDelay, rabbit);
-                    field.setEnabled(false);
-                }
+               // }
             }
         });
     }
@@ -504,6 +515,31 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
     }
+    private void handleGetHole(String json, String hole, String desired, String rabbit) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        players = Arrays.asList(mapper.readValue(json, Player[].class));
+
+
+                //Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
+                Log.d("Hole", "run: " + hole + " " + desired + " " + rabbit);
+                int currhole = Integer.parseInt(hole);
+                int desiredPos = Integer.parseInt(desired);
+                int rabbitCurr = Integer.parseInt(rabbit);
+                Log.d("Hole", "handlegethole: " + players.size());
+                for(Player p: players){
+                    Log.d("Hole", "Players");
+                    if(p.getSid().equals(socket.id())){
+                        Log.d("Hole", "Socket match");
+                        runOnUiThread(() -> {
+                            checkForHoles(p.getRabbits().get(rabbitCurr).getPosition(), currhole, desiredPos, rabbitCurr);
+                        });
+
+                        }
+                    }
+                }
+
+
+
 
     /**
      * Handle the shake event
@@ -550,21 +586,22 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                                     fieldtest = findViewById(fields[delay+position]);
                                 }
                                 final int finalDelay = delay+position;
-                                if (checkForHoles(finalDelay)) {
-                                    Log.d("Hole", "onClick: " + finalDelay);
-                                    for (Player p: players) {
-                                        if (p.getSid().equals(socket.id())) {
-                                            ServerConnection.reset(p.getRabbits().get(currRabbit).getPosition());
-                                        }
-                                    }
-                                   // ServerConnection.reset();
+                                ServerConnection.getHole(lobbyId, finalDelay, currRabbit);
+//                                if (checkForHoles(finalDelay)) {
+//                                    Log.d("Hole", "onClick: " + finalDelay);
+//                                    for (Player p: players) {
+//                                        if (p.getSid().equals(socket.id())) {
+//                                            ServerConnection.reset(p.getRabbits().get(currRabbit).getPosition());
+//                                        }
+//                                    }
+//                                   // ServerConnection.reset();
                                     field.setEnabled(false);
-                                } else {
-                                    Log.d("Cheat Move", "onClick: " + finalDelay);
-                                    ServerConnection.cheatMove(finalDelay, currRabbit);
-                                    field.setEnabled(false);
-                                    isCheating=false;
-                                }
+//                                } else {
+//                                    Log.d("Cheat Move", "onClick: " + finalDelay);
+//                                    ServerConnection.cheatMove(finalDelay, currRabbit);
+//                                    field.setEnabled(false);
+//                                    isCheating=false;
+//                                }
                             }
 
                         });
@@ -588,7 +625,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         String fieldid = "buttonfield"+number;
         Log.d("Carrotspin", "Field: "+fieldid);
         //hole = Integer.parseInt(number);
-        Log.d("Carrotspin", "Hole: "+hole);
+        Log.d("Carrotspin", "Hole: "+currHole);
         putHolesOnBoard(Integer.parseInt(number));
 
     }
@@ -676,8 +713,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             img.setVisibility(View.VISIBLE);
             checkForRabbit(holer);
             carrotButton.setEnabled(false);
-            //playerMove(0, 0);
-            renderBoard();
+            playerMove(0, 0);
+            //renderBoard();
         });
     }
 
@@ -759,85 +796,70 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }
     }
 
-    private boolean checkForHoles(int position){
-        Log.d("Rabbit", "checkForHoles: " + position);
-        if( hole != -1) {
-            switch (position) {
+    private void checkForHoles(int currPos, int currHole, int desiredPos, int rabbit){
+        Log.d("Rabbit", "checkForHoles: " + currPos);
+        if( currHole != 0 && (desiredPos == 3 || desiredPos == 5 || desiredPos == 7 || desiredPos == 9 || desiredPos == 12 || desiredPos == 17 || desiredPos == 19 || desiredPos == 22 || desiredPos == 25 || desiredPos == 27)) {
+            switch (desiredPos) {
                 case 3:
-                    if (hole == 0) {
-                        return true;
-//                        rabbitBtn.setImageResource(0);
-//                                ServerConnection.reset(position);
+                    if (currHole == 1) {
+                        ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
-                    return false;
+
 
                 case 5:
-                    if (hole == 1) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
+                    if (currHole == 2) {
+                        ServerConnection.reset(currPos);
                     }
-                    return false;
+                    break;
 
                 case 7:
-                    if (hole == 2) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
+                    if (currHole == 3) {
+                        ServerConnection.reset(currPos);
                     }
-                    return false;
-                case 9:
-                    if (hole == 3) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
-                    }
-                    return false;
-                case 12:
-                    if (hole == 4) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
-                    }
-                    return false;
-                case 17:
-                    if (hole == 5) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
-                    }
-                    return false;
-                case 19:
-                    if (hole == 6) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
-                    }
-                    return false;
-                case 22:
-                    if (hole == 7) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
-                    }
-                    return false;
-                case 25:
-                    if (hole == 8) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
-                    }
-                    return false;
-                case 27:
-                    if (hole == 9) {
-//                        rabbitBtn.setImageResource(0);
-//                        ServerConnection.reset(position);
-                        return true;
-                    }
-                    return false;
-            }
-        } return false;
+                    break;
 
+                case 9:
+                    if (currHole == 4) {
+                        ServerConnection.reset(currPos);
+                    }
+                    break;
+                case 12:
+                    if (currHole == 5) {
+                        ServerConnection.reset(currPos);
+                    }
+                    break;
+                case 17:
+                    if (currHole == 6) {
+                        ServerConnection.reset(currPos);
+                    }
+                    break;
+                case 19:
+                    if (currHole == 7) {
+                        ServerConnection.reset(currPos);
+                    }
+                    break;
+                case 22:
+                    if (currHole == 8) {
+                        ServerConnection.reset(currPos);
+                    }
+                    break;
+                case 25:
+                    if (currHole == 9) {
+                        ServerConnection.reset(currPos);
+                    }
+                    break;
+                case 27:
+                    if (currHole == 10) {
+                        ServerConnection.reset(currPos);
+                    }
+                    break;
+            }
+        } else {
+            ServerConnection.move(desiredPos-currPos, rabbit);
+        }
     }
 
 

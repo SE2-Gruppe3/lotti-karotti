@@ -240,7 +240,17 @@ io.on('connection', (socket) => {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
     });
-    
+    //getHole. A method to receive the current hole on the Map for a specific server
+    socket.on('gethole', (lobbycode, desiredPos, rabbit) => {
+        let lobbyIndex = lobbies.findIndex(lobby => lobby.code === lobbycode);
+        if (lobbyIndex !== -1) {
+            var currHole = lobbies[lobbyIndex].hole;
+            console.log(`[Server] Lobby ${lobbycode}'s hole is currently ${currHole}`);
+            io.to(lobbycode).emit('gethole', fetchLobbyGameData(gameData, lobbycode), currHole, desiredPos, rabbit);
+        } else {
+            console.error(`[Server] Lobby with code ${lobbycode} not found`);
+        }
+    });
     //Cheating, remark someone has cheated
         socket.on('cheat', args=>{
 
