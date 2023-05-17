@@ -3,11 +3,14 @@ package com.example.lottikarotti;
 import org.apache.commons.lang3.ArrayUtils;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PointF;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -19,6 +22,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -134,6 +139,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         String username = intent.getStringExtra("username");
         String info = intent.getStringExtra("info");
 
+        TextView lobbyID = findViewById(R.id.lobbyID);
+        lobbyID.setText("Lobby ID: " + lobbyId);
+
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
         if(info.equals("start")){
@@ -159,23 +167,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
-        isMyTurn = false;
+       // isMyTurn = false;
 
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
         rabbit4 = (ImageView) findViewById(R.id.rabbit4);
 
-
         rabbit1.setImageResource(R.drawable.fig11);
         rabbit2.setImageResource(R.drawable.fig11);
         rabbit3.setImageResource(R.drawable.fig11);
         rabbit4.setImageResource(R.drawable.fig11);
-
-
-
-
-
 
         instructions= (TextView) findViewById(R.id.textViewInstructions);
 
@@ -183,7 +185,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         containerplayerList = findViewById(R.id.container_playerList);
         fragmentPlayerList = new PlayerListFragment();
 
-
+        //Disale all fields at the start of the game
         for (int field : fields) {
             ImageButton button= (ImageButton)findViewById(field);
             button.setEnabled(false);
@@ -204,7 +206,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         myTurn = false;
         touchCounter = 0;
         touchCntLimit = -1;
-        corX = -1; corY = -1;
+        corX = -1;
+        corY = -1;
         radius = 180;
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
@@ -248,6 +251,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }catch (Exception e){
                 Log.w(TAG, "Can't handle carrotspin \n" + e.toString());
             }
+        });
+
+        socket.on("turn", id -> {
+            Log.println(Log.INFO, "Turn", "Turn received" +id[0].toString()+"<-gerver - l0cal->"+socket.id().toString());
+            if (id[0].toString().equals(socket.id().toString())) setMyTurn(true);
+
         });
 
         /**
@@ -316,7 +325,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+        // Toggle Player rabbits (disable if not own turn initially)
+        togglePlayerRabbits();
 
+
+        /**
+         * Turn Carrot
+         */
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -332,8 +347,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         drawButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
 
                 Random rand = new Random();
                 int random = rand.nextInt(4);
@@ -360,6 +373,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+        setMyTurn(false);
     }
 
     private void setColorForRabbits() {
@@ -410,6 +424,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         if(!myTurn) {
             sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
+        updateBrightness();
     }
     @Override
     protected void onPause() {
@@ -422,7 +437,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * @param steps
      */
     private void playerMove(int steps, int rabbit){
-        isMyTurn = true;
+        if (!isMyTurn) return;
+
         System.out.println(steps+" steps with rabbit "+rabbit);
         int add = 0;
         for (Player payer:players) {
@@ -536,7 +552,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                                 final int finalDelay = delay+position;
                                 if (checkForHoles(finalDelay)) {
                                     Log.d("Hole", "onClick: " + finalDelay);
-                                    ServerConnection.reset(0);
+                                    for (Player p: players) {
+                                        if (p.getSid().equals(socket.id())) {
+                                            ServerConnection.reset(p.getRabbits().get(currRabbit).getPosition());
+                                        }
+                                    }
+                                   // ServerConnection.reset();
                                     field.setEnabled(false);
                                 } else {
                                     Log.d("Cheat Move", "onClick: " + finalDelay);
@@ -617,7 +638,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 }
             }
         }
-        isMyTurn = false;
+        setMyTurn(false);
     }
     private void setColorForRabbitsRender(ImageButton rabbitbtn, String color) {
         switch (color) {
@@ -641,10 +662,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
 
-
-
-
-
     /**
      * Puts the holes on the board
      **/
@@ -659,14 +676,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             img.setVisibility(View.VISIBLE);
             checkForRabbit(holer);
             carrotButton.setEnabled(false);
+            //playerMove(0, 0);
             renderBoard();
         });
     }
 
     private void checkForRabbit(int hole) {
         ImageButton puffer;
-//        R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
-//                R.id.hole22,R.id.hole25,R.id.hole27};
         switch (hole) {
             case 0:
                 break;
@@ -949,6 +965,28 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         }, 5000);
     }
+    public void setMyTurn(boolean myTurn) {
+        isMyTurn = myTurn;
+        togglePlayerRabbits();
+        Log.d("Game", "setMyTurn: " + isMyTurn);
+    }
+    private void togglePlayerRabbits() {
+        Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
+        runOnUiThread(() -> {
+            if (isMyTurn) {
+                rabbit1.setEnabled(true);
+                rabbit2.setEnabled(true);
+                rabbit3.setEnabled(true);
+                rabbit4.setEnabled(true);
+            } else {
+                drawButton.setEnabled(false);
+                rabbit1.setEnabled(false);
+                rabbit2.setEnabled(false);
+                rabbit3.setEnabled(false);
+                rabbit4.setEnabled(false);
+            }
+        });
+    }
 
     private void getRabbitStartPos() {
         for (int i = 0; i < rabbits.length; i++) {
@@ -1001,6 +1039,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         Log.d("Game", "Moved rabbit to: " + startXx + " " + startYy);
 
     }
+    private void updateBrightness() {
+        SharedPreferences sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
+        int brightness = sharedBrightness.getInt("brightness", 100);
+        WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
+        layoutPar.screenBrightness = brightness / 255f;
+        getWindow().setAttributes(layoutPar);
+    }
+
 
 
 }

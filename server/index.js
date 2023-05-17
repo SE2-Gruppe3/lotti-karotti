@@ -126,6 +126,8 @@ io.on('connection', (socket) => {
             lobbycode = code;
             saveGameData(socket.id, lobbycode);
             io.to(socket.id).emit("createlobby", 1);
+             // Set turn true for owner
+             io.to(socket.id).emit('turn', socket.id);
         }
     });
 
@@ -179,16 +181,20 @@ io.on('connection', (socket) => {
 
     // Move logic, Client must handle the logic accordingly
     // Please don't forget rabbit1 = 0, rabbit2 = 1, rabbit3 = 2, rabbit4 = 3
-    socket.on('move', (steps, rabbit) =>{   
+    socket.on('move', (steps, rabbit) =>{
         if(registered === 1 && lobbycode !== 0 && steps < 8){
             var game = fetchGameDataInstance(gameData, socket.id);
-
+            
             var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
             gameData = positionAvail(gameData, newpos);
             game.rabbits[parseInt(rabbit)].position = newpos;
-
+            var lobbygame = fetchLobbyGameData(gameData,lobbycode);
+            
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
-            console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" is moving "+steps+" steps with rabbit "+rabbit+"!");
+            console.log("[Server] Player "+JSON.stringify(fetchClientInstance(clientsList, socket.id))+" is moving "+steps+" steps with rabbit "+rabbit+"!");
+
+
+           setTurn();
         }else{
             console.error("[Server] Invalid move!")
             io.to(socket.id).emit("error", 500);
@@ -229,6 +235,7 @@ io.on('connection', (socket) => {
             lobbies[lobbyIndex].hole = randomhole;
             console.log(`[Server] Lobby ${lobbycode}'s hole updated to ${randomhole}`);
             io.to(lobbycode).emit('carrotspin', socket.id, randomhole);
+            setTurn();
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
@@ -256,12 +263,25 @@ io.on('connection', (socket) => {
             }
         }
         io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
+        setTurn();
     });
 
 
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
     //********************************************************************************************************** */
+    
+    function setTurn(){
+        var lobby = fetchLobbyInstance(lobbies, lobbycode);
+        // Sending out turn to next player
+        lobby.socket_turn++;
+        if(lobby.socket_turn == lobby.players.length) lobby.socket_turn = 0;
+
+        io.to(lobby.players[lobby.socket_turn].clientId).emit('turn', lobby.players[lobby.socket_turn].clientId);
+        console.log("[Server] Next turn is id "+lobby.players[lobby.socket_turn].clientId);
+    }
+    
+    
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
         playercounter -= 1;

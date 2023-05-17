@@ -1,10 +1,12 @@
 package com.example.lottikarotti;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -96,4 +98,18 @@ public class LobbyActivity extends AppCompatActivity {
         intent.putExtra("info", String.valueOf(info));
         startActivity(intent);
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateBrightness();
+    }
+    private void updateBrightness() {
+        SharedPreferences sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
+        int brightness = sharedBrightness.getInt("brightness", 100);
+        WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
+        layoutPar.screenBrightness = brightness / 255f;
+        getWindow().setAttributes(layoutPar);
+    }
+
 }
