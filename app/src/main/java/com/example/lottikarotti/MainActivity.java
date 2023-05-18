@@ -468,11 +468,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 System.out.println("Sending move to server");
                 ImageButton fieldtest = (ImageButton) findViewById(fields[puffer]);
                 int delay = 0;
-                while(fieldtest.getDrawable() != null){
-                    System.out.println("Field is taken, steps + 1");
-                    ++delay;
-                    fieldtest =findViewById(fields[puffer+delay]);
-                }
+//                while(fieldtest.getDrawable() != null){
+//                    System.out.println("Field is taken, steps + 1");
+//                    ++delay;
+//                    fieldtest =findViewById(fields[puffer+delay]);
+//                }
                 final int finalDelay = delay;
                 ServerConnection.getHole(lobbyId, puffer+finalDelay, rabbit);
 //                if(checkForHoles(puffer+finalDelay)){
@@ -521,7 +521,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
                 //Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
-                Log.d("Hole", "run: " + hole + " " + desired + " " + rabbit);
+              //  Log.d("Hole", "run: " + hole + " " + desired + " " + rabbit);
                 int currhole = Integer.parseInt(hole);
                 int desiredPos = Integer.parseInt(desired);
                 int rabbitCurr = Integer.parseInt(rabbit);
@@ -530,9 +530,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     Log.d("Hole", "Players");
                     if(p.getSid().equals(socket.id())){
                         Log.d("Hole", "Socket match");
-                        runOnUiThread(() -> {
+                      //  runOnUiThread(() -> {
                             checkForHoles(p.getRabbits().get(rabbitCurr).getPosition(), currhole, desiredPos, rabbitCurr);
-                        });
+                    //    });
 
                         }
                     }
@@ -625,7 +625,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         String fieldid = "buttonfield"+number;
         Log.d("Carrotspin", "Field: "+fieldid);
         //hole = Integer.parseInt(number);
-        Log.d("Carrotspin", "Hole: "+currHole);
+        Log.d("Carrotspin", "Hole: "+ number);
         putHolesOnBoard(Integer.parseInt(number));
 
     }
@@ -706,7 +706,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         runOnUiThread(()-> {
             for (int h : holes) {
                 ImageView img = (ImageView) findViewById(h);
-                img.setVisibility(View.GONE);
+                img.setVisibility(View.INVISIBLE);
             }
 
             ImageView img=(ImageView)findViewById(holes[holer]);
@@ -798,7 +798,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     private void checkForHoles(int currPos, int currHole, int desiredPos, int rabbit){
         Log.d("Rabbit", "checkForHoles: " + currPos);
-        if( currHole != 0 && (desiredPos == 3 || desiredPos == 5 || desiredPos == 7 || desiredPos == 9 || desiredPos == 12 || desiredPos == 17 || desiredPos == 19 || desiredPos == 22 || desiredPos == 25 || desiredPos == 27)) {
+        if(desiredPos == 3 || desiredPos == 5 || desiredPos == 7 || desiredPos == 9 || desiredPos == 12 || desiredPos == 17 || desiredPos == 19 || desiredPos == 22 || desiredPos == 25 || desiredPos == 27) {
             switch (desiredPos) {
                 case 3:
                     if (currHole == 1) {
@@ -807,53 +807,78 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                         Log.d("Move", "onClick: " + desiredPos);
                         ServerConnection.move(desiredPos-currPos, rabbit);
                     }
-
+                    break;
 
                 case 5:
                     if (currHole == 2) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
-
                 case 7:
                     if (currHole == 3) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
-
                 case 9:
                     if (currHole == 4) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
                 case 12:
                     if (currHole == 5) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
                 case 17:
                     if (currHole == 6) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
                 case 19:
                     if (currHole == 7) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
                 case 22:
                     if (currHole == 8) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
                 case 25:
                     if (currHole == 9) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
                 case 27:
                     if (currHole == 10) {
                         ServerConnection.reset(currPos);
+                    } else {
+                        Log.d("Move", "onClick: " + desiredPos);
+                        ServerConnection.move(desiredPos-currPos, rabbit);
                     }
                     break;
             }
