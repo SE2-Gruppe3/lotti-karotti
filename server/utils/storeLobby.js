@@ -13,6 +13,7 @@ function storeLobbyInfo(code, owner, hole){
     lobby.players = [];
     lobby.socket_turn = 0;
     lobby.hole = hole;
+    lobby.game_started = 0;
 
     return lobby;
 }
