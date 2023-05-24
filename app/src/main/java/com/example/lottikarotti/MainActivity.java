@@ -150,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             throw new RuntimeException(e);
         }
 
-        ServerConnection.registerNewPlayer("Bro2");
+        ServerConnection.registerNewPlayer("Bro");
         ServerConnection.fetchUnique();
         ServerConnection.createNewLobby("123456");
         ServerConnection.joinLobby("123456");
@@ -529,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     closeVotingIfPlayerNotVotedAfterSomeTime(dialog);
                 }
                 else if(!accusedPlayer.equals("Error")) Toast.makeText(MainActivity.this.getApplicationContext(), "Automatically voted yes!", Toast.LENGTH_SHORT).show();
-                else Toast.makeText(MainActivity.this.getApplicationContext(), "Please enter the correct Player username!", Toast.LENGTH_SHORT).show();
+                else if(socketid.equals(socket.id())) Toast.makeText(MainActivity.this.getApplicationContext(), "Please enter the correct Player username!", Toast.LENGTH_SHORT).show();
             }
         });
     }
