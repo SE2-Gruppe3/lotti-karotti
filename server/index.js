@@ -107,6 +107,13 @@ io.on('connection', (socket) => {
         io.to(lobbycode).emit('getplayerlist', clientsList);
     });
 
+    socket.on('startgame', () => {
+        console.log('[Server] Flagging game as started!');
+        var lobby = fetchLobbyInstance(lobbies, lobbycode);
+        if (lobby.game_started == 0) lobby.game_started = 1;
+        io.to(lobbycode).emit('startgame', 1);
+    });
+
     //********************************************************************************************************** */
     //                          ***Lobby and Online Logic below here***                                          */
     //********************************************************************************************************** */
@@ -139,6 +146,8 @@ io.on('connection', (socket) => {
         } else {
             const lobby = fetchLobbyInstance(lobbies, code);
             const playerExists = playerExist(lobby.players, socket.id);
+            if (lobby.game_started == 1) io.to(socket.id).emit('error', 303);
+            else{
             playerExists ? (
                 io.to(socket.id).emit('error', 302),
                 console.error("[Server] Very funny... Player is already in the lobby can't join double!\nABORT JOINING")
@@ -150,6 +159,7 @@ io.on('connection', (socket) => {
                 saveGameData(socket.id, lobbycode),
                 console.log("[Server] Player " + socket.id + " joins lobby " + code)
             );
+            }
         }
     });
 
