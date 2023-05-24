@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     //--------------------------------
     private boolean isMyTurn;
     private boolean isCheating;
+    private boolean gameStarted;
     private List<Player> players;
     private String sid;
     final int[]rabbits={
@@ -128,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         try {
-            socket = ServerConnection.getInstance("http://10.0.0.6:3000");
+            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
         if(info.equals("start")){
+            //TODO: handle lobby gets started or joined, reason errorhandling
             ServerConnection.createNewLobby(lobbyId);
             ServerConnection.joinLobby(lobbyId);
             Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
@@ -254,7 +256,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
 
         socket.on("gethole", args -> {
-            Log.println(Log.INFO, "Hole", "gethole received");
+            Log.println(Log.INFO, TAG, "gethole received");
             try {
                 handleGetHole(args[0].toString(), args[1].toString(), args[2].toString(), args[3].toString());
             }catch (Exception e){
@@ -263,11 +265,22 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
 
         socket.on("turn", id -> {
-            Log.println(Log.INFO, "Turn", "Turn received" +id[0].toString()+"<-gerver - l0cal->"+socket.id().toString());
+            Log.println(Log.INFO, TAG, "Turn received" +id[0].toString()+"<-gerver - l0cal->"+socket.id().toString());
             if (id[0].toString().equals(socket.id().toString())) setMyTurn(true);
 
         });
 
+        socket.on("error", code -> {
+            Log.println(Log.INFO, TAG, "Server indicates error! Code: "+code[0].toString());
+            runOnUiThread(() -> {
+                Toast.makeText(getApplicationContext(), "Server indicates error! Code: "+code[0].toString(), Toast.LENGTH_SHORT).show();
+            });
+        });
+
+        socket.on("startgame", args -> {
+            Log.println(Log.INFO, TAG, "Game start recieved");
+            gameStarted = true;
+        });
         /**
          * Clouds for the Sensor
          */
@@ -383,6 +396,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
 
         setMyTurn(false);
+        gameStarted = false;
     }
 
 
@@ -448,6 +462,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     private void playerMove(int steps, int rabbit){
         if (!isMyTurn) return;
+
+        if(!gameStarted) socket.emit("startgame", 1);
 
         System.out.println(steps+" steps with rabbit "+rabbit);
         int add = 0;
