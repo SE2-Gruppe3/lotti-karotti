@@ -30,6 +30,7 @@ var playercounter = 0;
 var clientsList = [];
 var lobbies = [];
 var gameData = [];
+var votes = 1;
 
 //********************************************************************************************************** */
 //                          ***Connection Handling begins here***                                            */
@@ -199,8 +200,30 @@ io.on('connection', (socket) => {
     });
 
     //Notify each player when voting starts
-    socket.on('createvotingpopup', args=> {
-        io.to(lobbycode).emit('createvotingpopup', args);
+    socket.on('createvotingpopup', accusedPlayer => {
+        var exists = 0;
+        for (var i = 0; i < clientsList.length; i++) {
+            if (clientsList[i].name == accusedPlayer) exists = 1;
+        }
+        if (exists === 1) {
+            io.to(lobbycode).emit('createvotingpopup', socket.id, accusedPlayer);
+        }
+        else {
+            io.to(lobbycode).emit('createvotingpopup', socket.id, "Error");
+        }
+    })
+
+    socket.on('vote', args => {
+        votes++;
+        console.log("[SERVER] Player just voted yes. Number of yes votes: " + votes)
+        io.to(lobbycode).emit('vote', votes);
+    })
+
+    socket.on('getvotingresult', args => {
+        var percentage = (votes / playercounter) * 100
+        votes = 1
+        console.log("[SERVER] Voting results are Yes: " + percentage)
+        io.to(lobbycode).emit('getvotingresult', percentage)
     })
 
     //Carrotspin, notifying Client the carrot has been spun

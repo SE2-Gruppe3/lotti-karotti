@@ -9,7 +9,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-        import android.content.Context;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
         import android.content.SharedPreferences;
@@ -64,7 +65,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
     private Button carrotButton;
-    private String accusedPlayer;
     private ImageButton settingsButton;
     private Button drawButton;
     private Button startTurn;
@@ -236,9 +236,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
 
         socket.on("createvotingpopup", args -> {
-            Log.println(Log.INFO, "Voting", "Voting startet");
+            Log.println(Log.INFO, "Voting", "Voting started");
             try {
-                createVotingPopup((String) args[0], MainActivity.this);
+                createVotingPopup((String) args[0], args[1].toString(), MainActivity.this);
             }catch (Exception e){
                 Log.w(TAG, "Can't start voting process \n" + e.toString());
             }
@@ -370,10 +370,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                         .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
+                                String accusedPlayer;
                                 TextView username = dialogView.findViewById(R.id.txt_VotingUsername);
                                 accusedPlayer = username.getText().toString();
-                                Toast.makeText(getApplicationContext(), "Works! " + username.getText().toString(), Toast.LENGTH_SHORT).show();
-                                socket.emit("createvotingpopup");
+                                socket.emit("createvotingpopup", accusedPlayer);
                             }
                         })
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -499,34 +499,50 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Create voting popup
      */
 
-    private void createVotingPopup(String socketid, Activity activity) {
+    private void createVotingPopup(String socketid, String accusedPlayer, Activity activity) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
         mainHandler.post(new Runnable() {
             @Override
             public void run() {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                View dialogView = LayoutInflater.from(activity).inflate(R.layout.popup_voting2, null);
-                TextView accusedPlayerTxt = dialogView.findViewById(R.id.txt_AccusedPlayer);
-                accusedPlayerTxt.setText(accusedPlayer);
-                builder.setTitle("")
-                        .setView(dialogView)
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(MainActivity.this.getApplicationContext(), "Voted yes!" + accusedPlayer, Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(MainActivity.this.getApplicationContext(), "Voted no!", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                AlertDialog dialog = builder.create();
-                dialog.show();
+                if(!socketid.equals(socket.id()) && !accusedPlayer.equals("Error")){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    View dialogView = LayoutInflater.from(activity).inflate(R.layout.popup_voting2, null);
+                    TextView accusedPlayerTxt = dialogView.findViewById(R.id.txt_AccusedPlayer);
+                    accusedPlayerTxt.setText(accusedPlayer);
+                    builder.setTitle("")
+                            .setView(dialogView)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    socket.emit("vote");
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    closeVotingIfPlayerNotVotedAfterSomeTime(dialog);
+                }
+                else if(!accusedPlayer.equals("Error")) Toast.makeText(MainActivity.this.getApplicationContext(), "Automatically voted yes!", Toast.LENGTH_SHORT).show();
+                else Toast.makeText(MainActivity.this.getApplicationContext(), "Please enter the correct Player username!", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void closeVotingIfPlayerNotVotedAfterSomeTime(Dialog dialog) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+                socket.emit("getvotingresult");
+            }
+        }, 20000);
     }
 
     /**
