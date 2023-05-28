@@ -45,7 +45,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import io.socket.client.Socket;
@@ -104,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[]rabbits={
             R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-
+    private static final String URI = "http://192.168.178.22:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -122,20 +124,27 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
     private Socket socket;
-    @SuppressLint("MissingInflatedId")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-
+    private void initializeServerConnection(){
         try {
-            socket = ServerConnection.getInstance("http://192.168.178.22:3000");
+            socket = ServerConnection.getInstance(URI);
             ServerConnection.connect();
             Log.d(TAG, "onCreate: Connected to server");
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
+
+        players = new ArrayList<>();
+        /// Example of getting server response using callbacks - We get here online player count back
+        ServerConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
+            @Override
+            public void onPlayerCountReceived(int count) {
+                Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+
+    private void initializeIntent() {
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
         String username = intent.getStringExtra("username");
@@ -155,23 +164,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             ServerConnection.joinLobby(lobbyId);
             Log.d(TAG, "Joined lobby" + lobbyId);
         }
-
-        players = new ArrayList<>();
-        /// Example of getting server response using callbacks - We get here online player count back
-        ServerConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
-            @Override
-            public void onPlayerCountReceived(int count) {
-                Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
-            }
-        });
-
-
-        /** Initialize Sensor**/
+    }
+    public void initializeSensors(){
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+    }
 
-       // isMyTurn = false;
-
+    public void initializeDrawables(){
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
@@ -183,24 +182,29 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         rabbit4.setImageResource(R.drawable.fig11);
 
         instructions= (TextView) findViewById(R.id.textViewInstructions);
+    }
 
+    public void initializeFragments(){
         //  Initialize PlayerList Fragment and Layout
         containerplayerList = findViewById(R.id.container_playerList);
         fragmentPlayerList = new PlayerListFragment();
+    }
 
+    public void initializeLogic(){
         //Disale all fields at the start of the game
         for (int field : fields) {
             ImageButton button= (ImageButton)findViewById(field);
             button.setEnabled(false);
         }
+    }
 
+    public void initializeButtons(){
         carrotButton= (Button) findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
-
 
         instructions.setText("Instructions: Choose a rabbit to play");
 
@@ -214,10 +218,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         radius = 180;
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
+    }
 
-        /**
-         *  Client listening for events from server
-         */
+    public void initializeServerListeners(){
         socket.on("move", args -> {
             try {
                 handleMove(args[0].toString());
@@ -276,11 +279,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.println(Log.INFO, TAG, "Game start recieved");
             gameStarted = true;
         });
+    }
 
-        
-        /**
-         * Clouds for the Sensor
-         */
+    public void initializeClouds(){
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+
         cloudL = (ImageView) findViewById(R.id.cloudLeft);
         cloudR = (ImageView) findViewById(R.id.cloudRight);
         // Get Starting-Location of Clouds
@@ -297,10 +300,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         screenWidth = displayMetrics.widthPixels;
         screenHeight = displayMetrics.heightPixels;
 
-
-        /**
-         * Set Card Size based on Screen
-         */
+        // Programmatically set clouds (dynamically)
         ViewGroup.LayoutParams cloudLeftParam = cloudL.getLayoutParams();
         ViewGroup.LayoutParams cloudRightParam = cloudR.getLayoutParams();
 
@@ -311,14 +311,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         cloudRightParam.width = screenWidth * 2;
         cloudRightParam.height = screenHeight / 2;
         cloudR.setLayoutParams(cloudRightParam);
-
-
-
-
-
-        /**
-         * Rabbit Selection
-         */
+    }
+    public void initializeButtonLogic(){
         rabbit1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -389,48 +383,55 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 startActivity(intent);
             }
         });
+    }
 
+    public void initializeTurnLogic(){
         setMyTurn(false);
         gameStarted = false;
+    }
+        @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initializeServerConnection();
+        initializeIntent();
+        initializeSensors();
+        initializeDrawables();
+        initializeFragments();
+        initializeLogic();
+        initializeButtons();
+        initializeServerListeners();
+        initializeClouds();
+        initializeButtonLogic();
+        initializeTurnLogic();
     }
 
 
     private void setColorForRabbits() {
         Log.d("Rabbit", "setColorForRabbits: " + players.size());
-        for (Player players : players) {
-            if (players.getSid().equals(socket.id())) {
-                switch (players.getColor()) {
-                    case "white":
-                        rabbit1.setImageResource(R.drawable.fig11);
-                        rabbit2.setImageResource(R.drawable.fig11);
-                        rabbit3.setImageResource(R.drawable.fig11);
-                        rabbit4.setImageResource(R.drawable.fig11);
-                        Log.d("Rabbit", "setColorForRabbits: " + players.getColor());
-                        break;
-                    case "red":
-                        rabbit1.setImageResource(R.drawable.fig88);
-                        rabbit2.setImageResource(R.drawable.fig88);
-                        rabbit3.setImageResource(R.drawable.fig88);
-                        rabbit4.setImageResource(R.drawable.fig88);
-                        break;
-                    case "pink":
-                        rabbit1.setImageResource(R.drawable.fig22);
-                        rabbit2.setImageResource(R.drawable.fig22);
-                        rabbit3.setImageResource(R.drawable.fig22);
-                        rabbit4.setImageResource(R.drawable.fig22);
-                        break;
-                    case "green":
-                        rabbit1.setImageResource(R.drawable.fig77);
-                        rabbit2.setImageResource(R.drawable.fig77);
-                        rabbit3.setImageResource(R.drawable.fig77);
-                        rabbit4.setImageResource(R.drawable.fig77);
-                        break;
-                }
+        Map<String, Integer> colorDrawableMap = new HashMap<>();
+        colorDrawableMap.put("white", R.drawable.fig11);
+        colorDrawableMap.put("red", R.drawable.fig88);
+        colorDrawableMap.put("pink", R.drawable.fig22);
+        colorDrawableMap.put("green", R.drawable.fig77);
 
+        for (Player player : players) {
+            if (player.getSid().equals(socket.id())) {
+                Integer drawableId = colorDrawableMap.get(player.getColor());
+                if (drawableId != null) {
+                    rabbit1.setImageResource(drawableId);
+                    rabbit2.setImageResource(drawableId);
+                    rabbit3.setImageResource(drawableId);
+                    rabbit4.setImageResource(drawableId);
+                    Log.d("Rabbit", "setColorForRabbits: " + player.getColor());
+                    break;
+                }
             }
         }
-
     }
+
 
 
 
