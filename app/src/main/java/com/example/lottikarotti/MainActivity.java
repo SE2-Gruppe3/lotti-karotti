@@ -597,7 +597,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         try {
             hole = Integer.parseInt(holeIndex);
             putHolesOnBoard(hole);  // SHITCODE, why not put in renderboard?
-            playerMove(0,0);
+            ServerConnection.move(0,0);
         }catch (Exception ex){
             //TODO: handle exception
         }
