@@ -61,11 +61,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
-    private ImageView rabbit1;
-    private ImageView rabbit2;
-    private ImageView rabbit3;
-    private ImageView rabbit4;
-
+    private ImageView[] rabbits = new ImageView[4];
     private ImageView gameBoard;
     private ImageView figOne;
     private float corX, corY, radius;
@@ -74,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int touchCntLimit;
     private int currRabbit;
     private final String TAG = "MainActivity";
+
 
     //  Container for the Player List Fragment (Placeholder Container)
     private FrameLayout containerplayerList;
@@ -96,15 +93,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private ImageView cloudR;
     private int cloudLX;
     private int cloudRX;
-
-    //--------------------------------
     private boolean isMyTurn;
     private boolean isCheating;
     private boolean gameStarted;
     private int hole;
     private List<Player> players;
     private String sid;
-    final int[]rabbits={
+    final int[] rabbits={
             R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
     private static final String URI = "http://192.168.178.22:3000";
 
@@ -721,23 +716,19 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             float newZ = sensorEvent.values[2];
 
             long timeNow = System.currentTimeMillis();
+            long diff = timeNow - preUpdate;
 
-            if ((timeNow - preUpdate) > 100) {
-                long diff = (timeNow - preUpdate);
-                preUpdate = timeNow;
-
-                float speed = Math.abs(newX + newY + newZ - oldX - oldY - oldZ) / diff * 10000;
-
-                if (speed > SHAKE_THRESHOLD) {
-                    onShakeDetected();
-                }
-
-                oldX = newX;
-                oldY = newY;
-                oldZ = newZ;
+            if (diff > 100 && Math.abs(newX + newY + newZ - oldX - oldY - oldZ) / diff * 10000 > SHAKE_THRESHOLD) {
+                onShakeDetected();
             }
+
+            preUpdate = timeNow;
+            oldX = newX;
+            oldY = newY;
+            oldZ = newZ;
         }
     }
+
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
@@ -796,18 +787,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void togglePlayerRabbits() {
         Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
         runOnUiThread(() -> {
-            if (isMyTurn) {
-                rabbit1.setEnabled(true);
-                rabbit2.setEnabled(true);
-                rabbit3.setEnabled(true);
-                rabbit4.setEnabled(true);
-            } else {
-                drawButton.setEnabled(false);
-                rabbit1.setEnabled(false);
-                rabbit2.setEnabled(false);
-                rabbit3.setEnabled(false);
-                rabbit4.setEnabled(false);
-            }
+            rabbit1.setEnabled(isMyTurn);
+            rabbit2.setEnabled(isMyTurn);
+            rabbit3.setEnabled(isMyTurn);
+            rabbit4.setEnabled(isMyTurn);
+            drawButton.setEnabled(isMyTurn);
         });
     }
 
@@ -834,34 +818,23 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
     private void moveRabbitOnBoard(ImageView rabbit, PointF centerField, long duration) {
         Log.d("Game", "Moving rabbit to: " + centerField.toString());
-        int[] location = new int[2];
-        rabbit.getLocationOnScreen(location);
-        float startX = location[0];
-        float startY = location[1];
 
         rabbit.setPivotX(0.5f * rabbit.getWidth());
         rabbit.setPivotY(1.7f * rabbit.getHeight());
-        ObjectAnimator animX = ObjectAnimator.ofFloat(
-                rabbit, "x", startX, centerField.x- rabbit.getPivotX());
-        ObjectAnimator animY = ObjectAnimator.ofFloat(
-                rabbit, "y", startY, centerField.y - rabbit.getPivotY());
 
-//        ObjectAnimator X = ObjectAnimator.ofFloat(
-//                rabbit, "translationX", centerField.x - location[0] -rabbit.getPivotX());
-//        ObjectAnimator Y = ObjectAnimator.ofFloat(
-//                rabbit, "translationY", centerField.y - location[1] - rabbit.getPivotY());
+        ObjectAnimator animX = ObjectAnimator.ofFloat(rabbit, "x", rabbit.getX(), centerField.x - rabbit.getPivotX());
+        ObjectAnimator animY = ObjectAnimator.ofFloat(rabbit, "y", rabbit.getY(), centerField.y - rabbit.getPivotY());
 
         AnimatorSet animatorSet = new AnimatorSet();
         animatorSet.playTogether(animX, animY);
         animatorSet.setDuration(duration);
         animatorSet.start();
-        int[] location2 = new int[2];
-        rabbit.getLocationOnScreen(location);
-        float startXx = location[0];
-        float startYy = location[1];
-        Log.d("Game", "Moved rabbit to: " + startXx + " " + startYy);
 
+        float startXx = rabbit.getX();
+        float startYy = rabbit.getY();
+        Log.d("Game", "Moved rabbit to: " + startXx + " " + startYy);
     }
+
     private void updateBrightness() {
         SharedPreferences sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
         int brightness = sharedBrightness.getInt("brightness", 100);
