@@ -897,8 +897,5 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         layoutPar.screenBrightness = brightness / 255f;
         getWindow().setAttributes(layoutPar);
     }
-
-
-
 }
 

@@ -5,14 +5,14 @@
  * @param {*} hole
  * @returns lobby object
  */
-function storeLobbyInfo(code, owner, hole){
+function storeLobbyInfo(code, owner){
 
     var lobby = new Object();
     lobby.code = code;
     lobby.owner = owner;
     lobby.players = [];
     lobby.socket_turn = 0;
-    lobby.hole = hole;
+    lobby.hole = -1;
     lobby.game_started = 0;
 
     return lobby;
