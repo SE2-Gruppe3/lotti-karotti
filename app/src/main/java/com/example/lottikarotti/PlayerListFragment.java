@@ -106,6 +106,7 @@ public class PlayerListFragment extends Fragment {
         });
 
         TableLayout tableLayout = view.findViewById(R.id.tblayout_players);
+        int count = 0;
         if (names == null){
             do {
                 try {
@@ -115,6 +116,7 @@ public class PlayerListFragment extends Fragment {
                     Log.w(TAG, "Threading Error");
                     break;
                 }
+                if (count >= 100) break;
             }while (names == null);
         }
 // Loop through the array
