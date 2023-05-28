@@ -152,6 +152,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }
         else{
             ServerConnection.joinLobby(lobbyId);
+            Log.d(TAG, "Joined lobby" + lobbyId);
         }
 
         players = new ArrayList<>();
@@ -213,6 +214,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ActionBar actionBar = getSupportActionBar();
         actionBar.hide();
 
+        /**
+         *  Client listening for events from server
+         */
         socket.on("move", args -> {
             try {
                 handleMove(args[0].toString());
@@ -280,6 +284,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.println(Log.INFO, TAG, "Game start recieved");
             gameStarted = true;
         });
+
+        
         /**
          * Clouds for the Sensor
          */
