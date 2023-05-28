@@ -26,6 +26,9 @@ console.log('Server is running');
 
 // Create a new Socket.IO instance and define variables to track player count
 const io = socket(server);
+// Holes for the standard map, when used -> map to index 0-10
+const holes = [0, 3, 5, 7, 9, 12, 17, 19, 22, 25, 27];
+
 var playercounter = 0;
 var clientsList = [];
 var cheaterList = [];
@@ -49,7 +52,7 @@ io.on('connection', (socket) => {
         console.error('[Server] Refused connection to player, reason: player count too high!');
     } else {
         // Otherwise, log a message indicating that a player has connected
-        console.log('[Server] A player connected!\nCurrently ' + playercounter + '/'+settings.MAX_PLAYERS+' online!');
+        console.log('[Server] A player connected!\nCurrently ' + playercounter + '/' + settings.MAX_PLAYERS + ' online!');
     }
     //********************************************************************************************************** */
     //  CURRENT LISTENERS:
@@ -83,14 +86,14 @@ io.on('connection', (socket) => {
 
     // Register with name for identification
     socket.on('register', args => {
-        var taken = 0, loggedin=0;
+        var taken = 0, loggedin = 0;
         for (var i = 0; i < clientsList.length; i++) {
             if (clientsList[i].name == args) taken = 1;
             if (clientsList[i].id == socket.id) loggedin = 1;
         }
         if (taken == 0 && loggedin == 0) {
             clientsList.push(storeClientInfo(socket.id, args));
-            console.log('[Server] ALL PLAYERS\n\t'+JSON.stringify(clientsList));
+            console.log('[Server] ALL PLAYERS\n\t' + JSON.stringify(clientsList));
             socket.to(socket.id).emit("register", 1);
             registered = 1;
         } else {
@@ -126,20 +129,20 @@ io.on('connection', (socket) => {
         } else {
             console.log("[Server] Lobby creation");
             lobbies.push(storeLobbyInfo(code, socket.id, 0));
-            lobbies[lobbies.length-1].players.push(fetchClientInstance(clientsList, socket.id));
+            lobbies[lobbies.length - 1].players.push(fetchClientInstance(clientsList, socket.id));
 
-            console.log("[Server] Lobby saved!\nALL LOBBIES\n\t"+JSON.stringify(lobbies));
+            console.log("[Server] Lobby saved!\nALL LOBBIES\n\t" + JSON.stringify(lobbies));
             socket.join(code);
             lobbycode = code;
             saveGameData(socket.id, lobbycode);
             io.to(socket.id).emit("createlobby", 1);
-             // Set turn true for owner
-             io.to(socket.id).emit('turn', socket.id);
+            // Set turn true for owner
+            io.to(socket.id).emit('turn', socket.id);
         }
     });
 
     // Join a lobby on this gerver with the lobby code
-    socket.on('joinlobby', code=>{
+    socket.on('joinlobby', code => {
         if (code.length !== 6 || playerExist(clientsList, socket.id) === 0 || lobbyExist(lobbies, code) === 0) {
             io.to(socket.id).emit('error', 302);
             console.log("[Server] Error joining lobby (error 302)");
@@ -147,18 +150,18 @@ io.on('connection', (socket) => {
             const lobby = fetchLobbyInstance(lobbies, code);
             const playerExists = playerExist(lobby.players, socket.id);
             if (lobby.game_started == 1) io.to(socket.id).emit('error', 303);
-            else{
-            playerExists ? (
-                io.to(socket.id).emit('error', 302),
-                console.error("[Server] Very funny... Player is already in the lobby can't join double!\nABORT JOINING")
-            ) : (
-                lobby.players.push(fetchClientInstance(clientsList, socket.id)),
-                console.log(JSON.stringify(lobbies[0])),
-                socket.join(code),
-                lobbycode = code,
-                saveGameData(socket.id, lobbycode),
-                console.log("[Server] Player " + socket.id + " joins lobby " + code)
-            );
+            else {
+                playerExists ? (
+                    io.to(socket.id).emit('error', 302),
+                    console.error("[Server] Very funny... Player is already in the lobby can't join double!\nABORT JOINING")
+                ) : (
+                    lobby.players.push(fetchClientInstance(clientsList, socket.id)),
+                    console.log(JSON.stringify(lobbies[0])),
+                    socket.join(code),
+                    lobbycode = code,
+                    saveGameData(socket.id, lobbycode),
+                    console.log("[Server] Player " + socket.id + " joins lobby " + code)
+                );
             }
         }
     });
@@ -176,12 +179,12 @@ io.on('connection', (socket) => {
     });
 
     socket.on('getplayerslobby', args => {
-        if(lobbycode.length === 6){
+        if (lobbycode.length === 6) {
             lobby = fetchLobbyInstance(lobbies, lobbycode);
-            console.log("[Server] PlayerList\n\t"+JSON.stringify(lobby.players));
+            console.log("[Server] PlayerList\n\t" + JSON.stringify(lobby.players));
 
             io.to(socket.id).emit("getplayerslobby", JSON.stringify(lobby.players));
-    }
+        }
     });
 
     //********************************************************************************************************** */
@@ -191,61 +194,60 @@ io.on('connection', (socket) => {
 
     // Move logic, Client must handle the logic accordingly
     // Please don't forget rabbit1 = 0, rabbit2 = 1, rabbit3 = 2, rabbit4 = 3
-    socket.on('move', (steps, rabbit) =>{
-        if(registered === 1 && lobbycode !== 0 && steps < 8){
+    socket.on('move', (steps, rabbit) => {
+        if (registered === 1 && lobbycode !== 0 && steps < 8) {
             var game = fetchGameDataInstance(gameData, socket.id);
-            
+            var currLobby = fetchLobbyInstance(lobbies, lobbycode);
+
             var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
+            // If player opn hole, set position to 0
+            if (newpos === currLobby.hole) newpos = 0;
+
             gameData = positionAvail(gameData, newpos);
             game.rabbits[parseInt(rabbit)].position = newpos;
-            var lobbygame = fetchLobbyGameData(gameData,lobbycode);
-            
+
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
-            console.log("[Server] Player "+JSON.stringify(fetchClientInstance(clientsList, socket.id))+" is moving "+steps+" steps with rabbit "+rabbit+"!");
+            console.log("[Server] Player " + JSON.stringify(fetchClientInstance(clientsList, socket.id)) + " is moving " + steps + " steps with rabbit " + rabbit + "!");
 
-
-           setTurn();
-        }else{
+            setTurn();
+        } else {
             console.error("[Server] Invalid move!")
             io.to(socket.id).emit("error", 500);
         }
     });
-     socket.on('moveCheat', (pos, rabbit) =>{
-            if(registered === 1 && lobbycode !== 0 ){
-                var game = fetchGameDataInstance(gameData, socket.id);
-                var newpos = pos;
-                gameData = positionAvail(gameData, newpos);
-                game.rabbits[parseInt(rabbit)].position= parseInt(pos);
+
+    socket.on('moveCheat', (pos, rabbit) => {
+        if (registered === 1 && lobbycode !== 0) {
+            var game = fetchGameDataInstance(gameData, socket.id);
+            var newpos = pos;
+            gameData = positionAvail(gameData, newpos);
+            game.rabbits[parseInt(rabbit)].position = parseInt(pos);
 
 
-                io.to(lobbycode).emit("moveCheat", fetchLobbyGameData(gameData, lobbycode));
-                console.log("[Server] Player "+fetchClientInstance(clientsList, socket.id)+" moved to the "+pos+" position with rabbit "+rabbit+"!");
-                   console.log("[Server] Player is on "+parseInt(pos)+"!");
+            io.to(lobbycode).emit("moveCheat", fetchLobbyGameData(gameData, lobbycode));
+            console.log("[Server] Player " + fetchClientInstance(clientsList, socket.id) + " moved to the " + pos + " position with rabbit " + rabbit + "!");
+            console.log("[Server] Player is on " + parseInt(pos) + "!");
 
-            }else{
-                console.error("[Server] Invalid move!")
-                io.to(socket.id).emit("error", 500);
-            }
-        });
+        } else {
+            console.error("[Server] Invalid move!")
+            io.to(socket.id).emit("error", 500);
+        }
+    });
     //Shake-Sensor, notifying each player once event occurs.
-    socket.on('shake', args=>{
+    socket.on('shake', args => {
         io.to(lobbycode).emit('shake', socket.id);
     });
 
-    //Carrotspin, notifying Client the carrot has been spun
-    //socket.on('carrotspinning', args=>{
-        //const randomField = Math.floor(Math.random() * 10);
-       // console.log('Random Field (hole):', randomField);
-        //io.to(lobbycode).emit('carrotspinning', socket.id, randomField);
-   // });
-    socket.on('carrotspin', (lobbycode) => {
+    socket.on('carrotspin', args => {
         const randomhole = Math.floor(Math.random() * 11);
-        let lobbyIndex = lobbies.findIndex(lobby => lobby.code === lobbycode);
-        if (lobbyIndex !== -1) {
-            lobbies[lobbyIndex].hole = randomhole;
+
+        var lobby = fetchLobbyInstance(lobbies, lobbycode);
+
+        if (lobby !== undefined) {
+            lobby.hole = holes[randomhole];
+
             console.log(`[Server] Lobby ${lobbycode}'s hole updated to ${randomhole}`);
-            io.to(lobbycode).emit('carrotspin', socket.id, randomhole);
-            setTurn();
+            io.to(lobbycode).emit('carrotspin', randomhole);
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
@@ -262,19 +264,19 @@ io.on('connection', (socket) => {
         }
     });
     //Cheating, remark someone has cheated
-        socket.on('cheat', args=>{
+    socket.on('cheat', args => {
 
-            console.log('User: ', args, "cheated");
-            if(playerExist(cheaterList,socket.id)==0){
+        console.log('User: ', args, "cheated");
+        if (playerExist(cheaterList, socket.id) == 0) {
             clientsList.push(storeClientInfo(socket.id, args));
-            }
-            io.to(lobbycode).emit('cheat', socket.id);
-        });
+        }
+        io.to(lobbycode).emit('cheat', socket.id);
+    });
     //Hole appears below Rabbit logic
     socket.on('reset', (pos) => {
         var game = fetchGameDataInstance(gameData, socket.id);
         var targetPos = parseInt(pos);
-       
+
         for (var i = 0; i < game.rabbits.length; i++) {
             if (game.rabbits[i].position === targetPos) {
                 gameData = positionAvail(gameData, 0);
@@ -286,78 +288,77 @@ io.on('connection', (socket) => {
         setTurn();
     });
 
-
     //********************************************************************************************************** */
     //***PLEASE PUT YOUR LISTENERS/EMITTERS ABOVE HERE***                                                        */            
     //********************************************************************************************************** */
-    
-    function setTurn(){
+
+    function setTurn() {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
         // Sending out turn to next player
         lobby.socket_turn++;
-        if(lobby.socket_turn == lobby.players.length) lobby.socket_turn = 0;
+        if (lobby.socket_turn == lobby.players.length) lobby.socket_turn = 0;
 
         io.to(lobby.players[lobby.socket_turn].clientId).emit('turn', lobby.players[lobby.socket_turn].clientId);
-        console.log("[Server] Next turn is id "+lobby.players[lobby.socket_turn].clientId);
+        console.log("[Server] Next turn is id " + lobby.players[lobby.socket_turn].clientId);
     }
-    
-    
+
+
     // Listen for disconnection events and log a message to the console
     socket.on('disconnect', () => {
         playercounter -= 1;
         const index = clientsList.findIndex(client => client.clientId === socket.id);
 
         // unregister lobby if owner disconnects
-        if(lobbies) {
+        if (lobbies) {
             var lobbyindex = lobbies.findIndex(lobby => lobby.owner === socket.id);
-            if(lobbyindex !== -1) {
+            if (lobbyindex !== -1) {
                 lobbies.splice(lobbyindex, 1);  // splice lobby from lobbies
-                for(var i = 0; i<gameData.length; i++){
-                    if(gameData[i].lobbycode === lobbycode){
+                for (var i = 0; i < gameData.length; i++) {
+                    if (gameData[i].lobbycode === lobbycode) {
                         gameData.splice(i, 1);  // splice gameData of lobby from gameData
                     }
                 }
-            console.log('[Server] Owner disconnected, lobby deleted!\n\t'+JSON.stringify(lobbies));
+                console.log('[Server] Owner disconnected, lobby deleted!\n\t' + JSON.stringify(lobbies));
             }
         }
         if (index !== -1) { // Remove client from clientsList
             clientsList.splice(index, 1);
-            console.log('[Server] Player Unregistered, id: '+socket.id);
+            console.log('[Server] Player Unregistered, id: ' + socket.id);
         }
         console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
     });
 });
 
-    //********************************************************************************************************** */
-    //                          ***Functions below here***                                                       */
-    //********************************************************************************************************** */
+//********************************************************************************************************** */
+//                          ***Functions below here***                                                       */
+//********************************************************************************************************** */
 
-    // Function to save the game data with log of what is happening, may be removed in the future
-    function saveGameData(socketid, lobbycode){
-        var gdCurr = fetchLobbyGameData(gameData, lobbycode);
-        const usedColors = [];
-       // rabbitcolor = 'white';
-        gdCurr.forEach(game => {
-            // Check if the game's color property is already in the usedColors array
-            if (!usedColors.includes(game.color)) {
-              // If not, add it to the usedColors array
-              usedColors.push(game.color);
-            }
-          });
-          console.log("[Server] Game data sucessfully created"+usedColors.toString());
-          // Fowler would be proud
-          if (!usedColors.includes('white')) {
-            rabbitcolor = 'white';
-          }else if (!usedColors.includes('red')) {
-            rabbitcolor = 'red';
-          }else if (!usedColors.includes('pink')) {
-            rabbitcolor = 'pink';
-          }else if (!usedColors.includes('green')) {
-            rabbitcolor = 'green';
-          }
-
-        gameDataTemp = (storeGameData(socketid, lobbycode, rabbitcolor));
-        console.log("[Server] Game data sucessfully created"+JSON.stringify(gameDataTemp));
-        gameData.push(gameDataTemp);
-        console.log("[Server] Game data saved!\n");
+// Function to save the game data with log of what is happening, may be removed in the future
+function saveGameData(socketid, lobbycode) {
+    var gdCurr = fetchLobbyGameData(gameData, lobbycode);
+    const usedColors = [];
+    // rabbitcolor = 'white';
+    gdCurr.forEach(game => {
+        // Check if the game's color property is already in the usedColors array
+        if (!usedColors.includes(game.color)) {
+            // If not, add it to the usedColors array
+            usedColors.push(game.color);
+        }
+    });
+    console.log("[Server] Game data sucessfully created" + usedColors.toString());
+    // Fowler would be proud
+    if (!usedColors.includes('white')) {
+        rabbitcolor = 'white';
+    } else if (!usedColors.includes('red')) {
+        rabbitcolor = 'red';
+    } else if (!usedColors.includes('pink')) {
+        rabbitcolor = 'pink';
+    } else if (!usedColors.includes('green')) {
+        rabbitcolor = 'green';
     }
+
+    gameDataTemp = (storeGameData(socketid, lobbycode, rabbitcolor));
+    console.log("[Server] Game data sucessfully created" + JSON.stringify(gameDataTemp));
+    gameData.push(gameDataTemp);
+    console.log("[Server] Game data saved!\n");
+}

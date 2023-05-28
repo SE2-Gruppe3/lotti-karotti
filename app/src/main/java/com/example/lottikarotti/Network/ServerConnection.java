@@ -186,8 +186,8 @@ public class ServerConnection {
     public static void fetchUnique(){
         socket.emit("fetchuniqueid");
     }
-    public static void carrotSpin(String lobbyCode){
-        socket.emit("carrotspin", lobbyCode);
+    public static void carrotSpin(){
+        socket.emit("carrotspin", 1);
     }
     public static void cheat(String name){
         socket.emit("cheat",name);

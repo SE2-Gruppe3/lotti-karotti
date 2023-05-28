@@ -99,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private boolean isMyTurn;
     private boolean isCheating;
     private boolean gameStarted;
+    private int hole;
     private List<Player> players;
     private String sid;
     final int[]rabbits={
@@ -252,18 +253,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         socket.on("carrotspin", args -> {
             Log.println(Log.INFO, "Carrot", "carrotspin received");
             try {
-                handleCarrotspin(args[0].toString(), args[1].toString());
+                handleCarrotspin(args[0].toString());
             }catch (Exception e){
                 Log.w(TAG, "Can't handle carrotspin \n" + e.toString());
-            }
-        });
-
-        socket.on("gethole", args -> {
-            Log.println(Log.INFO, TAG, "gethole received");
-            try {
-                handleGetHole(args[0].toString(), args[1].toString(), args[2].toString(), args[3].toString());
-            }catch (Exception e){
-                Log.w(TAG, "Can't handle gethole \n" + e.toString());
             }
         });
 
@@ -362,10 +354,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         carrotButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                drawButton.setEnabled(true);
+                ServerConnection.carrotSpin();
 
-                ServerConnection.carrotSpin(lobbyId);
-
+                drawButton.setEnabled(false);
                 carrotButton.setEnabled(false);
 
             }
@@ -382,8 +373,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
                 switch(random) {
                     case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, currRabbit); break;
-                    case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board");
-                        break;
+                    case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board"); break;
                     case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, currRabbit); break;
                     case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, currRabbit); break;
                 }
@@ -450,7 +440,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     @Override
     protected void onResume() {
         super.onResume();
-        if(!myTurn) {
+        if(!isMyTurn) {
             sensorManager.registerListener(this, shakeSensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
         updateBrightness();
@@ -493,7 +483,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 final int finalDelay = delay;
                 ServerConnection.move(steps, rabbit);
 
-                    field.setEnabled(false);
+                field.setEnabled(false);
                // }
             }
         });
@@ -514,19 +504,16 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Handle the Cheating
      */
     private void handleCheating(String socketid){
-
         Handler mainHandler = new Handler(Looper.getMainLooper());
         mainHandler.post( new Runnable() {
 
             @Override
             public void run() {
                 //Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
-
-
             }
         });
     }
-    
+
     /**
      * Handle the shake event
      */
@@ -606,13 +593,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Handle Carrotclick (Carrotspin)
      */
-    private void handleCarrotspin(String socketId, String number) throws JsonProcessingException {
-        Log.d("Carrotspin", "Carrotspin received from server");
-        String fieldid = "buttonfield"+number;
-        Log.d("Carrotspin", "Field: "+fieldid);
-        //hole = Integer.parseInt(number);
-        Log.d("Carrotspin", "Hole: "+ number);
-        putHolesOnBoard(Integer.parseInt(number));
+    private void handleCarrotspin(String holeIndex) throws JsonProcessingException {
+        try {
+            hole = Integer.parseInt(holeIndex);
+            putHolesOnBoard(hole);  // SHITCODE, why not put in renderboard?
+            playerMove(0,0);
+        }catch (Exception ex){
+            //TODO: handle exception
+        }
 
     }
 
@@ -634,18 +622,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             String color = gayer.getColor();    // get color of player TODO: when implementing animations and stuff please use this
             List<Rabbit> tempRabbits = gayer.getRabbits();
             Log.d("Rabbit", "Renderboard: Rabbit color: " + color);
-            if(!(gayer.getSid().equals(socket.id()))) {
-                for (Rabbit rabbit : tempRabbits) {
-                    if (rabbit.getPosition() > 0) {
-                        runOnUiThread(() -> {
-                            ImageButton rabbitBtn = findViewById(fields[rabbit.getPosition()]);
-                            rabbitBtn.setOnClickListener(null);
-                            setColorForRabbitsRender(rabbitBtn, color);
-                            rabbitBtn.setEnabled(false);
-                        });
-                    }
-                }
-            } else if (gayer.getSid().equals(socket.id())){
+
+
                 for (Rabbit rabbit:tempRabbits) {
                     if (rabbit.getPosition() > 0) {
                         Log.d("Rabbit", "Renderboard.Rabbit: " + rabbit.getName());
@@ -660,7 +638,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     }
                 }
             }
-        }
+
         setMyTurn(false);
     }
     private void setColorForRabbitsRender(ImageButton rabbitbtn, String color) {
