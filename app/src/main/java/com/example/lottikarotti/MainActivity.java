@@ -456,39 +456,31 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * This method sends an emit to the Server signalising "move"
      * @param steps
      */
-    private void playerMove(int steps, int rabbit){
+    private void playerMove(int steps, int rabbit) {
         if (!isMyTurn) return;
 
-        if(!gameStarted) socket.emit("startgame", 1);
+        if (!gameStarted) socket.emit("startgame", 1);
 
-        System.out.println(steps+" steps with rabbit "+rabbit);
-        int add = 0;
-        for (Player payer:players) {
-            if (socket.id().equals(payer.getSid())){
-                add = payer.getRabbits().get(rabbit).getPosition();
-            }
+        System.out.println(steps + " steps with rabbit " + rabbit);
 
-        }
-        // activating field to press
-        ImageButton field = (ImageButton) findViewById(fields[steps+add]);
+        int add = players.stream()
+                .filter(player -> socket.id().equals(player.getSid()))
+                .map(player -> player.getRabbits().get(rabbit).getPosition())
+                .findFirst()
+                .orElse(0);
+
+        ImageButton field = findViewById(fields[steps + add]);
         field.setEnabled(true);
-        int puffer = steps+add;
 
-        field.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                System.out.println("Sending move to server");
-                ImageButton fieldtest = (ImageButton) findViewById(fields[puffer]);
-                int delay = 0;
-
-                final int finalDelay = delay;
-                ServerConnection.move(steps, rabbit);
-
-                field.setEnabled(false);
-               // }
-            }
+        field.setOnClickListener(view -> {
+            System.out.println("Sending move to server");
+            ImageButton fieldtest = findViewById(fields[steps + add]);
+            int delay = 0;
+            ServerConnection.move(steps, rabbit);
+            field.setEnabled(false);
         });
     }
+
 
     /**
      * Movement handler
