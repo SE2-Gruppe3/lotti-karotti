@@ -567,8 +567,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Renders the board to a pulp will get updated, shitcode is temporary
      */
     private void renderBoard() {
-        for (int x:fields) {
-            runOnUiThread(()-> {
+        for (int x : fields) {
+            runOnUiThread(() -> {
                 ImageButton btn = findViewById(x);
                 btn.setBackgroundColor(0);
                 btn.setImageResource(0);
@@ -576,29 +576,26 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             });
         }
         Log.d("Rabbit", "Renderboard: " + players.size());
-        for (Player gayer: players) {
-            String color = gayer.getColor();    // get color of player TODO: when implementing animations and stuff please use this
+        for (Player gayer : players) {
+            String color = gayer.getColor();
             List<Rabbit> tempRabbits = gayer.getRabbits();
             Log.d("Rabbit", "Renderboard: Rabbit color: " + color);
-
-
-                for (Rabbit rabbit:tempRabbits) {
-                    if (rabbit.getPosition() > 0) {
-                        Log.d("Rabbit", "Renderboard.Rabbit: " + rabbit.getName());
-                        runOnUiThread(()->{
-                            System.out.println("Renderboard.Drawing rabbit on field " + rabbit.getPosition());
-                            ImageButton rabbitbtn = findViewById(fields[rabbit.getPosition()]);
-                            rabbitbtn.setOnClickListener(null);
-                            setColorForRabbitsRender(rabbitbtn, color);
-                            rabbitbtn.setEnabled(false);
-                            //}
-                        });
-                    }
+            for (Rabbit rabbit : tempRabbits) {
+                if (rabbit.getPosition() > 0) {
+                    Log.d("Rabbit", "Renderboard.Rabbit: " + rabbit.getName());
+                    runOnUiThread(() -> {
+                        System.out.println("Renderboard.Drawing rabbit on field " + rabbit.getPosition());
+                        ImageButton rabbitbtn = findViewById(fields[rabbit.getPosition()]);
+                        rabbitbtn.setOnClickListener(null);
+                        setColorForRabbitsRender(rabbitbtn, color);
+                        rabbitbtn.setEnabled(false);
+                    });
                 }
             }
-
+        }
         setMyTurn(false);
     }
+
     private void setColorForRabbitsRender(ImageButton rabbitbtn, String color) {
         switch (color) {
             case "white":
@@ -641,82 +638,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     private void checkForRabbit(int hole) {
-        ImageButton puffer;
-        switch (hole) {
-            case 0:
-                break;
-            case 1:
-                puffer = findViewById(fields[3]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(3);
-                }
-                break;
-            case 2:
-                puffer = findViewById(fields[5]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(5);
-                }
-                break;
-            case 3:
-                puffer = findViewById(fields[7]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(7);
-                }
-                break;
-            case 4:
-                puffer = findViewById(fields[9]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(9);
-                }
-                break;
-            case 5:
-                puffer = findViewById(fields[12]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(12);
-                }
-                break;
-            case 6:
-                puffer = findViewById(fields[17]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(17);
-                }
-                break;
-            case 7:
-                puffer = findViewById(fields[19]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(19);
-                }
-                break;
-            case 8:
-                puffer = findViewById(fields[22]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(22);
-                }
-                break;
-            case 9:
-                puffer = findViewById(fields[25]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(25);
-                }
-                break;
-            case 10:
-                puffer = findViewById(fields[27]);
-                if (puffer.getDrawable() != null) {
-                    puffer.setImageResource(0);
-                    ServerConnection.reset(27);
-                }
-                break;
+        int[] fieldPositions = {3, 5, 7, 9, 12, 17, 19, 22, 25, 27};
+        int fieldIndex = hole - 1;
+        if (fieldIndex >= 0 && fieldIndex < fieldPositions.length) {
+            ImageButton puffer = findViewById(fields[fieldPositions[fieldIndex]]);
+            if (puffer.getDrawable() != null) {
+                puffer.setImageResource(0);
+                ServerConnection.reset(fieldPositions[fieldIndex]);
+            }
         }
     }
+
 
     private void checkForHoles(int currPos, int currHole, int desiredPos, int rabbit){
         Log.d("Rabbit", "checkForHoles: " + currPos);
