@@ -61,7 +61,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
-    private ImageView[] rabbits = new ImageView[4];
+    private ImageView rabbit1;
+    private ImageView rabbit2;
+    private ImageView rabbit3;
+    private ImageView rabbit4;
+
     private ImageView gameBoard;
     private ImageView figOne;
     private float corX, corY, radius;
@@ -70,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int touchCntLimit;
     private int currRabbit;
     private final String TAG = "MainActivity";
-
 
     //  Container for the Player List Fragment (Placeholder Container)
     private FrameLayout containerplayerList;
@@ -93,13 +96,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private ImageView cloudR;
     private int cloudLX;
     private int cloudRX;
+
+    //--------------------------------
     private boolean isMyTurn;
     private boolean isCheating;
     private boolean gameStarted;
     private int hole;
     private List<Player> players;
     private String sid;
-    final int[] rabbits={
+    final int[]rabbits={
             R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
     private static final String URI = "http://192.168.178.22:3000";
 
@@ -791,7 +796,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             rabbit2.setEnabled(isMyTurn);
             rabbit3.setEnabled(isMyTurn);
             rabbit4.setEnabled(isMyTurn);
-            drawButton.setEnabled(isMyTurn);
+            drawButton.setEnabled(!isMyTurn);
         });
     }
 
