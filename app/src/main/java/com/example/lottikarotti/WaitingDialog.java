@@ -14,7 +14,7 @@ public class WaitingDialog extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Host is choosing a GameMode, please wait~");
+        builder.setMessage("Host is choosing a Gamemode, please wait~");
 
         setCancelable(false); // Prevents user from closing the dialog
         return builder.create();
