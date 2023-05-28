@@ -1,16 +1,13 @@
 package com.example.lottikarotti;
 
-import org.apache.commons.lang3.ArrayUtils;
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PointF;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -22,7 +19,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -41,6 +37,8 @@ import com.example.lottikarotti.Listeners.IOnDataSentListener;
 import com.example.lottikarotti.Network.ServerConnection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -104,8 +102,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int hole;
     private List<Player> players;
     private String sid;
-    final int[]rabbits={
-            R.id.rabbit1,R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
+    final int[] rabbits = {
+            R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
     private static final String URI = "http://192.168.178.22:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
@@ -124,7 +122,30 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
     private Socket socket;
-    private void initializeServerConnection(){
+
+    @SuppressLint("MissingInflatedId")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initializeServerConnection();
+        initializeIntent();
+        initializeSensors();
+        initializeDrawables();
+        initializeFragments();
+        initializeLogic();
+        initializeButtons();
+        initializeServerListeners();
+        initializeClouds();
+        initializeButtonLogic();
+        initializeTurnLogic();
+    }
+
+    /**
+     * This method is called when the activity is created.
+     */
+    private void initializeServerConnection() {
         try {
             socket = ServerConnection.getInstance(URI);
             ServerConnection.connect();
@@ -143,7 +164,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
     }
 
-
+    /**
+     * This method is called when the activity is created.
+     */
     private void initializeIntent() {
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
@@ -156,21 +179,27 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
 
-        if(info.equals("start")){
+        if (info.equals("start")) {
             ServerConnection.createNewLobby(lobbyId);
             Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
-        }
-        else{
+        } else {
             ServerConnection.joinLobby(lobbyId);
             Log.d(TAG, "Joined lobby" + lobbyId);
         }
     }
-    public void initializeSensors(){
+
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeSensors() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
-    public void initializeDrawables(){
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeDrawables() {
         rabbit1 = (ImageView) findViewById(R.id.rabbit1);
         rabbit2 = (ImageView) findViewById(R.id.rabbit2);
         rabbit3 = (ImageView) findViewById(R.id.rabbit3);
@@ -181,25 +210,34 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         rabbit3.setImageResource(R.drawable.fig11);
         rabbit4.setImageResource(R.drawable.fig11);
 
-        instructions= (TextView) findViewById(R.id.textViewInstructions);
+        instructions = findViewById(R.id.textViewInstructions);
     }
 
-    public void initializeFragments(){
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeFragments() {
         //  Initialize PlayerList Fragment and Layout
         containerplayerList = findViewById(R.id.container_playerList);
         fragmentPlayerList = new PlayerListFragment();
     }
 
-    public void initializeLogic(){
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeLogic() {
         //Disale all fields at the start of the game
         for (int field : fields) {
-            ImageButton button= (ImageButton)findViewById(field);
+            ImageButton button = findViewById(field);
             button.setEnabled(false);
         }
     }
 
-    public void initializeButtons(){
-        carrotButton= (Button) findViewById(R.id.carrotButton);
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeButtons() {
+        carrotButton = findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
@@ -220,68 +258,84 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         actionBar.hide();
     }
 
-    public void initializeServerListeners(){
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeServerListeners() {
+        //  Initialize Server Listener "move", listen the move to the server
         socket.on("move", args -> {
             try {
                 handleMove(args[0].toString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
         });
+
+        // Initialize Server Listener "moveCheat", listen the move to the server in case of cheating
         socket.on("moveCheat", args -> {
             try {
                 handleMove(args[0].toString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.w(TAG, "Can't handle move cheat \n" + e.toString());
             }
         });
 
+        //  Initialize Server Listener "move", listen the shake event to the server
         socket.on("shake", args -> {
             Log.println(Log.INFO, "Shake", "Shake received");
             try {
                 handleShake(args[0].toString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
+
+        //  Initialize Server Listener "cheat", listen to the cheat event to the server
         socket.on("cheat", args -> {
             Log.println(Log.INFO, "Cheat", "CHEAT received");
             try {
                 handleCheating(args[0].toString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.w(TAG, "Can't cheating \n" + e.toString());
             }
         });
 
+        // Initialize Server Listener "carrotspin", listen the carrotspin event to the server, in case the carrot has been spun
         socket.on("carrotspin", args -> {
             Log.println(Log.INFO, "Carrot", "carrotspin received");
             try {
                 handleCarrotspin(args[0].toString());
-            }catch (Exception e){
+            } catch (Exception e) {
                 Log.w(TAG, "Can't handle carrotspin \n" + e.toString());
             }
         });
 
+        // Initialize Server Listener "turn", listen the turn event to the server
         socket.on("turn", id -> {
-            Log.println(Log.INFO, TAG, "Turn received" +id[0].toString()+"<-gerver - l0cal->"+socket.id().toString());
+            Log.println(Log.INFO, TAG, "Turn received" + id[0].toString() + "<-gerver - l0cal->" + socket.id());
             if (id[0].toString().equals(socket.id().toString())) setMyTurn(true);
 
         });
 
+        // Initialize Server Listener "turn", listen to the turn event from the server, see who's turn it is
         socket.on("error", code -> {
-            Log.println(Log.INFO, TAG, "Server indicates error! Code: "+code[0].toString());
+            Log.println(Log.INFO, TAG, "Server indicates error! Code: " + code[0].toString());
             runOnUiThread(() -> {
-                Toast.makeText(getApplicationContext(), "Server indicates error! Code: "+code[0].toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Server indicates error! Code: " + code[0].toString(), Toast.LENGTH_SHORT).show();
             });
         });
 
+        // Initialize Server Listener "startgame", listen to the startgame event from the server, see if the game has started
         socket.on("startgame", args -> {
             Log.println(Log.INFO, TAG, "Game start recieved");
             gameStarted = true;
         });
     }
 
-    public void initializeClouds(){
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeClouds() {
         DisplayMetrics displayMetrics = new DisplayMetrics();
 
         cloudL = (ImageView) findViewById(R.id.cloudLeft);
@@ -304,15 +358,19 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ViewGroup.LayoutParams cloudLeftParam = cloudL.getLayoutParams();
         ViewGroup.LayoutParams cloudRightParam = cloudR.getLayoutParams();
 
-        cloudLeftParam.width = screenWidth*2;
-        cloudLeftParam.height = screenHeight/2;
+        cloudLeftParam.width = screenWidth * 2;
+        cloudLeftParam.height = screenHeight / 2;
         cloudL.setLayoutParams(cloudLeftParam);
 
         cloudRightParam.width = screenWidth * 2;
         cloudRightParam.height = screenHeight / 2;
         cloudR.setLayoutParams(cloudRightParam);
     }
-    public void initializeButtonLogic(){
+
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeButtonLogic() {
         rabbit1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -356,25 +414,36 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
-        drawButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        drawButton.setOnClickListener(view -> {
+            Random rand = new Random();
+            int random = rand.nextInt(4);
+            cardView.setImageResource(cards[random]);
+            instructions.setTextColor(Color.BLACK);
 
-                Random rand = new Random();
-                int random = rand.nextInt(4);
-                cardView.setImageResource(cards[random]);
-                instructions.setTextColor(Color.BLACK);
-
-                switch(random) {
-                    case 0: drawButton.setEnabled(false); instructions.setText("Instructions: Move three fields with your rabbit on the game board"); playerMove(3, currRabbit); break;
-                    case 1: carrotButton.setEnabled(true);drawButton.setEnabled(false); instructions.setText("Instructions: Click the carrot on the game board"); break;
-                    case 2:  drawButton.setEnabled(false);instructions.setText("Instructions: Move one field with your rabbit on the game board");playerMove(1, currRabbit); break;
-                    case 3:  drawButton.setEnabled(false);instructions.setText("Instructions: Move two fields with your rabbit on the game board");playerMove(2, currRabbit); break;
-                }
-
-
+            switch (random) {
+                case 0:
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Move three fields with your rabbit on the game board");
+                    playerMove(3, currRabbit);
+                    break;
+                case 1:
+                    carrotButton.setEnabled(true);
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Click the carrot on the game board");
+                    break;
+                case 2:
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Move one field with your rabbit on the game board");
+                    playerMove(1, currRabbit);
+                    break;
+                case 3:
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Move two fields with your rabbit on the game board");
+                    playerMove(2, currRabbit);
+                    break;
             }
         });
+
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -385,29 +454,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
     }
 
-    public void initializeTurnLogic(){
+    /**
+     * This method is called when the activity is created.
+     */
+    public void initializeTurnLogic() {
         setMyTurn(false);
         gameStarted = false;
     }
-        @SuppressLint("MissingInflatedId")
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        initializeServerConnection();
-        initializeIntent();
-        initializeSensors();
-        initializeDrawables();
-        initializeFragments();
-        initializeLogic();
-        initializeButtons();
-        initializeServerListeners();
-        initializeClouds();
-        initializeButtonLogic();
-        initializeTurnLogic();
-    }
-
 
     private void setColorForRabbits() {
         Log.d("Rabbit", "setColorForRabbits: " + players.size());
@@ -431,9 +484,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         }
     }
-
-
-
 
     /**
      * Override the onSensorChanged method to detect the shake gesture
