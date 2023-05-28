@@ -145,10 +145,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
+
         if(info.equals("start")){
-            //TODO: handle lobby gets started or joined, reason errorhandling
             ServerConnection.createNewLobby(lobbyId);
-            ServerConnection.joinLobby(lobbyId);
             Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
         }
         else{
