@@ -14,7 +14,7 @@ public class DrawCard {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
             R.drawable.card4 };
 
-    public static void draw(Activity activity, ServerConnection serverConnection, View drawButton, TextView instructions, Button carrotButton, ImageView cardView, User user) {
+    public static void draw(Activity activity, ServerConnection serverConnection, View drawButton, TextView instructions, Button carrotButton, ImageView cardView) {
         serverConnection.drawCard(activity, new ServerConnection.DrawCardCallback() {
             @Override
             public void onCardDrawn(int random) {
