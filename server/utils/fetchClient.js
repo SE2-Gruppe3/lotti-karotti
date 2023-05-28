@@ -4,11 +4,11 @@
  * @param {*} socketID 
  * @returns client instance
  */
-function fetchClientInstance(clientsList,socketID){
+function fetchClientInstance(clientsList, socketID) {
     const client = clientsList.find(client => client.clientId === socketID);
     console.log(client.name);
     return client;
 }
 
 
-module.exports= fetchClientInstance;
+module.exports = fetchClientInstance;

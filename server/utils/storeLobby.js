@@ -6,7 +6,7 @@
  * @param {*} mutator
 * @returns lobby object
  */
-function storeLobbyInfo(code, owner, hole, mutator){
+function storeLobbyInfo(code, owner, hole, mutator) {
 
     var lobby = new Object();
     lobby.code = code;
