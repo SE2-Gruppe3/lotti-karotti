@@ -482,27 +482,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ImageButton field = (ImageButton) findViewById(fields[steps+add]);
         field.setEnabled(true);
         int puffer = steps+add;
-        //int addPuff = add;
+
         field.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 System.out.println("Sending move to server");
                 ImageButton fieldtest = (ImageButton) findViewById(fields[puffer]);
                 int delay = 0;
-//                while(fieldtest.getDrawable() != null){
-//                    System.out.println("Field is taken, steps + 1");
-//                    ++delay;
-//                    fieldtest =findViewById(fields[puffer+delay]);
-//                }
+
                 final int finalDelay = delay;
-                ServerConnection.getHole(lobbyId, puffer+finalDelay, rabbit);
-//                if(checkForHoles(puffer+finalDelay)){
-//                    Log.d("Hole", "onClick: " + finalDelay);
-//                    ServerConnection.reset(addPuff);
-//                    field.setEnabled(false);
-//                } else {
-//                    Log.d("Move", "onClick: " + finalDelay);
-//                    ServerConnection.move(steps + finalDelay, rabbit);
+                ServerConnection.move(steps, rabbit);
+
                     field.setEnabled(false);
                // }
             }
@@ -536,32 +526,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
     }
-    private void handleGetHole(String json, String hole, String desired, String rabbit) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        players = Arrays.asList(mapper.readValue(json, Player[].class));
-
-
-                //Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
-              //  Log.d("Hole", "run: " + hole + " " + desired + " " + rabbit);
-                int currhole = Integer.parseInt(hole);
-                int desiredPos = Integer.parseInt(desired);
-                int rabbitCurr = Integer.parseInt(rabbit);
-                Log.d("Hole", "handlegethole: " + players.size());
-                for(Player p: players){
-                    Log.d("Hole", "Players");
-                    if(p.getSid().equals(socket.id())){
-                        Log.d("Hole", "Socket match");
-                      //  runOnUiThread(() -> {
-                            checkForHoles(p.getRabbits().get(rabbitCurr).getPosition(), currhole, desiredPos, rabbitCurr);
-                    //    });
-
-                        }
-                    }
-                }
-
-
-
-
+    
     /**
      * Handle the shake event
      */
