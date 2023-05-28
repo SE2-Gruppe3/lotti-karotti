@@ -538,6 +538,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         if (!gameStarted) socket.emit("startgame", 1);
 
+        setMyTurn(false);
+        drawButton.setEnabled(false);
+
         System.out.println(steps + " steps with rabbit " + rabbit);
 
         int add = players.stream()
