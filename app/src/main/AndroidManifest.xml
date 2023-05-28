@@ -20,7 +20,7 @@
             android:name=".Highscore.HighscoreActivity"
             android:exported="false" />
         <service
-            android:name=".BGMusic"
+            android:name=".Util.BGMusic"
             android:enabled="true"
             android:exported="true" >
         </service>
