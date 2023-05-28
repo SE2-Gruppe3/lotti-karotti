@@ -510,78 +510,43 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Handle the shake event
      */
-    private void handleShake(String socketid)  {
-
+    private void handleShake(String socketid) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
-        mainHandler.post(new Runnable() {
-            @Override
-            public void run() {
-                //Toast.makeText(MainActivity.this, "Shake detected!", Toast.LENGTH_SHORT).show();
-                if (!socketid.equals(socket.id())) {
-                    animateClouds(screenWidth);
-                    resetClouds(cloudLX, cloudRX);
-                } else {
-                    instructions.setText("You are now able to cheat, others cant see you !!");
-                    instructions.setTextColor(Color.RED);
+        mainHandler.post(() -> {
+            if (!socketid.equals(socket.id())) {
+                animateClouds(screenWidth);
+                resetClouds(cloudLX, cloudRX);
+            } else {
+                instructions.setText("You are now able to cheat, others can't see you!!");
+                instructions.setTextColor(Color.RED);
 
-                    isCheating = true;
-                    ServerConnection.cheat("Brooo");
+                isCheating = true;
+                ServerConnection.cheat("Brooo");
 
-                   /*  for (Player p: players) {
-                        if (!(p.getSid().equals(socket.id()))) {
-                            for (Rabbit r: p.getRabbits()) {
+                for (int i = 1; i < fields.length; i++) {
+                    ImageButton field = findViewById(fields[i]);
+                    field.setEnabled(true);
 
-                            }
+                    field.setOnClickListener(view -> {
+                        int position = ArrayUtils.indexOf(fields, field.getId());
+                        System.out.println("Sending move to server");
+                        ImageButton fieldtest = findViewById(fields[position]);
+                        int delay = 0;
+                        while (fieldtest.getDrawable() != null) {
+                            System.out.println("Field is taken, steps + 1");
+                            ++delay;
+                            fieldtest = findViewById(fields[delay + position]);
                         }
-                    }*/
-                    for (int i = 1; i < fields.length; i++) {
-                        ImageButton field = (ImageButton) findViewById(fields[i]);
-                        field.setEnabled(true);
-
-                        field.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View view) {
-
-                                int position = ArrayUtils.indexOf(fields, field.getId()) ;
-                                System.out.println("Sending move to server");
-                                ImageButton fieldtest = (ImageButton) findViewById(fields[position]);
-                                int delay = 0;
-                                while (fieldtest.getDrawable() != null) {
-                                    System.out.println("Field is taken, steps + 1");
-                                    ++delay;
-                                    fieldtest = findViewById(fields[delay+position]);
-                                }
-                                final int finalDelay = delay+position;
-                                ServerConnection.getHole(lobbyId, finalDelay, currRabbit);
-//                                if (checkForHoles(finalDelay)) {
-//                                    Log.d("Hole", "onClick: " + finalDelay);
-//                                    for (Player p: players) {
-//                                        if (p.getSid().equals(socket.id())) {
-//                                            ServerConnection.reset(p.getRabbits().get(currRabbit).getPosition());
-//                                        }
-//                                    }
-//                                   // ServerConnection.reset();
-                                    field.setEnabled(false);
-//                                } else {
-//                                    Log.d("Cheat Move", "onClick: " + finalDelay);
-//                                    ServerConnection.cheatMove(finalDelay, currRabbit);
-//                                    field.setEnabled(false);
-//                                    isCheating=false;
-//                                }
-                            }
-
-                        });
-
-                    }
-                    Toast.makeText(MainActivity.this, "Please choose field you want to move", Toast.LENGTH_LONG).show();
-
+                        final int finalDelay = delay + position;
+                        ServerConnection.getHole(lobbyId, finalDelay, currRabbit);
+                        field.setEnabled(false);
+                    });
                 }
-
+                Toast.makeText(MainActivity.this, "Please choose the field you want to move", Toast.LENGTH_LONG).show();
             }
         });
-
-
     }
+
 
     /**
      * Handle Carrotclick (Carrotspin)
