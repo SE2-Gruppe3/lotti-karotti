@@ -242,7 +242,7 @@ io.on('connection', (socket) => {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
 
         if (lobby !== undefined) {
-            if(lobby.mutator === "classic") {
+            if (lobby.mutator === "classic") {
                 const randomhole = Math.floor(Math.random() * 11);
                 lobby.hole = holes[randomhole];
                 console.log(`[Server] Lobby ${lobbycode}'s hole updated to ${randomhole}`);
@@ -254,7 +254,7 @@ io.on('connection', (socket) => {
                 const randomhole = Math.floor(Math.random() * 11);
                 lobby.hole = holes[randomhole];
                 const temp = Math.floor(Math.random() * 11);
-                const randomholeTwo = (randomhole+temp+1) % 10;
+                const randomholeTwo = (randomhole + temp + 1) % 10;
                 lobby.holeTwo = holes[randomholeTwo]
                 console.log(`[Server] Lobby ${lobbycode}'s hole one updated to ${randomhole}`);
                 console.log(`[Server] Lobby ${lobbycode}'s hole two updated to ${randomholeTwo}`);
@@ -265,7 +265,7 @@ io.on('connection', (socket) => {
             } else {
                 console.error(`[Server] Lobby with code ${lobbycode} seems to have an undefined Gamemode`);
             }
-           
+
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
@@ -299,8 +299,8 @@ io.on('connection', (socket) => {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
         if (lobby !== undefined) {
             const currMutator = lobby.mutator;
-            if(currMutator !== "classic" || currMutator !== undefined){
-                if(currMutator === "spicyCarrot"){
+            if (currMutator !== "classic" || currMutator !== undefined) {
+                if (currMutator === "spicyCarrot") {
                     console.log(`[Server] Lobby ${lobbycode}'s Mutator: ${currMutator}`);
                     io.to(lobbycode).emit('getMutator', "spicyCarrot");
                 } //insert else if for second Mutator
