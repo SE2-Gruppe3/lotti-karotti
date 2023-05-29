@@ -1,8 +1,29 @@
 package com.example.lottikarotti;
 
+
+//import static com.example.lottikarotti.Network.ServerConnection.getSocket;
+
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+        import android.content.SharedPreferences;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.WindowManager;
+
+
 import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+        import android.graphics.PointF;
+        import android.hardware.Sensor;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,11 +33,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.os.Bundle;
-import android.os.Handler;
+        import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
 import android.util.Log;
+        import android.view.ViewGroup;
+
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -24,19 +48,24 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
+        import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
 import com.example.lottikarotti.Network.ServerConnection;
+import com.example.lottikarotti.Util.DisectJSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -84,6 +113,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Sensor shakeSensor;
     private float oldX, oldY, oldZ;
     private long preUpdate;
+    private String[] optionsArray;
+    private String accusedPlayer;
     private static final int SHAKE_THRESHOLD = 1000;
 
     //Variables for the Clouds
@@ -290,6 +321,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+        socket.on("createvotingpopup", args -> {
+            Log.println(Log.INFO, "Voting", "Voting started");
+            try {
+                createVotingPopup((String) args[0], args[1].toString(), MainActivity.this);
+            }catch (Exception e){
+                Log.w(TAG, "Can't start voting process \n" + e.toString());
+            }
+        });
+
         //  Initialize Server Listener "cheat", listen to the cheat event to the server
         socket.on("cheat", args -> {
             Log.println(Log.INFO, "Cheat", "CHEAT received");
@@ -452,6 +492,56 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 startActivity(intent);
             }
         });
+
+        ImageButton votingButton = findViewById(R.id.button_vote);
+        votingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                View dialogView = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_voting, null);
+                ServerConnection.getListOfConnectedPlayers(MainActivity.this, new ServerConnection.PlayerListCallback() {
+                    @Override
+                    public void onPlayerListReceived(List<String> playerList) {
+                        optionsArray = new String[playerList.size()];
+                        optionsArray = playerList.toArray(optionsArray);
+
+                        Spinner spinner = dialogView.findViewById(R.id.txt_VotingUsername);
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, optionsArray);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner.setAdapter(adapter);
+                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                accusedPlayer = parent.getItemAtPosition(position).toString();
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> adapterView) {
+                                //
+                            }
+                        });
+                    }
+                });
+
+                builder.setTitle("Select the username of the suspected cheater: ")
+                        .setView(dialogView)
+                        .setPositiveButton("Start", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                socket.emit("createvotingpopup", accusedPlayer);
+                            }
+                        })
+                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(getApplicationContext(), "Voting aborted!", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
     }
 
     /**
@@ -597,6 +687,70 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
     }
 
+
+    /**
+     * Create voting popup
+     */
+
+    private void createVotingPopup(String socketid, String accusedPlayer, Activity activity) {
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        mainHandler.post(new Runnable() {
+            @Override
+            public void run() {
+                if(!socketid.equals(socket.id()) && !accusedPlayer.equals("Error")){
+                    AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+                    View dialogView = LayoutInflater.from(activity).inflate(R.layout.popup_voting2, null);
+                    TextView accusedPlayerTxt = dialogView.findViewById(R.id.txt_AccusedPlayer);
+                    accusedPlayerTxt.setText(accusedPlayer);
+                    builder.setTitle("")
+                            .setView(dialogView)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    socket.emit("vote");
+                                }
+                            })
+                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            });
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    closeVotingIfPlayerNotVotedAfterSomeTime(dialog);
+                }
+                else if(!accusedPlayer.equals("Error")) Toast.makeText(MainActivity.this.getApplicationContext(), "Automatically voted yes!", Toast.LENGTH_SHORT).show();
+                else if(socketid.equals(socket.id())) Toast.makeText(MainActivity.this.getApplicationContext(), "Please enter the correct Player username!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void closeVotingIfPlayerNotVotedAfterSomeTime(Dialog dialog) {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                dialog.dismiss();
+                socket.on("getvotingresult", args -> {
+                    int result = (int) args[0];
+                    boolean isCheating = true;
+                    if(result >= 50 && isCheating){
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Remove rabbit from cheater!", Toast.LENGTH_SHORT).show());
+                    }
+                    else if(result < 50 && isCheating) {
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Not enough yes votes!", Toast.LENGTH_SHORT).show());
+                    }
+                    else if(!isCheating) {
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Player did not cheat! Removing your rabbit! ", Toast.LENGTH_SHORT).show());
+                    }
+                });
+
+                socket.emit("getvotingresult");
+            }
+        }, 20000);
+    }
 
     /**
      * Handle Carrotclick (Carrotspin)
