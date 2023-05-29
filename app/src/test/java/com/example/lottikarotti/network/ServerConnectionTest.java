@@ -1,4 +1,4 @@
-package com.example.lottikarotti.network;
+/*package com.example.lottikarotti.network;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -18,7 +18,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import io.socket.client.Socket;
-/*
+
 @ExtendWith(MockitoExtension.class)
 public class ServerConnectionTest {
 
