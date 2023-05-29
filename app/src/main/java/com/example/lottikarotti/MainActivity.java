@@ -395,7 +395,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     }
                 });
 
-                builder.setTitle("Enter the username of the suspected cheater: ")
+                builder.setTitle("Select the username of the suspected cheater: ")
                         .setView(dialogView)
                         .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                             @Override
