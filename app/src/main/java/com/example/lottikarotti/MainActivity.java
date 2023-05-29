@@ -55,6 +55,10 @@ import com.example.lottikarotti.Util.DisectJSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -567,6 +571,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             @Override
             public void run() {
                 dialog.dismiss();
+                socket.on("getvotingresult", args -> {
+                    int result = (int) args[0];
+                    boolean isCheating = true;
+                    if(result >= 50 && isCheating){
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Remove rabbit from cheater!", Toast.LENGTH_SHORT).show());
+                    }
+                    else if(result < 50 && isCheating) {
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Not enough yes votes!", Toast.LENGTH_SHORT).show());
+                    }
+                    else if(!isCheating) {
+                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Player did not cheat! Removing your rabbit! ", Toast.LENGTH_SHORT).show());
+                    }
+                });
+
                 socket.emit("getvotingresult");
             }
         }, 20000);
