@@ -96,6 +96,81 @@ public class ServerConnection {
         void onPlayerListReceived(List<String> playerList);
     }
 
+
+    public static void getHighScoreBoard(Activity activity, HighScoreBoardCallback callback){
+        socket.on("gethighscore", args -> {
+            JSONArray highScore = (JSONArray) args[0];
+            List<String> usernames = new ArrayList<>();
+            List<Integer> scores = new ArrayList<>();
+            for(int i=0; i<highScore.length(); i++){
+                try {
+                    JSONObject object = highScore.getJSONObject(i);
+                    usernames.add(object.getString("username"));
+                    scores.add(object.getInt("score"));
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            activity.runOnUiThread(() -> callback.onHighScoreBoardReceived(usernames, scores));
+        });
+
+        socket.emit("gethighscore");
+    }
+
+    public interface HighScoreBoardCallback {
+        void onHighScoreBoardReceived(List<String> usernames, List<Integer> scores);
+    }
+
+    public static void updateHighScoreBoard(String winnerUsername) {
+        socket.on("gethighscore", args -> {
+            JSONArray highScore = (JSONArray) args[0];
+            JSONArray updatedHighScore = new JSONArray();
+
+            boolean newPlayer = false;
+            for(int i=0; i<highScore.length(); i++){
+                try {
+                    JSONObject object = highScore.getJSONObject(i);
+                    if(object.getString("username").equals(winnerUsername)) {
+                        int newScore = object.getInt("score") + 1;
+                        object.put("score", newScore);
+                    }
+
+                    else if(!object.getString("username").contains(winnerUsername)) {
+                        newPlayer = true;
+                    }
+
+                    updatedHighScore.put(object);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            if(newPlayer){
+                JSONObject object = new JSONObject();
+                try {
+                    object.put("username", winnerUsername);
+                    object.put("score", 1);
+                    updatedHighScore.put(object);
+                } catch (JSONException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            socket.emit("saveupdatedhighscore", updatedHighScore);
+        });
+    }
+
+    public void drawCard(Activity activity, DrawCardCallback callback){
+        socket.on("drawcard", args -> {
+            int number = (Integer) args[0];
+            activity.runOnUiThread(() -> callback.onCardDrawn(number));
+        });
+
+        socket.emit("drawcard");
+    }
+
+    public interface DrawCardCallback {
+        void onCardDrawn(int random);
+    }
     public static void registerNewPlayer(String name) {
         socket.emit("register", name);
     }
@@ -111,6 +186,10 @@ public class ServerConnection {
     public static void move(int steps, int rabbitNo) {
         socket.emit("move", steps, rabbitNo);
     }
+    public static void cheatMove(int pos, int rabbitNo) {
+        socket.emit("moveCheat", pos, rabbitNo);
+    }
+
     public static void shake() {
         socket.emit("shake");
     }
@@ -118,9 +197,13 @@ public class ServerConnection {
         socket.emit("fetchuniqueid");
     }
     public static void carrotSpin(){
-        socket.emit("carrotspin");
+        socket.emit("carrotspin", 1);
+    }
+    public static void cheat(String name){
+        socket.emit("cheat",name);
     }
     public static void reset(int pos){
         socket.emit("reset", pos);
     }
+    public static void getHole(String lobbyCode, int desiredPos, int rabbit) { socket.emit ("gethole", lobbyCode, desiredPos, rabbit); }
 }

@@ -1,4 +1,4 @@
-package com.example.lottikarotti;
+package com.example.lottikarotti.Util;
 
 import android.app.Service;
 import android.content.Intent;
@@ -6,6 +6,8 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.IBinder;
+
+import com.example.lottikarotti.R;
 
 public class BGMusic extends Service {
     private MediaPlayer player;
@@ -62,7 +64,7 @@ public class BGMusic extends Service {
     }
 
     public class MusicBinder extends Binder {
-        BGMusic getService() {
+        public BGMusic getService() {
             return BGMusic.this;
         }
     }

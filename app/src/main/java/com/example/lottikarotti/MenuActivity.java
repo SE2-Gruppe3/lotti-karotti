@@ -9,9 +9,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.SeekBar;
-import android.widget.Switch;
+
+import com.example.lottikarotti.Highscore.HighscoreActivity;
+import com.example.lottikarotti.Util.BGMusic;
 
 public class MenuActivity extends AppCompatActivity {
 
@@ -21,6 +21,7 @@ public class MenuActivity extends AppCompatActivity {
 
     private Button openAbout;
     private Button exitSettings;
+    private Button highscore;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -36,7 +37,7 @@ public class MenuActivity extends AppCompatActivity {
         playGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this, MainActivity.class);
+                Intent intent = new Intent(MenuActivity.this, LobbyActivity.class);
                 startActivity(intent);
             }
         });
@@ -61,6 +62,14 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
+        highscore = findViewById(R.id.button_Highscore);
+        highscore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MenuActivity.this, HighscoreActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
     @Override
