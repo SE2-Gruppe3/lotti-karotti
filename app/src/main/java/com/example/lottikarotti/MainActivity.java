@@ -129,13 +129,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     //--------------------------------
     private boolean isMyTurn;
     private boolean isCheating;
+    private int result;
     private boolean gameStarted;
     private int hole;
     private List<Player> players;
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://192.168.178.22:3000";
+    private static final String URI = "http://10.2.0.60:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -330,13 +331,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
-        //  Initialize Server Listener "cheat", listen to the cheat event to the server
-        socket.on("cheat", args -> {
-            Log.println(Log.INFO, "Cheat", "CHEAT received");
+        socket.on("checkifplayercheated", args -> {
+            Log.println(Log.INFO, "Cheater", "Getting cheater");
             try {
-                handleCheating(args[0].toString());
-            } catch (Exception e) {
-                Log.w(TAG, "Can't cheating \n" + e.toString());
+                getCheater((String) args[0], (int) args[1]);
+            }catch (Exception e){
+                Log.w(TAG, "Can't start voting process \n" + e.toString());
             }
         });
 
@@ -633,19 +633,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         renderBoard();
     }
-    /**
-     * Handle the Cheating
-     */
-    private void handleCheating(String socketid){
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        mainHandler.post( new Runnable() {
-
-            @Override
-            public void run() {
-                //Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
 
     /**
      * Handle the shake event
@@ -659,9 +646,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             } else {
                 instructions.setText("You are now able to cheat, others can't see you!!");
                 instructions.setTextColor(Color.RED);
-
-                isCheating = true;
-                ServerConnection.cheat("Brooo");
 
                 for (int i = 1; i < fields.length; i++) {
                     ImageButton field = findViewById(fields[i]);
@@ -678,7 +662,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                             fieldtest = findViewById(fields[delay + position]);
                         }
                         final int finalDelay = delay + position;
-                        ServerConnection.getHole(lobbyId, finalDelay, currRabbit);
+                        ServerConnection.cheatMove(finalDelay, currRabbit);
+                        ServerConnection.cheat(socketid);
                         field.setEnabled(false);
                     });
                 }
@@ -719,7 +704,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                             });
                     AlertDialog dialog = builder.create();
                     dialog.show();
-                    closeVotingIfPlayerNotVotedAfterSomeTime(dialog);
+                    closeVotingAfterSomeTime(dialog, accusedPlayer);
                 }
                 else if(!accusedPlayer.equals("Error")) Toast.makeText(MainActivity.this.getApplicationContext(), "Automatically voted yes!", Toast.LENGTH_SHORT).show();
                 else if(socketid.equals(socket.id())) Toast.makeText(MainActivity.this.getApplicationContext(), "Please enter the correct Player username!", Toast.LENGTH_SHORT).show();
@@ -727,29 +712,47 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
     }
 
-    private void closeVotingIfPlayerNotVotedAfterSomeTime(Dialog dialog) {
+    private void closeVotingAfterSomeTime(Dialog dialog, String player) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 dialog.dismiss();
+
                 socket.on("getvotingresult", args -> {
-                    int result = (int) args[0];
-                    boolean isCheating = true;
-                    if(result >= 50 && isCheating){
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Remove rabbit from cheater!", Toast.LENGTH_SHORT).show());
-                    }
-                    else if(result < 50 && isCheating) {
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Not enough yes votes!", Toast.LENGTH_SHORT).show());
-                    }
-                    else if(!isCheating) {
-                        runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Player did not cheat! Removing your rabbit! ", Toast.LENGTH_SHORT).show());
-                    }
+                    result = (int) args[0];
+
+                    socket.emit("checkifplayercheated", player);
                 });
 
                 socket.emit("getvotingresult");
             }
         }, 20000);
+    }
+
+    /**
+     * Handle the Cheating
+     */
+    private void getCheater(String cheaterResponse, int percentage){
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        mainHandler.post( new Runnable() {
+
+            @Override
+            public void run() {
+                isCheating = Boolean.parseBoolean(cheaterResponse);
+                result = percentage;
+
+                if(result >= 50 && isCheating){
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Remove rabbit from cheater!", Toast.LENGTH_SHORT).show());
+                }
+                else if(isCheating) {
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Not enough yes votes!", Toast.LENGTH_SHORT).show());
+                }
+                else {
+                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Player did not cheat! Removing your rabbit! ", Toast.LENGTH_SHORT).show());
+                }
+            }
+        });
     }
 
     /**

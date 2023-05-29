@@ -35,6 +35,7 @@ var cheaterList = [];
 var lobbies = [];
 var gameData = [];
 var votes = 1;
+var percentage = 0;
 
 //********************************************************************************************************** */
 //                          ***Connection Handling begins here***                                            */
@@ -260,7 +261,7 @@ io.on('connection', (socket) => {
     })
 
     socket.on('getvotingresult', args => {
-        var percentage = (votes / playercounter) * 100
+        percentage = (votes / playercounter) * 100
         votes = 1
         console.log("[SERVER] Voting results are Yes: " + percentage)
         io.to(lobbycode).emit('getvotingresult', percentage)
@@ -296,11 +297,40 @@ io.on('connection', (socket) => {
     socket.on('cheat', args => {
 
         console.log('User: ', args, "cheated");
-        if (playerExist(cheaterList, socket.id) == 0) {
-            clientsList.push(storeClientInfo(socket.id, args));
-        }
+        cheaterList.push(socket.id);
+        console.log("[SERVER] " + cheaterList);
         io.to(lobbycode).emit('cheat', socket.id);
     });
+
+    socket.on('checkifplayercheated', args => {
+        var playerExists = false;
+        var cheated = false;
+        var id;
+        var name;
+
+        for (var i = 0; i < clientsList.length; i++) {
+            if (clientsList[i].name == args){
+                playerExists = true;
+                console.log(clientsList[i])
+                id = clientsList[i].clientId;
+            }
+        }
+
+        for (var i = 0; i < cheaterList.length; i++) {
+            if (cheaterList.includes(id)) cheated = true;
+        }
+
+        if (playerExists === true && cheated === true) {
+            cheaterList.pop(socket.id);
+            console.log("[SERVER] Player cheated");
+            io.to(lobbycode).emit('checkifplayercheated', "true", percentage);
+        }
+        else {
+            console.log("[SERVER] Player did not cheated");
+            io.to(lobbycode).emit('checkifplayercheated', "false", percentage);
+        }
+    });
+
     //Hole appears below Rabbit logic
     socket.on('reset', (pos) => {
         var game = fetchGameDataInstance(gameData, socket.id);
