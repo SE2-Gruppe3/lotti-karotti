@@ -35,10 +35,13 @@ import android.util.DisplayMetrics;
 import android.util.Log;
         import android.view.ViewGroup;
 
-        import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +51,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
 import com.example.lottikarotti.Network.ServerConnection;
+import com.example.lottikarotti.Util.DisectJSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -95,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Sensor shakeSensor;
     private float oldX, oldY, oldZ;
     private long preUpdate;
+    private String[] optionsArray;
+    private String accusedPlayer;
     private static final int SHAKE_THRESHOLD = 1000;
 
     //Variables for the Clouds
@@ -359,20 +365,41 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         });
 
         ImageButton votingButton = findViewById(R.id.button_vote);
-
         votingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 View dialogView = LayoutInflater.from(MainActivity.this).inflate(R.layout.popup_voting, null);
+                ServerConnection.getListOfConnectedPlayers(MainActivity.this, new ServerConnection.PlayerListCallback() {
+                    @Override
+                    public void onPlayerListReceived(List<String> playerList) {
+                        optionsArray = new String[playerList.size()];
+                        optionsArray = playerList.toArray(optionsArray);
+
+                        Spinner spinner = dialogView.findViewById(R.id.txt_VotingUsername);
+
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(MainActivity.this, android.R.layout.simple_spinner_item, optionsArray);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spinner.setAdapter(adapter);
+                        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                            @Override
+                            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                                accusedPlayer = parent.getItemAtPosition(position).toString();
+                            }
+
+                            @Override
+                            public void onNothingSelected(AdapterView<?> adapterView) {
+                                //
+                            }
+                        });
+                    }
+                });
+
                 builder.setTitle("Enter the username of the suspected cheater: ")
                         .setView(dialogView)
                         .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                String accusedPlayer;
-                                TextView username = dialogView.findViewById(R.id.txt_VotingUsername);
-                                accusedPlayer = username.getText().toString();
                                 socket.emit("createvotingpopup", accusedPlayer);
                             }
                         })
