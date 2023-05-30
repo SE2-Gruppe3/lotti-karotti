@@ -57,6 +57,8 @@ public class ServerConnection {
         socket.emit("alive");
     }
 
+
+
     public interface ConnectionCallback {
         void onConnectionChecked(boolean isAlive);
     }
@@ -205,5 +207,7 @@ public class ServerConnection {
     public static void reset(int pos){
         socket.emit("reset", pos);
     }
+    public static void setMutator(String mutator) { socket.emit ("setMutator", mutator); }
+    public static void getMutator() { socket.emit ("getMutator"); }
     public static void getHole(String lobbyCode, int desiredPos, int rabbit) { socket.emit ("gethole", lobbyCode, desiredPos, rabbit); }
 }

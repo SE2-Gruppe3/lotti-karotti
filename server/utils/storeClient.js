@@ -4,7 +4,7 @@
  * @param {*} name 
  * @returns client object
  */
-function storeClientInfo(id, name){
+function storeClientInfo(id, name) {
 
     var client = new Object();
     client.clientId = id;

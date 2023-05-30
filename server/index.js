@@ -130,7 +130,7 @@ io.on('connection', (socket) => {
             console.error("[Server] Error while creating lobby (error 300)");
         } else {
             console.log("[Server] Lobby creation");
-            lobbies.push(storeLobbyInfo(code, socket.id, 0));
+            lobbies.push(storeLobbyInfo(code, socket.id, 0, "classic"));
             lobbies[lobbies.length - 1].players.push(fetchClientInstance(clientsList, socket.id));
 
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t" + JSON.stringify(lobbies));
@@ -202,8 +202,8 @@ io.on('connection', (socket) => {
             var currLobby = fetchLobbyInstance(lobbies, lobbycode);
 
             var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
-            // If player opn hole, set position to 0
-            if (newpos === currLobby.hole) newpos = 0;
+            // If player lands on a hole, set position to 0
+            if (newpos === currLobby.hole || newpos === currLobby.holeTwo) newpos = 0;
 
             gameData = positionAvail(gameData, newpos);
             game.rabbits[parseInt(rabbit)].position = newpos;
@@ -269,19 +269,38 @@ io.on('connection', (socket) => {
 
     //Carrotspin, notifying Client the carrot has been spun
     socket.on('carrotspin', args => {
-        const randomhole = Math.floor(Math.random() * 11);
-
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
 
         if (lobby !== undefined) {
-            lobby.hole = holes[randomhole];
+            if (lobby.mutator === "classic") {
+                const randomhole = Math.floor(Math.random() * 11);
+                lobby.hole = holes[randomhole];
+                console.log(`[Server] Lobby ${lobbycode}'s hole updated to ${randomhole}`);
+                io.to(lobbycode).emit('carrotspin', randomhole);
 
-            console.log(`[Server] Lobby ${lobbycode}'s hole updated to ${randomhole}`);
-            io.to(lobbycode).emit('carrotspin', randomhole);
+                setTurn();
+
+            } else if (lobby.mutator === "spicyCarrot") {
+                const randomhole = Math.floor(Math.random() * 11);
+                lobby.hole = holes[randomhole];
+                const temp = Math.floor(Math.random() * 11);
+                const randomholeTwo = (randomhole + temp + 1) % 10;
+                lobby.holeTwo = holes[randomholeTwo]
+                console.log(`[Server] Lobby ${lobbycode}'s hole one updated to ${randomhole}`);
+                console.log(`[Server] Lobby ${lobbycode}'s hole two updated to ${randomholeTwo}`);
+                io.to(lobbycode).emit('spicycarrotspin', randomhole, randomholeTwo);
+
+                setTurn();
+
+            } else {
+                console.error(`[Server] Lobby with code ${lobbycode} seems to have an undefined Gamemode`);
+            }
+
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
     });
+
     //getHole. A method to receive the current hole on the Map for a specific server
     socket.on('gethole', (lobbycode, desiredPos, rabbit) => {
         let lobbyIndex = lobbies.findIndex(lobby => lobby.code === lobbycode);
@@ -293,6 +312,39 @@ io.on('connection', (socket) => {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
     });
+
+    //setMutator, sets the desired Mutator to the corresponding Lobby
+    socket.on('setMutator', (mutator) => {
+        var lobby = fetchLobbyInstance(lobbies, lobbycode);
+        if (lobby !== undefined) {
+            lobby.mutator = mutator;
+            console.log(`[Server] Lobby ${lobbycode}'s Mutator updated to ${mutator}`);
+            io.to(lobbycode).emit('mutatorSelected');
+        } else {
+            console.error(`[Server] Lobby with code ${lobbycode} not found`);
+        }
+    });
+    //getMutator, called by nonHosts to check if the mode has been selected already. Can be adjusted and used for the second Mutator, for now it works for spicyCarrot
+    socket.on('getMutator', args => {
+        var lobby = fetchLobbyInstance(lobbies, lobbycode);
+        if (lobby !== undefined) {
+            const currMutator = lobby.mutator;
+            if (currMutator !== "classic" || currMutator !== undefined) {
+                if (currMutator === "spicyCarrot") {
+                    console.log(`[Server] Lobby ${lobbycode}'s Mutator: ${currMutator}`);
+                    io.to(lobbycode).emit('getMutator', "spicyCarrot");
+                } //insert else if for second Mutator
+
+            } else { //if Mutator == classic
+                console.log(`[Server] Lobby ${lobbycode}'s Mutator: ${currMutator}`);
+                io.to(lobbycode).emit('getMutator', "classic");
+            }
+        } else {
+            console.error(`[Server] Lobby with code ${lobbycode} not found`);
+        }
+    });
+
+
     //Cheating, remark someone has cheated
     socket.on('cheat', args => {
 

@@ -3,9 +3,10 @@
  * @param {*} code 
  * @param {*} owner 
  * @param {*} hole
- * @returns lobby object
+ * @param {*} mutator
+* @returns lobby object
  */
-function storeLobbyInfo(code, owner, hole){
+function storeLobbyInfo(code, owner, hole, mutator) {
 
     var lobby = new Object();
     lobby.code = code;
@@ -13,6 +14,8 @@ function storeLobbyInfo(code, owner, hole){
     lobby.players = [];
     lobby.socket_turn = 0;
     lobby.hole = hole;
+    lobby.holeTwo = -1;
+    lobby.mutator = mutator;
     lobby.game_started = 0;
 
     return lobby;

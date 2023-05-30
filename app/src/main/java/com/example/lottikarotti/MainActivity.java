@@ -59,6 +59,7 @@ import androidx.fragment.app.FragmentTransaction;
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
 import com.example.lottikarotti.Network.ServerConnection;
 import com.example.lottikarotti.Util.DisectJSON;
+import com.example.lottikarotti.MutatorDialog;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -79,9 +80,11 @@ import java.util.Random;
 
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener, MutatorDialog.MutatorDialogListener {
 
     private String lobbyId;
+    private WaitingDialog waitDialog;
+    private String info;
     private Button carrotButton;
     private ImageButton settingsButton;
     private Button drawButton;
@@ -160,7 +163,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initializeServerConnection();
         initializeIntent();
         initializeSensors();
@@ -203,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
         String username = intent.getStringExtra("username");
-        String info = intent.getStringExtra("info");
+        info = intent.getStringExtra("info");
 
         TextView lobbyID = findViewById(R.id.lobbyID);
         lobbyID.setText("Lobby ID: " + lobbyId);
@@ -213,9 +215,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         if (info.equals("start")) {
             ServerConnection.createNewLobby(lobbyId);
+            showMutatorDialong();
             Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
         } else {
             ServerConnection.joinLobby(lobbyId);
+            waitDialog = new WaitingDialog();
+            waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
             Log.d(TAG, "Joined lobby" + lobbyId);
         }
     }
@@ -370,13 +375,35 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.println(Log.INFO, TAG, "Game start recieved");
             gameStarted = true;
         });
+
+        socket.on("mutatorSelected", args -> {
+            Log.println(Log.INFO, TAG, "Mutator selected recieved");
+            if (!(info.equals("start")) && waitDialog != null) {
+                Log.d(TAG, "onCreate: Dismissing dialog");
+                runOnUiThread(() -> {
+                    waitDialog.dismiss();
+                });
+            }
+        });
+
+        socket.on("spicycarrotspin", args -> {
+            Log.println(Log.INFO, "Carrot", "spicycarrotspin received");
+            try {
+                handleSpicyCarrotspin(args[0].toString(), args[1].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle spicycarrotspin \n" + e.toString());
+            }
+        });
     }
 
     /**
      * This method is called when the activity is created.
      */
     public void initializeClouds() {
-        DisplayMetrics displayMetrics = new DisplayMetrics();
+        DisplayMetrics displayMetrics = new DisplayMetrics(); 
+        /**
+         * Clouds for the Sensor
+         */
 
         cloudL = (ImageView) findViewById(R.id.cloudLeft);
         cloudR = (ImageView) findViewById(R.id.cloudRight);
@@ -601,6 +628,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         if (!gameStarted) socket.emit("startgame", 1);
 
+        setMyTurn(false);
+        drawButton.setEnabled(false);
+
         System.out.println(steps + " steps with rabbit " + rabbit);
 
         int add = players.stream()
@@ -760,13 +790,22 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     private void handleCarrotspin(String holeIndex) throws JsonProcessingException {
         try {
-            hole = Integer.parseInt(holeIndex);
-            putHolesOnBoard(hole);  // SHITCODE, why not put in renderboard?
+            putHolesOnBoard(Integer.parseInt(holeIndex), -1);  // SHITCODE, why not put in renderboard?
+            ServerConnection.move(0,0);
+        }catch (Exception ex){
+            //TODO: handle exception
+
+        }
+
+    }
+
+    private void handleSpicyCarrotspin(String holeOneIndex, String holeTwoIndex) {
+        try {
+            putHolesOnBoard(Integer.parseInt(holeOneIndex), Integer.parseInt(holeTwoIndex));  // SHITCODE, why not put in renderboard?
             ServerConnection.move(0,0);
         }catch (Exception ex){
             //TODO: handle exception
         }
-
     }
 
 
@@ -828,16 +867,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Puts the holes on the board
      **/
-    private void putHolesOnBoard(int holer) {
+    private void putHolesOnBoard(int hole1, int hole2) {
         runOnUiThread(()-> {
             for (int h : holes) {
                 ImageView img = (ImageView) findViewById(h);
                 img.setVisibility(View.INVISIBLE);
             }
-
-            ImageView img=(ImageView)findViewById(holes[holer]);
+            if (hole2 != -1) {
+                ImageView img = (ImageView) findViewById(holes[hole2]);
+                img.setVisibility(View.VISIBLE);
+                checkForRabbit(hole2);
+            }
+            ImageView img=(ImageView)findViewById(holes[hole1]);
             img.setVisibility(View.VISIBLE);
-            checkForRabbit(holer);
+            checkForRabbit(hole1);
             carrotButton.setEnabled(false);
             playerMove(0, 0);
             //renderBoard();
@@ -1055,7 +1098,32 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         getWindow().setAttributes(layoutPar);
     }
 
+    private void showMutatorDialong() {
+        MutatorDialog mutatorDialog = new MutatorDialog(this);
+        mutatorDialog.show(getSupportFragmentManager(), "MutatorDialog");
+    }
 
 
+    @Override
+    public void onGameModeSelected(int mutator) {
+        if(!(info.equals("start"))) {
+            waitDialog.dismiss();
+        }
+        switch (mutator) {
+            case 0:
+                ServerConnection.setMutator("classic");
+                Toast.makeText(MainActivity.this, "Classic mode: No Mutator selected!", Toast.LENGTH_SHORT).show();
+                break;
+            case 1:
+                ServerConnection.setMutator("spicyCarrot");
+                Toast.makeText(MainActivity.this, "Spicy Carrot selected!", Toast.LENGTH_SHORT).show();
+                break;
+            case 2:
+                ServerConnection.setMutator("mutator2"); //yet to be decided
+                Toast.makeText(MainActivity.this, "Mutator 2 selected!", Toast.LENGTH_SHORT).show();
+                break;
+        }
+
+    }
 }
 
