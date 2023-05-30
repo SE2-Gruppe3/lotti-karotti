@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://10.2.0.60:3000";
+    private static final String URI = "http://192.168.178.22:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -174,8 +174,28 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         initializeClouds();
         initializeButtonLogic();
         initializeTurnLogic();
+        checkServerConnected();
+
+
     }
 
+    /**
+     * Check server connectivity
+     * If the server is not connected the activitiy gets finished!
+     */
+    private void checkServerConnected(){
+        // Test if server has connection, finish activity if not
+        int countConn = 0;
+        do {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            countConn++;
+        }while (!socket.connected() && countConn <=10);
+        if (!socket.connected()) finish();
+    }
     /**
      * This method is called when the activity is created.
      */
