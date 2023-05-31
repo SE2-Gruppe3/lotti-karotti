@@ -9,6 +9,7 @@
  */
 
 const server = require('./utils/server.js');
+const fs = require('fs');
 const settings = require('./utils/settings.js');
 const socket = require('./utils/socket.js');
 const storeClientInfo = require('./utils/storeClient.js');
@@ -189,6 +190,30 @@ io.on('connection', (socket) => {
             io.to(socket.id).emit("getplayerslobby", JSON.stringify(lobby.players));
         }
     });
+
+    socket.on('gethighscore', () => {
+        fs.readFile('highscore.json', 'utf8', (err, data) => {
+            if(err) {
+                console.log("Error loading file!");
+            }
+            const jsonData = JSON.parse(data);
+            console.log('[Server] Sending players highscore information!');
+        io.emit('gethighscore', jsonData);
+        });
+    });
+
+    socket.on('saveupdatedhighscore', (jsonArray) => {
+        try {
+            fs.writeFile('highscore.json', JSON.stringify(jsonArray), (err) => {
+                if (err) throw err;
+                console.log('[Server] Successfully saved updated Highscore list');
+                socket.emit('saveJsonSuccess');
+            });
+        } catch (err) {
+            console.error('[Server] Error while updating highscore list');
+            socket.emit('saveJsonError', 'Invalid JSON array');
+        }
+    });  
 
     //********************************************************************************************************** */
     //                          ***Game Logic handling below here***                                             */
@@ -408,7 +433,6 @@ io.on('connection', (socket) => {
         }
 
         if (playerExists === true && cheated === true) {
-            console.log("Uslo ovdje!")
             var game = fetchGameDataInstance(gameData, id);
 
             for (var i = 0; i < game.rabbits.length; i++) {

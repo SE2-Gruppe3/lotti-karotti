@@ -16,9 +16,7 @@ import com.example.lottikarotti.Util.BGMusic;
 public class MenuActivity extends AppCompatActivity {
 
     private Button playGame;
-
     private Button openSettings;
-
     private Button openAbout;
     private Button exitSettings;
     private Button highscore;
@@ -68,9 +66,9 @@ public class MenuActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, HighscoreActivity.class);
                 startActivity(intent);
+                finish();
             }
         });
-
     }
     @Override
     public void onDestroy() {
