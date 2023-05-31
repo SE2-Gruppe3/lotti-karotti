@@ -91,7 +91,7 @@ public class LobbyActivity extends AppCompatActivity {
         });
     }
 
-    private void startGameActivity(Integer lobbyId, String username, String info) {
+    void startGameActivity(Integer lobbyId, String username, String info) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("lobbyId", String.valueOf(lobbyId));
         intent.putExtra("username", String.valueOf(username));
@@ -104,7 +104,7 @@ public class LobbyActivity extends AppCompatActivity {
         super.onResume();
         updateBrightness();
     }
-    private void updateBrightness() {
+    void updateBrightness() {
         SharedPreferences sharedBrightness = getSharedPreferences("settings", MODE_PRIVATE);
         int brightness = sharedBrightness.getInt("brightness", 100);
         WindowManager.LayoutParams layoutPar = getWindow().getAttributes();
