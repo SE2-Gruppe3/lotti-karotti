@@ -77,7 +77,7 @@ public class LobbyActivity extends AppCompatActivity {
         });
 
         binding.btnStartGame.setOnClickListener(v -> {
-            int lobbyCode = new Random().nextInt(900000) + 100000;
+            int lobbyCode = getLobbyId();
             startGameActivity(lobbyCode, binding.usernameTextView.getText().toString(), "start");
         });
 
@@ -112,4 +112,8 @@ public class LobbyActivity extends AppCompatActivity {
         getWindow().setAttributes(layoutPar);
     }
 
+    public int getLobbyId() {
+        int lobbyCode = new Random().nextInt(900000) + 100000;
+        return  lobbyCode;
+    }
 }
