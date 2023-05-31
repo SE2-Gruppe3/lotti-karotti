@@ -794,7 +794,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
                 if(result >= 50 && isCheating){
                     runOnUiThread(() -> {
-                        Toast.makeText(getApplicationContext(), "Remove rabbit from cheater!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "Remove rabbits from cheater!", Toast.LENGTH_SHORT).show();
                         ServerConnection.punish(accusedPlayer);
                     });
                 }
@@ -805,8 +805,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 }
                 else {
                     runOnUiThread(() -> {
-                        Toast.makeText(getApplicationContext(), "Player did not cheat! Removing your rabbit! ", Toast.LENGTH_SHORT).show();
-                        ServerConnection.punish(socket.id());
+                        Toast.makeText(getApplicationContext(), "Player did not cheat! Removing your rabbits! ", Toast.LENGTH_SHORT).show();
+                        ServerConnection.punish(accusedPlayer);
                     });
                 }
             }

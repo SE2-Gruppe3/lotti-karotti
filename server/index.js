@@ -36,6 +36,7 @@ var lobbies = [];
 var gameData = [];
 var votes = 1;
 var percentage = 0;
+var voterStarterId = 0;
 
 //********************************************************************************************************** */
 //                          ***Connection Handling begins here***                                            */
@@ -242,6 +243,7 @@ io.on('connection', (socket) => {
 
     //Notify each player when voting starts
     socket.on('createvotingpopup', accusedPlayer => {
+        voterStarterId = socket.id;
         var exists = 0;
         for (var i = 0; i < clientsList.length; i++) {
             if (clientsList[i].name == accusedPlayer) exists = 1;
@@ -372,7 +374,6 @@ io.on('connection', (socket) => {
         }
 
         if (playerExists === true && cheated === true) {
-            cheaterList.pop(socket.id);
             console.log("[SERVER] Player cheated");
             io.to(lobbycode).emit('checkifplayercheated', "true", percentage);
         }
@@ -385,22 +386,96 @@ io.on('connection', (socket) => {
     //Remove players rabbits as punishment after voting
     socket.on('resetallrabittsfromplayer', args => {
         var playerExists = false;
-        var id = args;
-        console.log("args "+args);
+        var cheated = false;
+        var id;
+        var game;
+        var pos0 = 0;
+        var pos1 = 0;
+        var pos2 = 0;
+        var pos3 = 0;
+
         for (var i = 0; i < clientsList.length; i++) {
             if (clientsList[i].name == args){
                 playerExists = true;
                 id = clientsList[i].clientId;
             }
         }
-        
-        var game = fetchGameDataInstance(gameData, id);
-        for (var i = 0; i < game.rabbits.length; i++) {
-            gameData = positionAvail(gameData, 0);
-            game.rabbits[parseInt(i)].position = 0;
+
+        for (var i = 0; i < cheaterList.length; i++) {
+            if (cheaterList.includes(id)) {
+                cheated = true;
+            }
         }
 
-        io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
+        if (playerExists === true && cheated === true) {
+            console.log("Uslo ovdje!")
+            var game = fetchGameDataInstance(gameData, id);
+
+            for (var i = 0; i < game.rabbits.length; i++) {
+                if(pos0 == 0){
+                    pos0 = game.rabbits[parseInt(i)].position;
+                }
+                else if(pos1 == 0){
+                    pos1 = game.rabbits[parseInt(i)].position;
+                }
+                else if(pos2 == 0){
+                    pos2 = game.rabbits[parseInt(i)].position;
+                }
+                else if(pos3 == 0){
+                    pos3 = game.rabbits[parseInt(i)].position;
+                }
+            }
+            console.log("POS0 "+pos0);
+            console.log("POS1 "+pos1);
+            console.log("POS2 "+pos2);
+            console.log("POS3 "+pos3);
+
+            for (var i = 0; i < game.rabbits.length; i++) {
+                if (game.rabbits[i].position === pos0 || game.rabbits[i].position === pos1 || game.rabbits[i].position === pos2 || game.rabbits[i].position === pos3) {
+                    gameData = positionAvail(gameData, 0);
+                    game.rabbits[parseInt(i)].position = 0;
+                    break;
+                }
+            }
+            io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
+            setTurn();
+            cheaterList.pop(id);
+            voterStarterId = 0;
+        }
+
+        else if(voterStarterId != 0) {
+            var game = fetchGameDataInstance(gameData, voterStarterId);
+
+            for (var i = 0; i < game.rabbits.length; i++) {
+                if(pos0 == 0){
+                    pos0 = game.rabbits[parseInt(i)].position;
+                }
+                else if(pos1 == 0){
+                    pos1 = game.rabbits[parseInt(i)].position;
+                }
+                else if(pos2 == 0){
+                    pos2 = game.rabbits[parseInt(i)].position;
+                }
+                else if(pos3 == 0){
+                    pos3 = game.rabbits[parseInt(i)].position;
+                }
+            }
+            console.log("POS0 "+pos0);
+            console.log("POS1 "+pos1);
+            console.log("POS2 "+pos2);
+            console.log("POS3 "+pos3);
+
+            for (var i = 0; i < game.rabbits.length; i++) {
+                if (game.rabbits[i].position === pos0 || game.rabbits[i].position === pos1 || game.rabbits[i].position === pos2 || game.rabbits[i].position === pos3) {
+                    gameData = positionAvail(gameData, 0);
+                    game.rabbits[parseInt(i)].position = 0;
+                    break;
+                }
+            }
+            io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
+            setTurn();
+            voterStarterId = 0;
+        }
     });
 
     //Hole appears below Rabbit logic
