@@ -38,6 +38,7 @@ var gameData = [];
 var votes = 1;
 var percentage = 0;
 var voterStarterId = 0;
+var cheaterId = 0;
 
 //********************************************************************************************************** */
 //                          ***Connection Handling begins here***                                            */
@@ -253,6 +254,7 @@ io.on('connection', (socket) => {
 
 
             io.to(lobbycode).emit("moveCheat", fetchLobbyGameData(gameData, lobbycode));
+            setTurn();
             console.log("[Server] Player " + fetchClientInstance(clientsList, socket.id) + " moved to the " + pos + " position with rabbit " + rabbit + "!");
             console.log("[Server] Player is on " + parseInt(pos) + "!");
 
@@ -384,18 +386,16 @@ io.on('connection', (socket) => {
     socket.on('checkifplayercheated', args => {
         var playerExists = false;
         var cheated = false;
-        var id;
-        var name;
 
         for (var i = 0; i < clientsList.length; i++) {
             if (clientsList[i].name == args){
                 playerExists = true;
-                id = clientsList[i].clientId;
+                cheaterId = clientsList[i].clientId;
             }
         }
 
         for (var i = 0; i < cheaterList.length; i++) {
-            if (cheaterList.includes(id)) cheated = true;
+            if (cheaterList.includes(cheaterId)) cheated = true;
         }
 
         if (playerExists === true && cheated === true) {
@@ -412,28 +412,27 @@ io.on('connection', (socket) => {
     socket.on('resetallrabittsfromplayer', args => {
         var playerExists = false;
         var cheated = false;
-        var id;
         var game;
         var pos0 = 0;
         var pos1 = 0;
         var pos2 = 0;
         var pos3 = 0;
 
-        for (var i = 0; i < clientsList.length; i++) {
-            if (clientsList[i].name == args){
-                playerExists = true;
-                id = clientsList[i].clientId;
-            }
-        }
+        // for (var i = 0; i < clientsList.length; i++) {
+        //     if (clientsList[i].name == args){
+        //         playerExists = true;
+        //         id = clientsList[i].clientId;
+        //     }
+        // }
 
         for (var i = 0; i < cheaterList.length; i++) {
-            if (cheaterList.includes(id)) {
+            if (cheaterList.includes(cheaterId)) {
                 cheated = true;
             }
         }
-
-        if (playerExists === true && cheated === true) {
-            var game = fetchGameDataInstance(gameData, id);
+        console.log("Ch "+cheated + " id "+cheaterId);
+        if (cheated === true && cheaterId != 0) {
+            var game = fetchGameDataInstance(gameData, cheaterId);
 
             for (var i = 0; i < game.rabbits.length; i++) {
                 if(pos0 == 0){
@@ -463,7 +462,8 @@ io.on('connection', (socket) => {
             }
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
             setTurn();
-            cheaterList.pop(id);
+            cheaterList.pop(cheaterId);
+            cheaterId = 0;
             voterStarterId = 0;
         }
 
