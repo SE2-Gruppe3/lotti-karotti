@@ -363,7 +363,6 @@ io.on('connection', (socket) => {
         for (var i = 0; i < clientsList.length; i++) {
             if (clientsList[i].name == args){
                 playerExists = true;
-                console.log(clientsList[i])
                 id = clientsList[i].clientId;
             }
         }
@@ -381,6 +380,27 @@ io.on('connection', (socket) => {
             console.log("[SERVER] Player did not cheated");
             io.to(lobbycode).emit('checkifplayercheated', "false", percentage);
         }
+    });
+
+    //Remove players rabbits as punishment after voting
+    socket.on('resetallrabittsfromplayer', args => {
+        var playerExists = false;
+        var id = args;
+        console.log("args "+args);
+        for (var i = 0; i < clientsList.length; i++) {
+            if (clientsList[i].name == args){
+                playerExists = true;
+                id = clientsList[i].clientId;
+            }
+        }
+        
+        var game = fetchGameDataInstance(gameData, id);
+        for (var i = 0; i < game.rabbits.length; i++) {
+            gameData = positionAvail(gameData, 0);
+            game.rabbits[parseInt(i)].position = 0;
+        }
+
+        io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
     });
 
     //Hole appears below Rabbit logic

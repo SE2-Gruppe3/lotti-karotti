@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://192.168.178.22:3000";
+    private static final String URI = "http://10.2.0.60:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -793,13 +793,21 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 result = percentage;
 
                 if(result >= 50 && isCheating){
-                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Remove rabbit from cheater!", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        Toast.makeText(getApplicationContext(), "Remove rabbit from cheater!", Toast.LENGTH_SHORT).show();
+                        ServerConnection.punish(accusedPlayer);
+                    });
                 }
                 else if(isCheating) {
-                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Not enough yes votes!", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        Toast.makeText(getApplicationContext(), "Not enough yes votes!", Toast.LENGTH_SHORT).show();
+                    });
                 }
                 else {
-                    runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Player did not cheat! Removing your rabbit! ", Toast.LENGTH_SHORT).show());
+                    runOnUiThread(() -> {
+                        Toast.makeText(getApplicationContext(), "Player did not cheat! Removing your rabbit! ", Toast.LENGTH_SHORT).show();
+                        ServerConnection.punish(socket.id());
+                    });
                 }
             }
         });
