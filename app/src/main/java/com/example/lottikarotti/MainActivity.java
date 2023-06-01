@@ -87,12 +87,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String info;
     private Button carrotButton;
     private ImageButton settingsButton;
-    private Button drawButton;
+    Button drawButton;
     private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
-    private ImageView rabbit1;
-    private ImageView rabbit2;
+    ImageView rabbit1;
+    ImageView rabbit2;
     private ImageView rabbit3;
     private ImageView rabbit4;
 
@@ -109,11 +109,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private FrameLayout containerplayerList;
     private Fragment fragmentPlayerList;
 
-    private TextView instructions;
+    TextView instructions;
 
     // Variables for the Sensor
-    private SensorManager sensorManager;
-    private Sensor shakeSensor;
+    SensorManager sensorManager;
+    Sensor shakeSensor;
     private float oldX, oldY, oldZ;
     private long preUpdate;
     private String[] optionsArray;
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://10.2.0.60:3000";
+    private static final String URI = "http://192.168.68.50:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Check server connectivity
      * If the server is not connected the activitiy gets finished!
      */
-    private void checkServerConnected(){
+    void checkServerConnected(){
         // Test if server has connection, finish activity if not
         int countConn = 0;
         do {
@@ -199,7 +199,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * This method is called when the activity is created.
      */
-    private void initializeServerConnection() {
+    void initializeServerConnection() {
         try {
             socket = ServerConnection.getInstance(URI);
             ServerConnection.connect();
@@ -221,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * This method is called when the activity is created.
      */
-    private void initializeIntent() {
+    void initializeIntent() {
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
         String username = intent.getStringExtra("username");
@@ -643,7 +643,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * This method sends an emit to the Server signalising "move"
      * @param steps
      */
-    private void playerMove(int steps, int rabbit) {
+    void playerMove(int steps, int rabbit) {
         if (!isMyTurn) return;
 
         if (!gameStarted) socket.emit("startgame", 1);
@@ -676,7 +676,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Movement handler
      * Annotate JSON Values to @Class Player and @Class Rabbit
      */
-    private void handleMove(String json) throws JsonProcessingException {
+    void handleMove(String json) throws JsonProcessingException {
         System.out.println("Received move from server!");
         ObjectMapper mapper = new ObjectMapper();
         players = Arrays.asList(mapper.readValue(json, Player[].class));
@@ -687,7 +687,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Handle the shake event
      */
-    private void handleShake(String socketid) {
+    void handleShake(String socketid) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
         mainHandler.post(() -> {
             if (!socketid.equals(socket.id())) {
@@ -727,7 +727,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Create voting popup
      */
 
-    private void createVotingPopup(String socketid, String accusedPlayer, Activity activity) {
+    void createVotingPopup(String socketid, String accusedPlayer, Activity activity) {
         Handler mainHandler = new Handler(Looper.getMainLooper());
 
         mainHandler.post(new Runnable() {
@@ -816,7 +816,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Handle Carrotclick (Carrotspin)
      */
-    private void handleCarrotspin(String holeIndex) throws JsonProcessingException {
+    void handleCarrotspin(String holeIndex) throws JsonProcessingException {
         try {
             putHolesOnBoard(Integer.parseInt(holeIndex), -1);  // SHITCODE, why not put in renderboard?
             ServerConnection.move(0,0);
@@ -827,7 +827,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
 
-    private void handleSpicyCarrotspin(String holeOneIndex, String holeTwoIndex) {
+    void handleSpicyCarrotspin(String holeOneIndex, String holeTwoIndex) {
         try {
             putHolesOnBoard(Integer.parseInt(holeOneIndex), Integer.parseInt(holeTwoIndex));  // SHITCODE, why not put in renderboard?
             ServerConnection.move(0,0);

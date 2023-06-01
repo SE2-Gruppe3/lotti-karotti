@@ -83,6 +83,7 @@ public class LobbyActivityTest {
         Espresso.onView(ViewMatchers.withId(R.id.btnStartGame))
                 .perform(click());
 
+
         // Verify that the startGameActivity method is called with the correct data
         Intent expectedIntent = new Intent(lobbyActivity, MainActivity.class);
         expectedIntent.putExtra("lobbyId", String.valueOf(lobbyActivity.getLobbyId()));

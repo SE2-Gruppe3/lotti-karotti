@@ -20,6 +20,7 @@ public class LobbyActivity extends AppCompatActivity {
     private ActivityLobbyBinding binding;
     private boolean setUsername;
     private boolean setLobbyId;
+    private int lobbyCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,9 @@ public class LobbyActivity extends AppCompatActivity {
         });
 
         binding.btnStartGame.setOnClickListener(v -> {
-            int lobbyCode = getLobbyId();
+
+             lobbyCode = new Random().nextInt(900000) + 100000;
+
             startGameActivity(lobbyCode, binding.usernameTextView.getText().toString(), "start");
         });
 
@@ -113,7 +116,8 @@ public class LobbyActivity extends AppCompatActivity {
     }
 
     public int getLobbyId() {
-        int lobbyCode = new Random().nextInt(900000) + 100000;
-        return  lobbyCode;
+           return  lobbyCode;
     }
+
+
 }
