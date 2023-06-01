@@ -33,6 +33,9 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
         unitTests.all {
             useJUnitPlatform()
             finalizedBy jacocoTestReport
@@ -72,15 +75,19 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    testImplementation 'org.robolectric:robolectric:4.6.1'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testImplementation "org.mockito:mockito-core:5.3.1"
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'org.mockito:mockito-core:3.11.2'
+    testImplementation 'org.mockito:mockito-inline:3.11.2'
+    testImplementation 'org.mockito:mockito-android:3.11.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     testImplementation 'org.mockito:mockito-junit-jupiter:4.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test:rules:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-intents:3.4.0'
-
     androidTestImplementation 'org.mockito:mockito-android:4.1.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
     implementation ('io.socket:socket.io-client:2.0.0') {

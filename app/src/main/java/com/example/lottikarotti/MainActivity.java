@@ -6,7 +6,6 @@ package com.example.lottikarotti;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -24,12 +23,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
         import android.graphics.PointF;
         import android.hardware.Sensor;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PointF;
-import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -41,9 +35,6 @@ import android.util.Log;
 
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -58,15 +49,9 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
 import com.example.lottikarotti.Network.ServerConnection;
-import com.example.lottikarotti.Util.DisectJSON;
-import com.example.lottikarotti.MutatorDialog;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -85,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String lobbyId;
     private WaitingDialog waitDialog;
     private String info;
-    private Button carrotButton;
+    Button carrotButton;
     private ImageButton settingsButton;
     Button drawButton;
     private Button startTurn;
@@ -102,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private boolean myTurn;
     private int touchCounter;
     private int touchCntLimit;
-    private int currRabbit;
+    int currRabbit;
     private final String TAG = "MainActivity";
 
     //  Container for the Player List Fragment (Placeholder Container)
@@ -135,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private int result;
     private boolean gameStarted;
     private int hole;
-    private List<Player> players;
+    List<Player> players;
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
@@ -156,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
             R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
-    private Socket socket;
+    Socket socket;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -175,7 +160,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         initializeButtonLogic();
         initializeTurnLogic();
         checkServerConnected();
-
 
     }
 
@@ -222,28 +206,29 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * This method is called when the activity is created.
      */
     void initializeIntent() {
-        Intent intent = getIntent();
-        lobbyId = intent.getStringExtra("lobbyId");
-        String username = intent.getStringExtra("username");
-        info = intent.getStringExtra("info");
+            Intent intent = getIntent();
+            lobbyId = intent.getStringExtra("lobbyId");
+            String username = intent.getStringExtra("username");
+            info = intent.getStringExtra("info");
 
-        TextView lobbyID = findViewById(R.id.lobbyID);
-        lobbyID.setText("Lobby ID: " + lobbyId);
+            TextView lobbyID = findViewById(R.id.lobbyID);
+            lobbyID.setText("Lobby ID: " + lobbyId);
 
-        ServerConnection.registerNewPlayer(username);
-        ServerConnection.fetchUnique();
+            ServerConnection.registerNewPlayer(username);
+            ServerConnection.fetchUnique();
 
-        if (info.equals("start")) {
-            ServerConnection.createNewLobby(lobbyId);
-            showMutatorDialong();
-            Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
-        } else {
-            ServerConnection.joinLobby(lobbyId);
-            waitDialog = new WaitingDialog();
-            waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
-            Log.d(TAG, "Joined lobby" + lobbyId);
+            if ("start".equals(info)) {
+                ServerConnection.createNewLobby(lobbyId);
+                showMutatorDialog();
+                Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
+            } else {
+                ServerConnection.joinLobby(lobbyId);
+                waitDialog = new WaitingDialog();
+                waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
+                Log.d(TAG, "Joined lobby" + lobbyId);
+            }
         }
-    }
+
 
     /**
      * This method is called when the activity is created.
@@ -420,7 +405,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * This method is called when the activity is created.
      */
     public void initializeClouds() {
-        DisplayMetrics displayMetrics = new DisplayMetrics(); 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
         /**
          * Clouds for the Sensor
          */
@@ -895,7 +880,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * Puts the holes on the board
      **/
-    private void putHolesOnBoard(int hole1, int hole2) {
+    void putHolesOnBoard(int hole1, int hole2) {
         runOnUiThread(()-> {
             for (int h : holes) {
                 ImageView img = (ImageView) findViewById(h);
@@ -1126,7 +1111,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         getWindow().setAttributes(layoutPar);
     }
 
-    private void showMutatorDialong() {
+    void showMutatorDialog() {
         MutatorDialog mutatorDialog = new MutatorDialog(this);
         mutatorDialog.show(getSupportFragmentManager(), "MutatorDialog");
     }

@@ -17,13 +17,15 @@ import com.example.lottikarotti.databinding.ActivityLobbyBinding;
 import java.util.Random;
 
 public class LobbyActivity extends AppCompatActivity {
-    private ActivityLobbyBinding binding;
-    private boolean setUsername;
-    private boolean setLobbyId;
-    private int lobbyCode;
+    public ActivityLobbyBinding binding;
+    boolean setUsername;
+    boolean setLobbyId;
+    public int lobbyCode;
+
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLobbyBinding.inflate(getLayoutInflater());
         View view = binding.getRoot();
@@ -94,7 +96,7 @@ public class LobbyActivity extends AppCompatActivity {
         });
     }
 
-    void startGameActivity(Integer lobbyId, String username, String info) {
+    public void startGameActivity(Integer lobbyId, String username, String info) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.putExtra("lobbyId", String.valueOf(lobbyId));
         intent.putExtra("username", String.valueOf(username));
