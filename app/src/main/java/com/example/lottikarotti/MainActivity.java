@@ -1205,11 +1205,16 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     @Override
     public void onExitGame(boolean isHost) {
         if(!isHost){
+            ServerConnection.disconnectServer();
             finish();
         } else if (isHost){
-           //ServerConnection.closeLobby();
-            finish(); //temporary
+            ServerConnection.disconnectServer();
+            finish();
         }
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 }
 
