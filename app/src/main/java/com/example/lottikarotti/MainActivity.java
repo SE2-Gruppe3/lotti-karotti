@@ -80,9 +80,10 @@ import java.util.Random;
 
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener, MutatorDialog.MutatorDialogListener {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener, MutatorDialog.MutatorDialogListener, GameEndDialog.GameEndDialogListener {
 
     private String lobbyId;
+    private String username;
     private WaitingDialog waitDialog;
     private String info;
     private Button carrotButton;
@@ -139,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://10.2.0.60:3000";
+    private static final String URI = "http://10.0.0.6:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -224,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void initializeIntent() {
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
-        String username = intent.getStringExtra("username");
+        username = intent.getStringExtra("username");
         info = intent.getStringExtra("info");
 
         TextView lobbyID = findViewById(R.id.lobbyID);
@@ -414,7 +415,20 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle spicycarrotspin \n" + e.toString());
             }
         });
+
+        socket.on("winning", args -> {
+            Log.println(Log.INFO, "WIN", "winning received");
+            try {
+                handleWinning(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle winning \n" + e.toString());
+            }
+        });
+
+
     }
+
+
 
     /**
      * This method is called when the activity is created.
@@ -510,21 +524,24 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             switch (random) {
                 case 0:
                     drawButton.setEnabled(false);
+                    carrotButton.setEnabled(false);
                     instructions.setText("Instructions: Move three fields with your rabbit on the game board");
                     playerMove(3, currRabbit);
                     break;
                 case 1:
-                    carrotButton.setEnabled(true);
                     drawButton.setEnabled(false);
                     instructions.setText("Instructions: Click the carrot on the game board");
+                    carrotButton.setEnabled(true);
                     break;
                 case 2:
                     drawButton.setEnabled(false);
                     instructions.setText("Instructions: Move one field with your rabbit on the game board");
+                    carrotButton.setEnabled(false);
                     playerMove(1, currRabbit);
                     break;
                 case 3:
                     drawButton.setEnabled(false);
+                    carrotButton.setEnabled(false);
                     instructions.setText("Instructions: Move two fields with your rabbit on the game board");
                     playerMove(2, currRabbit);
                     break;
@@ -659,16 +676,22 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 .findFirst()
                 .orElse(0);
 
-        ImageButton field = findViewById(fields[steps + add]);
-        field.setEnabled(true);
+        if((steps+add) <= 29){
+            ImageButton field = findViewById(fields[steps + add]);
+            field.setEnabled(true);
 
-        field.setOnClickListener(view -> {
+            field.setOnClickListener(view -> {
+                System.out.println("Sending move to server");
+                //ImageButton fieldtest = findViewById(fields[steps + add]);
+                //int delay = 0;
+                ServerConnection.move(steps, rabbit);
+                field.setEnabled(false);
+            });
+        } else {
             System.out.println("Sending move to server");
-            ImageButton fieldtest = findViewById(fields[steps + add]);
-            int delay = 0;
-            ServerConnection.move(steps, rabbit);
-            field.setEnabled(false);
-        });
+            ServerConnection.move(0, rabbit);
+        }
+
     }
 
 
@@ -720,6 +743,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Toast.makeText(MainActivity.this, "Please choose the field you want to move", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * Handle the winning
+     */
+    private void handleWinning(String winner) {
+        if(info.equals("start")) {
+            showGameEndDialog(winner, true);
+        } else if (!(info.equals("start"))) {
+            showGameEndDialog(winner, false);
+        }
     }
 
 
@@ -1131,7 +1165,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         mutatorDialog.show(getSupportFragmentManager(), "MutatorDialog");
     }
 
-
     @Override
     public void onGameModeSelected(int mutator) {
         if(!(info.equals("start"))) {
@@ -1152,6 +1185,31 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 break;
         }
 
+    }
+    private void showGameEndDialog(String winner, boolean isHost) {
+        GameEndDialog gameEndDialog = new GameEndDialog(this, winner, isHost);
+        gameEndDialog.show(getSupportFragmentManager(), "GameEndDialog");
+    }
+
+    @Override
+    public void onRestartGame() {
+        Intent intent = new Intent(this, MainActivity.class);
+        int lobbyCode = new Random().nextInt(900000) + 100000;
+        intent.putExtra("lobbyId", String.valueOf(lobbyCode+1));
+        intent.putExtra("username", String.valueOf(username));
+        intent.putExtra("info", String.valueOf(info));
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
+    public void onExitGame(boolean isHost) {
+        if(!isHost){
+            finish();
+        } else if (isHost){
+           //ServerConnection.closeLobby();
+            finish(); //temporary
+        }
     }
 }
 
