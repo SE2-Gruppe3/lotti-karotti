@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://10.2.0.60:3000";
+    private static final String URI = "http://192.168.68.52:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
 
-        instructions.setText("Instructions: Choose a rabbit to play");
+        instructions.setText(" Please choose a rabbit to play !");
 
         gameBoard = (ImageView) findViewById(R.id.imageView);
         figOne = (ImageView) findViewById(R.id.rabbit1);
@@ -1063,6 +1063,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }, 5000);
     }
     public void setMyTurn(boolean myTurn) {
+        if(myTurn == true){
+            instructions.setText(" Your turn, please choose a rabbit");
+             }
+
         isMyTurn = myTurn;
         togglePlayerRabbits();
         Log.d("Game", "setMyTurn: " + isMyTurn);
