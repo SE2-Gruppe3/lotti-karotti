@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
         import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -302,7 +303,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         carrotButton.setEnabled(false);
 
         instructions.setText(" Please choose a rabbit to play !");
-
+        instructions.setMovementMethod(new ScrollingMovementMethod());
         gameBoard = (ImageView) findViewById(R.id.imageView);
         figOne = (ImageView) findViewById(R.id.rabbit1);
         myTurn = false;
@@ -1100,6 +1101,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public void setMyTurn(boolean myTurn) {
         if(myTurn == true){
             instructions.setText(" Your turn, please choose a rabbit");
+            resetRabbitBorder(4);
              }
 
         isMyTurn = myTurn;
