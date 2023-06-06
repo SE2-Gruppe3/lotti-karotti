@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://192.168.68.52:3000";
+    private static final String URI = "http://143.205.186.39:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -453,6 +453,16 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         cloudRightParam.height = screenHeight / 2;
         cloudR.setLayoutParams(cloudRightParam);
     }
+    private void resetRabbitBorder(int rabbit){
+        for (int i = 0; i < rabbits.length; i++) {
+            if(i != rabbit){
+                ImageView otherRabbit = findViewById(rabbits[i]);
+                otherRabbit.setBackgroundResource(R.color.white);
+
+            }
+        }
+
+    }
 
     /**
      * This method is called when the activity is created.
@@ -462,24 +472,33 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             @Override
             public void onClick(View v) {
                 selectRabbit(0);
+                rabbit1.setBackgroundResource(R.drawable.border_fragment);
+                resetRabbitBorder(0);
             }
         });
         rabbit2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectRabbit(1);
+                rabbit2.setBackgroundResource(R.drawable.border_fragment);
+                resetRabbitBorder(1);
+
             }
         });
         rabbit3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectRabbit(2);
+                rabbit3.setBackgroundResource(R.drawable.border_fragment);
+                resetRabbitBorder(2);
             }
         });
         rabbit4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectRabbit(3);
+                rabbit4.setBackgroundResource(R.drawable.border_fragment);
+                resetRabbitBorder(3);
             }
         });
 
