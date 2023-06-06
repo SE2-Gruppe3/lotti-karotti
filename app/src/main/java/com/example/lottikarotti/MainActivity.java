@@ -474,6 +474,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 selectRabbit(0);
                 rabbit1.setBackgroundResource(R.drawable.border_fragment);
                 resetRabbitBorder(0);
+                Toast.makeText(getApplicationContext(), "Rabbit 1", Toast.LENGTH_SHORT).show();
+
             }
         });
         rabbit2.setOnClickListener(new View.OnClickListener() {
@@ -482,6 +484,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 selectRabbit(1);
                 rabbit2.setBackgroundResource(R.drawable.border_fragment);
                 resetRabbitBorder(1);
+                Toast.makeText(getApplicationContext(), "Rabbit 2", Toast.LENGTH_SHORT).show();
+
 
             }
         });
@@ -491,6 +495,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 selectRabbit(2);
                 rabbit3.setBackgroundResource(R.drawable.border_fragment);
                 resetRabbitBorder(2);
+                Toast.makeText(getApplicationContext(), "Rabbit 3", Toast.LENGTH_SHORT).show();
+
             }
         });
         rabbit4.setOnClickListener(new View.OnClickListener() {
@@ -499,6 +505,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 selectRabbit(3);
                 rabbit4.setBackgroundResource(R.drawable.border_fragment);
                 resetRabbitBorder(3);
+                Toast.makeText(getApplicationContext(), "Rabbit 4", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -879,9 +887,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     runOnUiThread(() -> {
                         System.out.println("Renderboard.Drawing rabbit on field " + rabbit.getPosition());
                         ImageButton rabbitbtn = findViewById(fields[rabbit.getPosition()]);
-                        rabbitbtn.setOnClickListener(null);
+                        rabbitbtn.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        Toast.makeText(getApplicationContext(), ""+rabbit.getName(), Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
                         setColorForRabbitsRender(rabbitbtn, color);
-                        rabbitbtn.setEnabled(false);
+                        rabbitbtn.setEnabled(true);
                     });
                 }
             }
@@ -1002,12 +1018,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public void selectRabbit(int num){
         if (num<4) {
             currRabbit = num;
-            instructions.setText("Instructions: You are playing with Rabbit"+currRabbit);
+            currRabbit++;
+            instructions.setText("Instructions: You are playing with Rabbit "+currRabbit);
             drawButton.setEnabled(true);
 
         }
-        else
-            instructions.setText("Fuck you");
+
     }
 
     @Override
