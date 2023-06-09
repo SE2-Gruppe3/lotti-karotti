@@ -18,10 +18,12 @@ import android.widget.ImageButton;
 import android.widget.SeekBar;
 
 import com.example.lottikarotti.Util.BGMusic;
+import com.example.lottikarotti.Util.MusicService;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    //**Relevant variables for Volume**//
+    private static final String BRIGHTNESS_PREF = "brightness";
+
     private ImageButton settingsVolOn;
     private SeekBar barVolume;
     private ImageButton settingsVolMute;
@@ -29,18 +31,21 @@ public class SettingsActivity extends AppCompatActivity {
     private BGMusic bgMusicService;
     private boolean isBound = false;
     private static float volume;
-    private float volumeBuffer;
     private static boolean muted = false;
     private static boolean isBarZero = false;
-
-    //**Relevant variables for Brightness**//
     private SeekBar barBrightness;
     private SharedPreferences preferences;
+
+    // constructor that allows dependency injection
+    public SettingsActivity(BGMusic bgMusicService, SharedPreferences preferences) {
+        this.bgMusicService = bgMusicService;
+        this.preferences = preferences;
+    }
 
 
     @SuppressLint("MissingInflatedId")
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
@@ -315,14 +320,6 @@ public class SettingsActivity extends AppCompatActivity {
         isBound = bound;
     }
 
-    public float getVolumeBuffer() {
-        return volumeBuffer;
-    }
-
-    public void setVolumeBuffer(float volumeBuffer) {
-        this.volumeBuffer = volumeBuffer;
-    }
-
     public SeekBar getBarBrightness() {
         return barBrightness;
     }
@@ -368,5 +365,9 @@ public class SettingsActivity extends AppCompatActivity {
 
     public void setServiceConnection(ServiceConnection serviceConnection) {
         this.serviceConnection = serviceConnection;
+    }
+
+    public MusicService getMusicService() {
+        return bgMusicService;
     }
 }

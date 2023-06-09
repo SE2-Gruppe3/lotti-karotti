@@ -9,7 +9,7 @@ import android.os.IBinder;
 
 import com.example.lottikarotti.R;
 
-public class BGMusic extends Service {
+public class BGMusic extends Service implements MusicService {
     private MediaPlayer player;
     private SharedPreferences preferences;
     private final IBinder musicBind = new MusicBinder();

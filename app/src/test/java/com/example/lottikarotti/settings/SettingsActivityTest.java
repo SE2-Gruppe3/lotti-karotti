@@ -1,54 +1,60 @@
-/*package com.example.lottikarotti.settings;
+package com.example.lottikarotti.settings;
 
-import static org.junit.jupiter.api.Assertions.*;
+import android.content.Intent;
+import android.os.Build;
+import android.os.IBinder;
 
 import com.example.lottikarotti.SettingsActivity;
+import com.example.lottikarotti.Util.BGMusic;
+import com.example.lottikarotti.Util.MusicService;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.robolectric.Robolectric;
+import org.robolectric.RobolectricTestRunner;
+import org.robolectric.RuntimeEnvironment;
+import org.robolectric.annotation.Config;
+import org.robolectric.shadows.ShadowApplication;
 
-class SettingsActivityTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.robolectric.Shadows.shadowOf;
 
-    SettingsActivity settingsActivity;
+@RunWith(RobolectricTestRunner.class)
+@Config(sdk = Build.VERSION_CODES.O_MR1)
+public class SettingsActivityTest {
 
-    @BeforeEach
-    void setUp() {
-        settingsActivity = new SettingsActivity();
+    private SettingsActivity activity;
+    private MusicService bgMusicServiceMock;
+    private BGMusic.MusicBinder binderSpy;
+
+    @Before
+    public void setUp() {
+        activity = Robolectric.buildActivity(SettingsActivity.class).create().get();
+
+        // Create a mock for MusicService
+        bgMusicServiceMock = Mockito.mock(MusicService.class);
+
+        // Create a real instance of MusicBinder
+        binderSpy = new BGMusic().new MusicBinder();
+
+        // When getService() is called on the binder, return the mock MusicService
+        Mockito.doReturn(bgMusicServiceMock).when(binderSpy).getService();
     }
-
-    @AfterEach
-    void tearDown() {
-        settingsActivity = null;
-    }
-
     @Test
-    void onCreate() {
+    public void testOnCreate_BindsMusicService() {
+        activity.onCreate(null);
 
-    }
+        // Verify that bindService was called
+        ShadowApplication shadowApp = shadowOf(RuntimeEnvironment.application);
+        Intent startedServiceIntent = shadowApp.getNextStartedService();
+        assertNotNull(startedServiceIntent);
+        assertEquals(MusicService.class.getName(), startedServiceIntent.getComponent().getClassName());
 
-    @Test
-    public void testSetBrightnessMax() {
-        int desiredBrightness = 100;
-        float expected = desiredBrightness / 255f;
-        settingsActivity.setBrightness(desiredBrightness);
-        float current = settingsActivity.getWindow().getAttributes().screenBrightness;
-        assertEquals(expected, current, 0.01);
+        // Verify the music service was set in the activity
+        assertEquals(bgMusicServiceMock, activity.getMusicService());
     }
-    @Test
-    public void testSetBrightnessMin() {
-        int desiredBrightness = 0;
-        float expected = desiredBrightness / 255f;
-        settingsActivity.setBrightness(desiredBrightness);
-        float current = settingsActivity.getWindow().getAttributes().screenBrightness;
-        assertEquals(expected, current, 0.01);
-    }
-    @Test
-    public void testSetBrightnessAverage() {
-        int desiredBrightness = 50;
-        float expected = desiredBrightness / 255f;
-        settingsActivity.setBrightness(desiredBrightness);
-        float current = settingsActivity.getWindow().getAttributes().screenBrightness;
-        assertEquals(expected, current, 0.01);
-    }
-}*/
+}

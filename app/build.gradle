@@ -10,6 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.lottikarotti"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         minSdk 30
         targetSdk 33
         versionCode 1
@@ -67,6 +68,7 @@ sonarqube {
 }
 
 dependencies {
+    testImplementation 'org.robolectric:robolectric:4.6.1'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'org.apache.commons:commons-text:1.7'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.3'
@@ -74,6 +76,9 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.9.2'
     testImplementation "org.mockito:mockito-core:5.3.1"
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:core:1.5.0'
+    androidTestImplementation 'androidx.test:runner:1.5.2'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.9.2'
     testImplementation 'org.mockito:mockito-junit-jupiter:4.2.0'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
