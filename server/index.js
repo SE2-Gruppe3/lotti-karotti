@@ -229,14 +229,26 @@ io.on('connection', (socket) => {
             var currLobby = fetchLobbyInstance(lobbies, lobbycode);
 
             var newpos = game.rabbits[parseInt(rabbit)].position + parseInt(steps);
+
+           
+
             // If player lands on a hole, set position to 0
             if (newpos === currLobby.hole || newpos === currLobby.holeTwo) newpos = 0;
 
             gameData = positionAvail(gameData, newpos);
             game.rabbits[parseInt(rabbit)].position = newpos;
 
+             // If player lands on final field, he wins and game ends
+             if (newpos === 29) {
+                console.log("[Server] Player " + JSON.stringify(fetchClientInstance(clientsList, socket.id)) + " is moving " + steps + " steps with rabbit " + rabbit + "!");
+                console.log("[Server] Player " + JSON.stringify(fetchClientInstance(clientsList, socket.id)) + " moved to field 29, they won with rabbit " + rabbit + "!");
+                var winner = JSON.stringify(fetchClientInstance(clientsList, socket.id).name);
+                io.to(lobbycode).emit("winning", winner);
+
+            }
+
             io.to(lobbycode).emit("move", fetchLobbyGameData(gameData, lobbycode));
-            console.log("[Server] Player " + JSON.stringify(fetchClientInstance(clientsList, socket.id)) + " is moving " + steps + " steps with rabbit " + rabbit + "!");
+            console.log("[Server] Player " + JSON.stringify(fetchClientInstance(clientsList, socket.id)) + " is moving " + steps + " steps to field " + newpos + " with rabbit " + rabbit + "!");
 
             setTurn();
         } else {
