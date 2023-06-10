@@ -214,5 +214,5 @@ public class ServerConnection {
     public static void getHole(String lobbyCode, int desiredPos, int rabbit) { socket.emit ("gethole", lobbyCode, desiredPos, rabbit); }
     public static void disconnectServer() {socket.emit("disconnect");}
     public static void startGame() {socket.emit("startgame");}
-    public static void checkGame() {socket.emit("checkgame");}
+
 }
