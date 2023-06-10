@@ -385,6 +385,16 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('checkgame', () => {
+        console.log('[Server] Game has started!');
+        var lobby = fetchLobbyInstance(lobbies, lobbycode);
+        if (lobby.game_started == 1){
+            io.to(lobbycode).emit('checkgame', true);
+        } else {
+            io.to(lobbycode).emit('checkgame', false);
+        }
+    });
+
 
     //Cheating, remark someone has cheated
     socket.on('cheat', args => {

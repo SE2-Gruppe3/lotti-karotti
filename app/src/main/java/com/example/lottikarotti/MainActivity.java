@@ -240,8 +240,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
         } else {
             ServerConnection.joinLobby(lobbyId);
-            waitDialog = new WaitingDialog();
-            waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
+            ServerConnection.checkGame();
+            if(!gameStarted) {
+                waitDialog = new WaitingDialog();
+                waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
+            }
             Log.d(TAG, "Joined lobby" + lobbyId);
         }
     }
@@ -398,8 +401,19 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             gameStarted = true;
         });
 
+        socket.on("checkgame", args -> {
+            String state = args[0].toString();
+            if(state.equals("true") && !gameStarted){
+                Log.println(Log.INFO, TAG, "Game start recieved");
+                gameStarted = true;
+            } else gameStarted = false;
+        });
+
         socket.on("mutatorSelected", args -> {
             Log.println(Log.INFO, TAG, "Mutator selected recieved");
+            if (info.equals("start")){
+                ServerConnection.startGame();
+            }
             if (!(info.equals("start")) && waitDialog != null) {
                 Log.d(TAG, "onCreate: Dismissing dialog");
                 runOnUiThread(() -> {
