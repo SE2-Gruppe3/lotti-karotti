@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     /**
      * This method is called when the activity is created.
      */
-    private void initializeIntent() {
+    void initializeIntent() {
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
         username = intent.getStringExtra("username");
@@ -234,7 +234,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         ServerConnection.registerNewPlayer(username);
         ServerConnection.fetchUnique();
 
-        if (info.equals("start")) {
+        if (info != null && info.equals("start")) {
             ServerConnection.createNewLobby(lobbyId);
             showMutatorDialong();
             Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
@@ -245,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.d(TAG, "Joined lobby" + lobbyId);
         }
     }
+
 
     /**
      * This method is called when the activity is created.
