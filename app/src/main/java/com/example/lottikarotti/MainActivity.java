@@ -84,6 +84,7 @@ import io.socket.client.Socket;
 public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener, MutatorDialog.MutatorDialogListener {
 
     private String lobbyId;
+    private String username;
     private WaitingDialog waitDialog;
     private String info;
     private Button carrotButton;
@@ -91,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Button drawButton;
     private Button startTurn;
     private Button endTurn;
+    private TextView turnInstruction;
     private ImageView cardView;
     private ImageView rabbit1;
     private ImageView rabbit2;
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://143.205.186.39:3000";
+    private static final String URI = "http://192.168.68.52:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -225,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void initializeIntent() {
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
-        String username = intent.getStringExtra("username");
+         username = intent.getStringExtra("username");
         info = intent.getStringExtra("info");
 
         TextView lobbyID = findViewById(R.id.lobbyID);
@@ -299,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
+        turnInstruction = (TextView)findViewById(R.id.turnInstruction);
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
 
@@ -379,6 +382,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         // Initialize Server Listener "turn", listen the turn event to the server
         socket.on("turn", id -> {
             Log.println(Log.INFO, TAG, "Turn received" + id[0].toString() + "<-gerver - l0cal->" + socket.id());
+
             if (id[0].toString().equals(socket.id().toString())) setMyTurn(true);
 
         });
@@ -1100,6 +1104,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
     public void setMyTurn(boolean myTurn) {
         if(myTurn == true){
+            turnInstruction.setText("Turn of: "+ username);
+            turnInstruction.setTextColor(Color.parseColor("#FFA500"));
             instructions.setText(" Your turn, please choose a rabbit");
             resetRabbitBorder(4);
              }
