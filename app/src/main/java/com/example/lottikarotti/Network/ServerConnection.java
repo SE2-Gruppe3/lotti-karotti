@@ -191,6 +191,7 @@ public class ServerConnection {
     public static void cheatMove(int pos, int rabbitNo) {
         socket.emit("moveCheat", pos, rabbitNo);
     }
+    public static void isTurnOf(String username){socket.emit("isTurnOf", username);}
 
     public static void shake() {
         socket.emit("shake");

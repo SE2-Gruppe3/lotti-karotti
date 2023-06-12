@@ -351,6 +351,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+        socket.on("isTurnOf", args -> {
+            Log.println(Log.INFO, "Turn of", "Turn received");
+            try {
+                handleIsTurnOf(args[0].toString());
+            } catch (Exception e) {
+                Log.w(TAG, "Can't handle shake \n" + e.toString());
+            }
+        });
         socket.on("createvotingpopup", args -> {
             Log.println(Log.INFO, "Voting", "Voting started");
             try {
@@ -716,6 +724,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         renderBoard();
     }
 
+    private void handleIsTurnOf(String username){
+        turnInstruction.setText("Turn of: "+username);
+    }
     /**
      * Handle the shake event
      */
@@ -1104,6 +1115,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
     public void setMyTurn(boolean myTurn) {
         if(myTurn == true){
+            ServerConnection.isTurnOf(username);
             turnInstruction.setText("Turn of: "+ username);
             turnInstruction.setTextColor(Color.parseColor("#FFA500"));
             instructions.setText(" Your turn, please choose a rabbit");

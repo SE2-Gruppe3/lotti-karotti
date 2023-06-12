@@ -25,7 +25,7 @@ public class MutatorDialog  extends DialogFragment {
         String[] mutators = new String[]{"No Mutator", "Spicy Carrot", "Mutator 2"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Choose a Mutator").setSingleChoiceItems(mutators, -1, new DialogInterface.OnClickListener() {
+        builder.setTitle("Pleas wait until everyone has joined. \nMeanwhile you can choose a Mutator").setSingleChoiceItems(mutators, -1, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int mutator) {
                 selectedMutator = mutator;
             }
