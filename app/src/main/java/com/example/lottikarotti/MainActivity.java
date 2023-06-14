@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String info;
     private Button carrotButton;
     private ImageButton settingsButton;
-    private Button drawButton;
+    public Button drawButton;
     private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://10.0.0.6:3000";
+    private static final String URI = "http://192.168.178.22:3000";
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -514,40 +514,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
             }
         });
-
-        drawButton.setOnClickListener(view -> {
-            Random rand = new Random();
-            int random = rand.nextInt(4);
-            cardView.setImageResource(cards[random]);
-            instructions.setTextColor(Color.BLACK);
-
-            switch (random) {
-                case 0:
-                    drawButton.setEnabled(false);
-                    carrotButton.setEnabled(false);
-                    instructions.setText("Instructions: Move three fields with your rabbit on the game board");
-                    playerMove(3, currRabbit);
-                    break;
-                case 1:
-                    drawButton.setEnabled(false);
-                    instructions.setText("Instructions: Click the carrot on the game board");
-                    carrotButton.setEnabled(true);
-                    break;
-                case 2:
-                    drawButton.setEnabled(false);
-                    instructions.setText("Instructions: Move one field with your rabbit on the game board");
-                    carrotButton.setEnabled(false);
-                    playerMove(1, currRabbit);
-                    break;
-                case 3:
-                    drawButton.setEnabled(false);
-                    carrotButton.setEnabled(false);
-                    instructions.setText("Instructions: Move two fields with your rabbit on the game board");
-                    playerMove(2, currRabbit);
-                    break;
-            }
-        });
-
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1215,6 +1181,47 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     @Override
     public void onDestroy() {
         super.onDestroy();
+        try {
+            ServerConnection.getInstance("xxx").disconnect();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Button Listeners
+     */
+    public void drawButtonListener(View view){
+            Random rand = new Random();
+            int random = rand.nextInt(4);
+            cardView.setImageResource(cards[random]);
+            instructions.setTextColor(Color.BLACK);
+
+            switch (random) {
+                case 0:
+                    drawButton.setEnabled(false);
+                    carrotButton.setEnabled(false);
+                    instructions.setText("Instructions: Move three fields with your rabbit on the game board");
+                    playerMove(3, currRabbit);
+                    break;
+                case 1:
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Click the carrot on the game board");
+                    carrotButton.setEnabled(true);
+                    break;
+                case 2:
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Move one field with your rabbit on the game board");
+                    carrotButton.setEnabled(false);
+                    playerMove(1, currRabbit);
+                    break;
+                case 3:
+                    drawButton.setEnabled(false);
+                    carrotButton.setEnabled(false);
+                    instructions.setText("Instructions: Move two fields with your rabbit on the game board");
+                    playerMove(2, currRabbit);
+                    break;
+            }
     }
 }
 
