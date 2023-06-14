@@ -24,12 +24,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
         import android.graphics.PointF;
         import android.hardware.Sensor;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PointF;
-import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -41,9 +36,6 @@ import android.util.Log;
 
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -56,23 +48,16 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.lottikarotti.GameLogic.PlayerMove;
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
 import com.example.lottikarotti.Network.ServerConnection;
-import com.example.lottikarotti.Util.DisectJSON;
-import com.example.lottikarotti.MutatorDialog;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,14 +114,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private ImageView cloudR;
     private int cloudLX;
     private int cloudRX;
-
-    //--------------------------------
-    private boolean isMyTurn;
+    public boolean isMyTurn;
     private boolean isCheating;
     private int result;
-    private boolean gameStarted;
+    public boolean gameStarted;
     private int hole;
-    private List<Player> players;
+    public List<Player> players;
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
@@ -157,8 +140,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
             R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
-    private Socket socket;
+    public Socket socket;
 
+    public void MainActivity() {
+        onCreate(null);
+    }
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,8 +162,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         initializeButtonLogic();
         initializeTurnLogic();
         checkServerConnected();
-
-
     }
 
     /**
@@ -389,6 +373,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             runOnUiThread(() -> {
                 Toast.makeText(getApplicationContext(), "Server indicates error! Code: " + code[0].toString(), Toast.LENGTH_SHORT).show();
             });
+
+            if (code[0].toString() == "302") finish();
         });
 
         // Initialize Server Listener "startgame", listen to the startgame event from the server, see if the game has started
@@ -657,7 +643,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             System.out.println("Sending move to server");
             ServerConnection.move(0, rabbit);
         }
-
     }
 
 
@@ -666,10 +651,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Annotate JSON Values to @Class Player and @Class Rabbit
      */
     private void handleMove(String json) throws JsonProcessingException {
-        System.out.println("Received move from server!");
-        ObjectMapper mapper = new ObjectMapper();
-        players = Arrays.asList(mapper.readValue(json, Player[].class));
-
+        players = PlayerMove.handleMoveFromServer(json);
         renderBoard();
     }
 
