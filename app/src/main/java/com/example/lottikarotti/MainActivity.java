@@ -365,7 +365,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.println(Log.INFO, TAG, "Server indicates error! Code: " + code[0].toString());
             runOnUiThread(() -> {
                 Toast.makeText(getApplicationContext(), "Server indicates error! Code: " + code[0].toString(), Toast.LENGTH_SHORT).show();
-                if (code[0].toString().equals("302")) finish();
+                if (code[0].toString().equals("302") || code[0].toString().equals("303")) finish();
             });
 
         });
