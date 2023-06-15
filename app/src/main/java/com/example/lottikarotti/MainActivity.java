@@ -25,12 +25,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
         import android.graphics.PointF;
         import android.hardware.Sensor;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.PointF;
-import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
@@ -42,9 +37,6 @@ import android.util.Log;
 
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -57,23 +49,18 @@ import android.widget.Toast;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.example.lottikarotti.GameLogic.PlayerMove;
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
+import com.example.lottikarotti.Network.CheckConnectionHandler;
+import com.example.lottikarotti.Network.InitializeConnectionHandler;
 import com.example.lottikarotti.Network.ServerConnection;
-import com.example.lottikarotti.Util.DisectJSON;
-import com.example.lottikarotti.MutatorDialog;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.net.URISyntaxException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +68,7 @@ import java.util.Random;
 
 import io.socket.client.Socket;
 
-public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener, MutatorDialog.MutatorDialogListener {
+public class MainActivity extends AppCompatActivity implements IOnDataSentListener, SensorEventListener, MutatorDialog.MutatorDialogListener, GameEndDialog.GameEndDialogListener {
 
     private String lobbyId;
     private String username;
@@ -89,15 +76,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String info;
     private Button carrotButton;
     private ImageButton settingsButton;
-    private Button drawButton;
+    public Button drawButton;
     private Button startTurn;
     private Button endTurn;
     private TextView turnInstruction;
     private ImageView cardView;
-    private ImageView rabbit1;
-    private ImageView rabbit2;
-    private ImageView rabbit3;
-    private ImageView rabbit4;
+    public ImageView rabbit1;
+    public ImageView rabbit2;
+    public ImageView rabbit3;
+    public ImageView rabbit4;
 
     private ImageView gameBoard;
     private ImageView figOne;
@@ -131,18 +118,18 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private ImageView cloudR;
     private int cloudLX;
     private int cloudRX;
-
-    //--------------------------------
-    private boolean isMyTurn;
+    public boolean isMyTurn;
     private boolean isCheating;
     private int result;
-    private boolean gameStarted;
+    public boolean gameStarted;
     private int hole;
-    private List<Player> players;
+    public List<Player> players;
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
+
     private static final String URI = "http://192.168.68.52:3000";
+
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -159,8 +146,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.buttonField15, R.id.buttonField16, R.id.buttonField17, R.id.buttonField18, R.id.buttonField19, R.id.buttonField20,
             R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
-    private Socket socket;
+    public Socket socket;
 
+    public void MainActivity() {
+        onCreate(null);
+    }
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -179,8 +169,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         initializeButtonLogic();
         initializeTurnLogic();
         checkServerConnected();
-
-
     }
 
     /**
@@ -189,37 +177,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     private void checkServerConnected(){
         // Test if server has connection, finish activity if not
-        int countConn = 0;
-        do {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            countConn++;
-        }while (!socket.connected() && countConn <=10);
-        if (!socket.connected()) finish();
+        if (CheckConnectionHandler.check(socket) == false) finish();
     }
     /**
      * This method is called when the activity is created.
      */
     private void initializeServerConnection() {
-        try {
-            socket = ServerConnection.getInstance(URI);
-            ServerConnection.connect();
-            Log.d(TAG, "onCreate: Connected to server");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-
         players = new ArrayList<>();
-        /// Example of getting server response using callbacks - We get here online player count back
-        ServerConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
-            @Override
-            public void onPlayerCountReceived(int count) {
-                Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
-            }
-        });
+        socket = InitializeConnectionHandler.initialize(socket, URI, this);
     }
 
     /**
@@ -228,7 +193,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void initializeIntent() {
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
+
          username = intent.getStringExtra("username");
+
         info = intent.getStringExtra("info");
 
         TextView lobbyID = findViewById(R.id.lobbyID);
@@ -247,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
             Log.d(TAG, "Joined lobby" + lobbyId);
         }
-    }
+            }
 
     /**
      * This method is called when the activity is created.
@@ -401,7 +368,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.println(Log.INFO, TAG, "Server indicates error! Code: " + code[0].toString());
             runOnUiThread(() -> {
                 Toast.makeText(getApplicationContext(), "Server indicates error! Code: " + code[0].toString(), Toast.LENGTH_SHORT).show();
+                if (code[0].toString().equals("302")) finish();
             });
+
         });
 
         // Initialize Server Listener "startgame", listen to the startgame event from the server, see if the game has started
@@ -428,6 +397,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle spicycarrotspin \n" + e.toString());
             }
         });
+
+        socket.on("winning", args -> {
+            Log.println(Log.INFO, "WIN", "winning received");
+            try {
+                handleWinning(args[0].toString());
+            }catch (Exception e){
+                Log.w(TAG, "Can't handle winning \n" + e.toString());
+            }
+        });
+
+
     }
 
     /**
@@ -541,37 +521,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
             }
         });
-
-        drawButton.setOnClickListener(view -> {
-            Random rand = new Random();
-            int random = rand.nextInt(4);
-            cardView.setImageResource(cards[random]);
-            instructions.setTextColor(Color.BLACK);
-
-            switch (random) {
-                case 0:
-                    drawButton.setEnabled(false);
-                    instructions.setText("Instructions: Move three fields with your rabbit on the game board");
-                    playerMove(3, currRabbit);
-                    break;
-                case 1:
-                    carrotButton.setEnabled(true);
-                    drawButton.setEnabled(false);
-                    instructions.setText("Instructions: Click the carrot on the game board");
-                    break;
-                case 2:
-                    drawButton.setEnabled(false);
-                    instructions.setText("Instructions: Move one field with your rabbit on the game board");
-                    playerMove(1, currRabbit);
-                    break;
-                case 3:
-                    drawButton.setEnabled(false);
-                    instructions.setText("Instructions: Move two fields with your rabbit on the game board");
-                    playerMove(2, currRabbit);
-                    break;
-            }
-        });
-
 
         settingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -700,16 +649,21 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 .findFirst()
                 .orElse(0);
 
-        ImageButton field = findViewById(fields[steps + add]);
-        field.setEnabled(true);
+        if((steps+add) <= 29){
+            ImageButton field = findViewById(fields[steps + add]);
+            field.setEnabled(true);
 
-        field.setOnClickListener(view -> {
+            field.setOnClickListener(view -> {
+                System.out.println("Sending move to server");
+                //ImageButton fieldtest = findViewById(fields[steps + add]);
+                //int delay = 0;
+                ServerConnection.move(steps, rabbit);
+                field.setEnabled(false);
+            });
+        } else {
             System.out.println("Sending move to server");
-            ImageButton fieldtest = findViewById(fields[steps + add]);
-            int delay = 0;
-            ServerConnection.move(steps, rabbit);
-            field.setEnabled(false);
-        });
+            ServerConnection.move(0, rabbit);
+        }
     }
 
 
@@ -718,10 +672,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Annotate JSON Values to @Class Player and @Class Rabbit
      */
     private void handleMove(String json) throws JsonProcessingException {
-        System.out.println("Received move from server!");
-        ObjectMapper mapper = new ObjectMapper();
-        players = Arrays.asList(mapper.readValue(json, Player[].class));
-
+        players = PlayerMove.handleMoveFromServer(json);
         renderBoard();
     }
 
@@ -767,6 +718,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Toast.makeText(MainActivity.this, "Please choose the field you want to move", Toast.LENGTH_LONG).show();
             }
         });
+    }
+
+    /**
+     * Handle the winning
+     */
+    private void handleWinning(String winner) {
+        if(info.equals("start")) {
+            showGameEndDialog(winner, true);
+        } else if (!(info.equals("start"))) {
+            showGameEndDialog(winner, false);
+        }
     }
 
 
@@ -865,7 +827,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     private void handleCarrotspin(String holeIndex) throws JsonProcessingException {
         try {
-            putHolesOnBoard(Integer.parseInt(holeIndex), -1);  // SHITCODE, why not put in renderboard?
+            putHolesOnBoard(Integer.parseInt(holeIndex), -1);
             ServerConnection.move(0,0);
         }catch (Exception ex){
             //TODO: handle exception
@@ -876,7 +838,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     private void handleSpicyCarrotspin(String holeOneIndex, String holeTwoIndex) {
         try {
-            putHolesOnBoard(Integer.parseInt(holeOneIndex), Integer.parseInt(holeTwoIndex));  // SHITCODE, why not put in renderboard?
+            putHolesOnBoard(Integer.parseInt(holeOneIndex), Integer.parseInt(holeTwoIndex));
             ServerConnection.move(0,0);
         }catch (Exception ex){
             //TODO: handle exception
@@ -1142,13 +1104,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
     private void togglePlayerRabbits() {
         Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
-        runOnUiThread(() -> {
-            rabbit1.setEnabled(isMyTurn);
-            rabbit2.setEnabled(isMyTurn);
-            rabbit3.setEnabled(isMyTurn);
-            rabbit4.setEnabled(isMyTurn);
-            drawButton.setEnabled(!isMyTurn);
-        });
+        PlayerMove.rabbitToggle(this, isMyTurn);
+    }
+    private void togglePlayerRabbits(boolean activate) {
+        Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
+        PlayerMove.rabbitToggle(this, activate);
     }
 
     private void getRabbitStartPos() {
@@ -1207,7 +1167,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
 
-
     @Override
     public void onGameModeSelected(int mutator) {
         if(!(info.equals("start"))) {
@@ -1228,6 +1187,72 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 break;
         }
 
+    }
+    private void showGameEndDialog(String winner, boolean isHost) {
+        GameEndDialog gameEndDialog = new GameEndDialog(this, winner, isHost);
+        gameEndDialog.show(getSupportFragmentManager(), "GameEndDialog");
+    }
+
+    @Override
+    public void onRestartGame() {
+        finish();
+    }
+
+    @Override
+    public void onExitGame(boolean isHost) {
+        if(!isHost){
+            ServerConnection.disconnectServer();
+            finish();
+        } else if (isHost){
+            ServerConnection.disconnectServer();
+            finish();
+        }
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            ServerConnection.getInstance("xxx").disconnect();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Button Listeners
+     */
+    public void drawButtonListener(View view){
+            Random rand = new Random();
+            int random = rand.nextInt(4);
+            cardView.setImageResource(cards[random]);
+            instructions.setTextColor(Color.BLACK);
+
+            switch (random) {
+                case 0:
+                    drawButton.setEnabled(false);
+                    carrotButton.setEnabled(false);
+                    instructions.setText("Instructions: Move three fields with your rabbit on the game board");
+                    playerMove(3, currRabbit);
+                    break;
+                case 1:
+                    togglePlayerRabbits(false);
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Click the carrot on the game board");
+                    carrotButton.setEnabled(true);
+                    break;
+                case 2:
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Move one field with your rabbit on the game board");
+                    carrotButton.setEnabled(false);
+                    playerMove(1, currRabbit);
+                    break;
+                case 3:
+                    drawButton.setEnabled(false);
+                    carrotButton.setEnabled(false);
+                    instructions.setText("Instructions: Move two fields with your rabbit on the game board");
+                    playerMove(2, currRabbit);
+                    break;
+            }
     }
 }
 

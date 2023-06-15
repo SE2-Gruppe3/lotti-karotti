@@ -79,6 +79,7 @@
         android:id="@+id/drawCard"
         android:layout_width="110dp"
         android:layout_height="39dp"
+        android:onClick="drawButtonListener"
         android:text="Draw card"
         app:layout_constraintBottom_toTopOf="@+id/imageViewCard"
         app:layout_constraintEnd_toStartOf="@+id/textViewAvailableRabbits"
