@@ -1186,8 +1186,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     private void showMutatorDialong() {
-        MutatorDialog mutatorDialog = new MutatorDialog(this);
-        mutatorDialog.show(getSupportFragmentManager(), "MutatorDialog");
+        MutatorDialog mutatorDialog = new MutatorDialog(this,lobbyId);
+       mutatorDialog.show(getSupportFragmentManager(), "MutatorDialog");
+
+
+
     }
 
 
