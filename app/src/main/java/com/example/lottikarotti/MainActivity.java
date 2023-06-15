@@ -3,38 +3,31 @@ package com.example.lottikarotti;
 
 //import static com.example.lottikarotti.Network.ServerConnection.getSocket;
 
-import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-        import android.content.SharedPreferences;
-import android.os.Bundle;
-import android.text.method.ScrollingMovementMethod;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.WindowManager;
-
-
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
-        import android.graphics.PointF;
-        import android.hardware.Sensor;
+import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.PointF;
+import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-        import android.os.Handler;
+import android.os.Bundle;
+import android.os.Handler;
 import android.os.Looper;
+import android.text.method.ScrollingMovementMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
-        import android.view.ViewGroup;
-
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -45,7 +38,10 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-        import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
@@ -55,7 +51,6 @@ import com.example.lottikarotti.Network.CheckConnectionHandler;
 import com.example.lottikarotti.Network.InitializeConnectionHandler;
 import com.example.lottikarotti.Network.ServerConnection;
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -1242,16 +1237,18 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * Button Listeners
      */
     public void drawButtonListener(View view){
-            Random rand = new Random();
-            int random = rand.nextInt(5);
-            cardView.setImageResource(cards[random]);
-            instructions.setTextColor(Color.BLACK);
+        int maxCase = 4;
+        if (activemutator.equals("specialCard")) maxCase = 5;
+        Random rand = new Random();
+        int random = rand.nextInt(maxCase);
+        cardView.setImageResource(cards[random]);
+        instructions.setTextColor(Color.BLACK);
 
-            switch (random) {
-                case 0:
-                    drawButton.setEnabled(false);
-                    carrotButton.setEnabled(false);
-                    instructions.setText("Instructions: Move three fields with your rabbit on the game board");
+        switch (random) {
+            case 0:
+                drawButton.setEnabled(false);
+                carrotButton.setEnabled(false);
+                instructions.setText("Instructions: Move three fields with your rabbit on the game board");
                     playerMove(3, currRabbit);
                     break;
                 case 1:
