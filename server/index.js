@@ -313,7 +313,7 @@ io.on('connection', (socket) => {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
 
         if (lobby !== undefined) {
-            if (lobby.mutator === "classic") {
+            if (!(lobby.mutator === "spicyCarrot")) {
                 const randomhole = Math.floor(Math.random() * 11);
                 lobby.hole = holes[randomhole];
                 console.log(`[Server] Lobby ${lobbycode}'s hole updated to ${randomhole}`);
