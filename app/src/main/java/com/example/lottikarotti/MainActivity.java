@@ -351,9 +351,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.println(Log.INFO, TAG, "Server indicates error! Code: " + code[0].toString());
             runOnUiThread(() -> {
                 Toast.makeText(getApplicationContext(), "Server indicates error! Code: " + code[0].toString(), Toast.LENGTH_SHORT).show();
+                if (code[0].toString().equals("302")) finish();
             });
 
-            if (code[0].toString() == "302") finish();
         });
 
         // Initialize Server Listener "startgame", listen to the startgame event from the server, see if the game has started
@@ -392,8 +392,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
 
     }
-
-
 
     /**
      * This method is called when the activity is created.
