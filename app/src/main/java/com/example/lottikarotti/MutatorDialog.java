@@ -26,7 +26,7 @@ public class MutatorDialog  extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        String[] mutators = new String[]{"No Mutator", "Spicy Carrot", "Mutator 2"};
+        String[] mutators = new String[]{"No Mutator", "Spicy Carrot", "Special Card"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
