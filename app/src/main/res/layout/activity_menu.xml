@@ -61,7 +61,7 @@
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="128dp"
+        android:layout_marginTop="172dp"
         android:text="Play"
         android:textColor="#040404"
         android:textSize="20sp"
@@ -74,35 +74,22 @@
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:layout_marginTop="77dp"
+        android:layout_marginTop="60dp"
         android:text="Settings"
         android:textColor="#000000"
         android:textSize="16sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_Play" />
-
-    <Button
-        android:id="@+id/button_About"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="80dp"
-        android:text="About"
-        android:textColor="#000000"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_Settings" />
+        app:layout_constraintTop_toBottomOf="@+id/button_Play" />
 
     <Button
         android:id="@+id/button_Highscore"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="150dp"
         android:layout_height="50dp"
-        android:layout_marginTop="228dp"
+        android:layout_marginTop="272dp"
         android:text="Highscore"
         android:textColor="#000000"
         android:textSize="20sp"
