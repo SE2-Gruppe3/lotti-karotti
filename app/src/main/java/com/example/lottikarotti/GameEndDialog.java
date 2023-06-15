@@ -32,7 +32,7 @@ public class GameEndDialog extends DialogFragment {
         builder.setMessage("Game has ended, " + dialogMessage + " has won the game!")
                 .setNegativeButton("Exit", (dialog, id) -> gameEndDialogListener.onExitGame(isHost));
                 if(isHost) {
-                      builder.setPositiveButton("Restart", (dialog, id) -> gameEndDialogListener.onRestartGame());
+                      builder.setPositiveButton("End Game", (dialog, id) -> gameEndDialogListener.onRestartGame());
                 }
 
         return builder.create();
