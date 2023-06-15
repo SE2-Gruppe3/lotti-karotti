@@ -4,8 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Arrays;
-
 public class DisectJSON {
 
     public static String[] getNames(String jsonstring){
@@ -23,8 +21,6 @@ public class DisectJSON {
                 String name = jsonObject.getString("name");
                 names[i] = name;
             }
-
-            // Print the array of names
 
         } catch (JSONException e) {
             System.out.println("Invalid JSON string.");
