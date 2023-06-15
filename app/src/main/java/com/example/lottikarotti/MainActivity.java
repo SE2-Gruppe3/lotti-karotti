@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
             R.drawable.card1, R.drawable.card2, R.drawable.card3,
-            R.drawable.card4 };
+            R.drawable.card4, R.drawable.card5 };
     final int[] holes = { R.id.hole0,
             R.id.hole3, R.id.hole5,R.id.hole7,R.id.hole9,R.id.hole12,R.id.hole17,R.id.hole19,
             R.id.hole22,R.id.hole25,R.id.hole27};
@@ -607,6 +607,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
         if((steps+add) <= 29){
             ImageButton field = findViewById(fields[steps + add]);
+            field.setBackgroundResource(R.drawable.border_field);
             field.setEnabled(true);
 
             field.setOnClickListener(view -> {
@@ -1144,7 +1145,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     public void drawButtonListener(View view){
             Random rand = new Random();
-            int random = rand.nextInt(4);
+            int random = rand.nextInt(5);
             cardView.setImageResource(cards[random]);
             instructions.setTextColor(Color.BLACK);
 
@@ -1172,6 +1173,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     carrotButton.setEnabled(false);
                     instructions.setText("Instructions: Move two fields with your rabbit on the game board");
                     playerMove(2, currRabbit);
+                    break;
+                case 4:
+                    drawButton.setEnabled(false);
+                    instructions.setText("Instructions: Your rabbit moves, but you don't control where!");
+                    carrotButton.setEnabled(false);
+                    playerMove(rand.nextInt(6), currRabbit);
                     break;
             }
     }
