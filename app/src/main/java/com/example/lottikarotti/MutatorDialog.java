@@ -1,13 +1,18 @@
 package com.example.lottikarotti;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.DialogFragment;
+
+import com.example.lottikarotti.Network.ServerConnection;
+
+import java.net.URISyntaxException;
 
 public class MutatorDialog  extends DialogFragment {
     public interface MutatorDialogListener {
@@ -41,6 +46,11 @@ public class MutatorDialog  extends DialogFragment {
         }).setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int i) {
                 mutatorDialogListener.onGameModeSelected(selectedMutator);
+                try {
+                    ServerConnection.getInstance("x").emit("getMutator", 1);
+                } catch (URISyntaxException e) {
+                    throw new RuntimeException(e);
+                }
                 dialog.dismiss();
             }
 
