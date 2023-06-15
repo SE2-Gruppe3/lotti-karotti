@@ -22,6 +22,7 @@ const storeGameData = require('./utils/storeGameData.js');
 const fetchGameDataInstance = require('./utils/fetchGame.js');
 const fetchLobbyGameData = require('./utils/fetchLobbyGame.js');
 const positionAvail = require('./utils/positionUpdate.js');
+const { log, Console } = require('console');
 // Print a message to the console indicating that the gerver is running
 console.log('Server is running');
 
@@ -368,22 +369,27 @@ io.on('connection', (socket) => {
     //getMutator, called by nonHosts to check if the mode has been selected already. Can be adjusted and used for the second Mutator, for now it works for spicyCarrot
     socket.on('getMutator', args => {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
+        console.log(`[Server] Lobby ${lobbycode}'s Mutator: ${lobby.mutator}`);
         if (lobby !== undefined) {
             const currMutator = lobby.mutator;
-            if (currMutator !== "classic" || currMutator !== undefined) {
+            if (currMutator !== undefined) {
                 if (currMutator === "spicyCarrot") {
-                    console.log(`[Server] Lobby ${lobbycode}'s Mutator: ${currMutator}`);
                     io.to(lobbycode).emit('getMutator', "spicyCarrot");
                 } //insert else if for second Mutator
-
+            } else if(currMutator === "specialCard"){
+                io.to(lobbycode).emit('getMutator', "specialCard");
             } else { //if Mutator == classic
-                console.log(`[Server] Lobby ${lobbycode}'s Mutator: ${currMutator}`);
                 io.to(lobbycode).emit('getMutator', "classic");
             }
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
     });
+
+    socket.on('hostTurn', args => {
+        console.log("[SERVER] Host has turned");
+        setTurn();
+    })
 
 
     //Cheating, remark someone has cheated
