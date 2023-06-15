@@ -395,6 +395,13 @@ io.on('connection', (socket) => {
         io.to(lobbycode).emit('cheat', socket.id);
     });
 
+ //Cheating, remark someone has cheated
+    socket.on('isTurnOf', args => {
+
+        console.log('Turn of: ', args);
+
+        io.to(lobbycode).emit('isTurnOf', args);
+    });
     socket.on('checkifplayercheated', args => {
         var playerExists = false;
         var cheated = false;

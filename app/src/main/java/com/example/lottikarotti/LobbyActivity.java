@@ -37,10 +37,18 @@ public class LobbyActivity extends AppCompatActivity {
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
+                if(s.toString().length()>0){
+                    binding.btnStartGame.setEnabled(false);
+                }else{
+                    binding.btnStartGame.setEnabled(true);
+                }
                 if (s.toString().length() < 6) {
                     binding.btnJoinGame.setEnabled(false);
                 }
@@ -62,16 +70,21 @@ public class LobbyActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+
                 if (s.toString().isEmpty()) {
                     binding.usernameTextView.setError("username must be set");
                     binding.btnStartGame.setEnabled(false);
                     binding.btnJoinGame.setEnabled(false);
                 } else {
                     setUsername = true;
-                    if (setLobbyId) {
+
+                    if (binding.etLobbyId.getText().toString().length() ==6 && setUsername) {
+
                         binding.btnJoinGame.setEnabled(true);
+                        binding.btnStartGame.setEnabled(false);
+                    }else {
+                        binding.btnStartGame.setEnabled(true);
                     }
-                    binding.btnStartGame.setEnabled(true);
                 }
             }
         });

@@ -14,6 +14,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
         import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -78,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public Button drawButton;
     private Button startTurn;
     private Button endTurn;
+    private TextView turnInstruction;
     private ImageView cardView;
     public ImageView rabbit1;
     public ImageView rabbit2;
@@ -125,7 +127,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private String sid;
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
-    private static final String URI = "http://192.168.178.22:3000";
+
+    private static final String URI = "http://192.168.68.52:3000";
+
 
     PointF[] rabbitStartPos = new PointF[8];
     final int[] cards = {
@@ -153,6 +157,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeServerConnection();
+
         initializeIntent();
         initializeSensors();
         initializeDrawables();
@@ -188,7 +193,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private void initializeIntent() {
         Intent intent = getIntent();
         lobbyId = intent.getStringExtra("lobbyId");
-        username = intent.getStringExtra("username");
+
+         username = intent.getStringExtra("username");
+
         info = intent.getStringExtra("info");
 
         TextView lobbyID = findViewById(R.id.lobbyID);
@@ -213,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * This method is called when the activity is created.
      */
     public void initializeSensors() {
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
@@ -262,11 +270,13 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
+        turnInstruction = (TextView)findViewById(R.id.turnInstruction);
+        turnInstruction.setText("Host is starting game ! ");
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
 
-        instructions.setText("Instructions: Choose a rabbit to play");
-
+        instructions.setText(" Please choose a rabbit to play !");
+        instructions.setMovementMethod(new ScrollingMovementMethod());
         gameBoard = (ImageView) findViewById(R.id.imageView);
         figOne = (ImageView) findViewById(R.id.rabbit1);
         myTurn = false;
@@ -292,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+
         // Initialize Server Listener "moveCheat", listen the move to the server in case of cheating
         socket.on("moveCheat", args -> {
             try {
@@ -310,6 +321,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle shake \n" + e.toString());
             }
         });
+
 
         socket.on("createvotingpopup", args -> {
             Log.println(Log.INFO, "Voting", "Voting started");
@@ -342,10 +354,15 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         // Initialize Server Listener "turn", listen the turn event to the server
         socket.on("turn", id -> {
             Log.println(Log.INFO, TAG, "Turn received" + id[0].toString() + "<-gerver - l0cal->" + socket.id());
+
             if (id[0].toString().equals(socket.id().toString())) setMyTurn(true);
 
         });
-
+        // Initialize Server Listener "turn", listen the turn event to the server
+        socket.on("isTurnOf", us -> {
+            Log.println(Log.INFO, TAG, "Turn of received"   );
+            handleIsTurnOf(us[0].toString());
+        });
         // Initialize Server Listener "turn", listen to the turn event from the server, see who's turn it is
         socket.on("error", code -> {
             Log.println(Log.INFO, TAG, "Server indicates error! Code: " + code[0].toString());
@@ -430,6 +447,16 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         cloudRightParam.height = screenHeight / 2;
         cloudR.setLayoutParams(cloudRightParam);
     }
+    private void resetRabbitBorder(int rabbit){
+        for (int i = 0; i < rabbits.length; i++) {
+            if(i != rabbit){
+                ImageView otherRabbit = findViewById(rabbits[i]);
+                otherRabbit.setBackgroundResource(R.color.white);
+
+            }
+        }
+
+    }
 
     /**
      * This method is called when the activity is created.
@@ -439,24 +466,41 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             @Override
             public void onClick(View v) {
                 selectRabbit(0);
+                rabbit1.setBackgroundResource(R.drawable.border_fragment);
+                resetRabbitBorder(0);
+                Toast.makeText(getApplicationContext(), "Rabbit 1", Toast.LENGTH_SHORT).show();
+
             }
         });
         rabbit2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectRabbit(1);
+                rabbit2.setBackgroundResource(R.drawable.border_fragment);
+                resetRabbitBorder(1);
+                Toast.makeText(getApplicationContext(), "Rabbit 2", Toast.LENGTH_SHORT).show();
+
+
             }
         });
         rabbit3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectRabbit(2);
+                rabbit3.setBackgroundResource(R.drawable.border_fragment);
+                resetRabbitBorder(2);
+                Toast.makeText(getApplicationContext(), "Rabbit 3", Toast.LENGTH_SHORT).show();
+
             }
         });
         rabbit4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 selectRabbit(3);
+                rabbit4.setBackgroundResource(R.drawable.border_fragment);
+                resetRabbitBorder(3);
+                Toast.makeText(getApplicationContext(), "Rabbit 4", Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -632,6 +676,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         renderBoard();
     }
 
+    private void handleIsTurnOf(String username){
+
+        turnInstruction.setText("Turn of: "+username);
+    }
     /**
      * Handle the shake event
      */
@@ -643,7 +691,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 resetClouds(cloudLX, cloudRX);
             } else {
                 instructions.setText("You are now able to cheat, others can't see you!!");
-                instructions.setTextColor(Color.RED);
+                instructions.setTextColor(Color.parseColor("#FFA500"));
+
 
                 for (int i = 1; i < fields.length; i++) {
                     ImageButton field = findViewById(fields[i]);
@@ -665,6 +714,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                         field.setEnabled(false);
                     });
                 }
+
                 Toast.makeText(MainActivity.this, "Please choose the field you want to move", Toast.LENGTH_LONG).show();
             }
         });
@@ -819,9 +869,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     runOnUiThread(() -> {
                         System.out.println("Renderboard.Drawing rabbit on field " + rabbit.getPosition());
                         ImageButton rabbitbtn = findViewById(fields[rabbit.getPosition()]);
-                        rabbitbtn.setOnClickListener(null);
+                        rabbitbtn.setOnClickListener(
+                                new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+
+                                        Toast.makeText(getApplicationContext(), ""+rabbit.getName(), Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
                         setColorForRabbitsRender(rabbitbtn, color);
-                        rabbitbtn.setEnabled(false);
+                        rabbitbtn.setEnabled(true);
                     });
                 }
             }
@@ -942,33 +1000,39 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public void selectRabbit(int num){
         if (num<4) {
             currRabbit = num;
-            instructions.setText("Instructions: You are playing with Rabbit"+currRabbit);
+            currRabbit++;
+            instructions.setText("Instructions: You are playing with Rabbit "+currRabbit);
             drawButton.setEnabled(true);
 
         }
-        else
-            instructions.setText("Fuck you");
+
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float newX = sensorEvent.values[0];
-            float newY = sensorEvent.values[1];
-            float newZ = sensorEvent.values[2];
+            if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                float newX = sensorEvent.values[0];
+                float newY = sensorEvent.values[1];
+                float newZ = sensorEvent.values[2];
 
-            long timeNow = System.currentTimeMillis();
-            long diff = timeNow - preUpdate;
+                long timeNow = System.currentTimeMillis();
 
-            if (diff > 100 && Math.abs(newX + newY + newZ - oldX - oldY - oldZ) / diff * 10000 > SHAKE_THRESHOLD) {
-                onShakeDetected();
+                if ((timeNow - preUpdate) > 100) {
+                    long diff = (timeNow - preUpdate);
+                    preUpdate = timeNow;
+
+                    float speed = Math.abs(newX + newY + newZ - oldX - oldY - oldZ) / diff * 10000;
+
+                    if (speed > SHAKE_THRESHOLD) {
+                        onShakeDetected();
+                    }
+
+                    oldX = newX;
+                    oldY = newY;
+                    oldZ = newZ;
+                }
             }
 
-            preUpdate = timeNow;
-            oldX = newX;
-            oldY = newY;
-            oldZ = newZ;
-        }
     }
 
 
@@ -977,7 +1041,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
     private void onShakeDetected() {
-        if(!isMyTurn) {
+       if(!isMyTurn) {
             ServerConnection.shake();}
 
         //Debugging
@@ -1022,6 +1086,18 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         }, 5000);
     }
     public void setMyTurn(boolean myTurn) {
+        if(myTurn == true){
+            ServerConnection.isTurnOf(username);
+            instructions.setTextColor(Color.BLACK);
+            instructions.setText(" Your turn, please choose a rabbit");
+            resetRabbitBorder(4);
+             }
+        else{
+            instructions.setTextColor(Color.BLACK);
+            instructions.setText(" Not your turn, please wait");
+
+        }
+
         isMyTurn = myTurn;
         togglePlayerRabbits();
         Log.d("Game", "setMyTurn: " + isMyTurn);
@@ -1084,8 +1160,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     private void showMutatorDialong() {
-        MutatorDialog mutatorDialog = new MutatorDialog(this);
-        mutatorDialog.show(getSupportFragmentManager(), "MutatorDialog");
+        MutatorDialog mutatorDialog = new MutatorDialog(this,lobbyId);
+       mutatorDialog.show(getSupportFragmentManager(), "MutatorDialog");
+
+
+
     }
 
     @Override
