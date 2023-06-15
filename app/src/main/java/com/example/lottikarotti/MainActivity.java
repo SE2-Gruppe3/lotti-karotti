@@ -664,7 +664,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 .findFirst()
                 .orElse(0);
 
-        if((steps+add) <= 29){
+        if((steps+add) <= 29 && (steps+add) >= 0) {
             ImageButton field = findViewById(fields[steps + add]);
             field.setBackgroundResource(R.drawable.border_field);
             field.setEnabled(true);
@@ -1198,7 +1198,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Toast.makeText(MainActivity.this, "Spicy Carrot selected!", Toast.LENGTH_SHORT).show();
                 break;
             case 2:
-                ServerConnection.setMutator("specialCard"); //yet to be decided
+                ServerConnection.setMutator("specialCard");
                 Toast.makeText(MainActivity.this, "Special Card selected!", Toast.LENGTH_SHORT).show();
                 break;
         }
@@ -1270,9 +1270,9 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     break;
                 case 4:
                     drawButton.setEnabled(false);
-                    instructions.setText("Instructions: Your rabbit moves, but you don't control where!");
+                    instructions.setText("Instructions: Do you move? Are you getting set back or maybe racing in front?!");
                     carrotButton.setEnabled(false);
-                    playerMove(rand.nextInt(6)+1, currRabbit);
+                    playerMove(rand.nextInt(10)-3, currRabbit);
                     break;
             }
     }

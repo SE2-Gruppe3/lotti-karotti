@@ -22,6 +22,7 @@ const storeGameData = require('./utils/storeGameData.js');
 const fetchGameDataInstance = require('./utils/fetchGame.js');
 const fetchLobbyGameData = require('./utils/fetchLobbyGame.js');
 const positionAvail = require('./utils/positionUpdate.js');
+const { log } = require('console');
 // Print a message to the console indicating that the gerver is running
 console.log('Server is running');
 
@@ -370,19 +371,19 @@ io.on('connection', (socket) => {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
         if (lobby !== undefined) {
             const currMutator = lobby.mutator;
-            if (currMutator !== undefined) {
-                if (currMutator === "spicyCarrot") {
-                    io.to(lobbycode).emit('getMutator', "spicyCarrot");
-                } //insert else if for second Mutator
-            } else if(currMutator === "specialCard"){
-                io.to(lobbycode).emit('getMutator', "specialCard");
-            } else { //if Mutator == classic
+            console.log(`[Server] mutator GET`);
+            if (currMutator === "spicyCarrot") {
+                io.to(lobbycode).emit('getMutator', "spicyCarrot");
+            } else if (currMutator === "classic") { //if Mutator == classic
                 io.to(lobbycode).emit('getMutator', "classic");
-            }
+            } else {
+                io.to(lobbycode).emit('getMutator', "specialCard");
+            } 
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
     });
+    
 
 
     //Cheating, remark someone has cheated
