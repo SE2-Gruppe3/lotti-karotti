@@ -369,7 +369,6 @@ io.on('connection', (socket) => {
     //getMutator, called by nonHosts to check if the mode has been selected already. Can be adjusted and used for the second Mutator, for now it works for spicyCarrot
     socket.on('getMutator', args => {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
-        console.log(`[Server] Lobby ${lobbycode}'s Mutator: ${lobby.mutator}`);
         if (lobby !== undefined) {
             const currMutator = lobby.mutator;
             if (currMutator !== undefined) {
