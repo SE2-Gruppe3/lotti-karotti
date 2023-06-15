@@ -253,6 +253,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * This method is called when the activity is created.
      */
     public void initializeSensors() {
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         shakeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
@@ -333,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Log.w(TAG, "Can't handle move \n" + e.toString());
             }
         });
+
 
         // Initialize Server Listener "moveCheat", listen the move to the server in case of cheating
         socket.on("moveCheat", args -> {
@@ -738,7 +740,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 resetClouds(cloudLX, cloudRX);
             } else {
                 instructions.setText("You are now able to cheat, others can't see you!!");
-                instructions.setTextColor(Color.RED);
+                instructions.setTextColor(Color.parseColor("#FFA500"));
+
 
                 for (int i = 1; i < fields.length; i++) {
                     ImageButton field = findViewById(fields[i]);
@@ -760,6 +763,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                         field.setEnabled(false);
                     });
                 }
+
                 Toast.makeText(MainActivity.this, "Please choose the field you want to move", Toast.LENGTH_LONG).show();
             }
         });
@@ -1044,23 +1048,29 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
-        if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
-            float newX = sensorEvent.values[0];
-            float newY = sensorEvent.values[1];
-            float newZ = sensorEvent.values[2];
+            if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                float newX = sensorEvent.values[0];
+                float newY = sensorEvent.values[1];
+                float newZ = sensorEvent.values[2];
 
-            long timeNow = System.currentTimeMillis();
-            long diff = timeNow - preUpdate;
+                long timeNow = System.currentTimeMillis();
 
-            if (diff > 100 && Math.abs(newX + newY + newZ - oldX - oldY - oldZ) / diff * 10000 > SHAKE_THRESHOLD) {
-                onShakeDetected();
+                if ((timeNow - preUpdate) > 100) {
+                    long diff = (timeNow - preUpdate);
+                    preUpdate = timeNow;
+
+                    float speed = Math.abs(newX + newY + newZ - oldX - oldY - oldZ) / diff * 10000;
+
+                    if (speed > SHAKE_THRESHOLD) {
+                        onShakeDetected();
+                    }
+
+                    oldX = newX;
+                    oldY = newY;
+                    oldZ = newZ;
+                }
             }
 
-            preUpdate = timeNow;
-            oldX = newX;
-            oldY = newY;
-            oldZ = newZ;
-        }
     }
 
 
@@ -1069,7 +1079,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     }
     private void onShakeDetected() {
-        if(!isMyTurn) {
+       if(!isMyTurn) {
             ServerConnection.shake();}
 
         //Debugging
@@ -1116,10 +1126,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public void setMyTurn(boolean myTurn) {
         if(myTurn == true){
             ServerConnection.isTurnOf(username);
+            instructions.setTextColor(Color.BLACK);
             instructions.setText(" Your turn, please choose a rabbit");
             resetRabbitBorder(4);
              }
         else{
+            instructions.setTextColor(Color.BLACK);
             instructions.setText(" Not your turn, please wait");
 
         }
