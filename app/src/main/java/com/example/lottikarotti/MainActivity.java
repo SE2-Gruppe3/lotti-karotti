@@ -79,10 +79,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     private Button startTurn;
     private Button endTurn;
     private ImageView cardView;
-    private ImageView rabbit1;
-    private ImageView rabbit2;
-    private ImageView rabbit3;
-    private ImageView rabbit4;
+    public ImageView rabbit1;
+    public ImageView rabbit2;
+    public ImageView rabbit3;
+    public ImageView rabbit4;
 
     private ImageView gameBoard;
     private ImageView figOne;
@@ -1030,13 +1030,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
     private void togglePlayerRabbits() {
         Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
-        runOnUiThread(() -> {
-            rabbit1.setEnabled(isMyTurn);
-            rabbit2.setEnabled(isMyTurn);
-            rabbit3.setEnabled(isMyTurn);
-            rabbit4.setEnabled(isMyTurn);
-            drawButton.setEnabled(!isMyTurn);
-        });
+        PlayerMove.rabbitToggle(this, isMyTurn);
+    }
+    private void togglePlayerRabbits(boolean activate) {
+        Log.d("Game", "togglePlayerRabbits: " + isMyTurn);
+        PlayerMove.rabbitToggle(this, activate);
     }
 
     private void getRabbitStartPos() {
@@ -1160,6 +1158,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     playerMove(3, currRabbit);
                     break;
                 case 1:
+                    togglePlayerRabbits(false);
                     drawButton.setEnabled(false);
                     instructions.setText("Instructions: Click the carrot on the game board");
                     carrotButton.setEnabled(true);
