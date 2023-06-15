@@ -70,16 +70,19 @@ public class LobbyActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
+
                 if (s.toString().isEmpty()) {
                     binding.usernameTextView.setError("username must be set");
                     binding.btnStartGame.setEnabled(false);
                     binding.btnJoinGame.setEnabled(false);
                 } else {
                     setUsername = true;
-                    if (setLobbyId && setUsername) {
+                    if (binding.etLobbyId.getText().toString().length() ==6 && setUsername) {
                         binding.btnJoinGame.setEnabled(true);
+                        binding.btnStartGame.setEnabled(false);
+                    }else {
+                        binding.btnStartGame.setEnabled(true);
                     }
-                    binding.btnStartGame.setEnabled(true);
                 }
             }
         });

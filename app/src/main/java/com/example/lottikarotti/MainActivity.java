@@ -1119,6 +1119,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             instructions.setText(" Your turn, please choose a rabbit");
             resetRabbitBorder(4);
              }
+        else{
+            instructions.setText(" Not your turn, please wait");
+
+        }
 
         isMyTurn = myTurn;
         togglePlayerRabbits();
