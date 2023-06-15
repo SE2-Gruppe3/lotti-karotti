@@ -167,6 +167,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initializeServerConnection();
+
         initializeIntent();
         initializeSensors();
         initializeDrawables();
@@ -302,6 +303,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         settingsButton = (ImageButton) findViewById(R.id.settings);
         drawButton = (Button) findViewById(R.id.drawCard);
         turnInstruction = (TextView)findViewById(R.id.turnInstruction);
+        turnInstruction.setText("Host is starting game ! ");
         drawButton.setEnabled(false);
         carrotButton.setEnabled(false);
 
@@ -351,14 +353,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
-        socket.on("isTurnOf", args -> {
-            Log.println(Log.INFO, "Turn of", "Turn received");
-            try {
-                handleIsTurnOf(args[0].toString());
-            } catch (Exception e) {
-                Log.w(TAG, "Can't handle shake \n" + e.toString());
-            }
-        });
+
         socket.on("createvotingpopup", args -> {
             Log.println(Log.INFO, "Voting", "Voting started");
             try {
@@ -394,7 +389,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             if (id[0].toString().equals(socket.id().toString())) setMyTurn(true);
 
         });
-
+        // Initialize Server Listener "turn", listen the turn event to the server
+        socket.on("isTurnOf", us -> {
+            Log.println(Log.INFO, TAG, "Turn of received"   );
+            handleIsTurnOf(us[0].toString());
+        });
         // Initialize Server Listener "turn", listen to the turn event from the server, see who's turn it is
         socket.on("error", code -> {
             Log.println(Log.INFO, TAG, "Server indicates error! Code: " + code[0].toString());
@@ -725,6 +724,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     }
 
     private void handleIsTurnOf(String username){
+
         turnInstruction.setText("Turn of: "+username);
     }
     /**
@@ -1116,8 +1116,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public void setMyTurn(boolean myTurn) {
         if(myTurn == true){
             ServerConnection.isTurnOf(username);
-            turnInstruction.setText("Turn of: "+ username);
-            turnInstruction.setTextColor(Color.parseColor("#FFA500"));
             instructions.setText(" Your turn, please choose a rabbit");
             resetRabbitBorder(4);
              }
