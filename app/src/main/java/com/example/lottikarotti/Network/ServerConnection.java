@@ -1,17 +1,6 @@
 package com.example.lottikarotti.Network;
 
 import android.app.Activity;
-import android.content.DialogInterface;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import androidx.appcompat.app.AlertDialog;
-
-import com.example.lottikarotti.MainActivity;
-import com.example.lottikarotti.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -74,7 +63,7 @@ public class ServerConnection {
     }
 
     public interface PlayerCountCallback {
-        void onPlayerCountReceived(int count);
+        int onPlayerCountReceived(int count);
     }
 
     public static void getListOfConnectedPlayers(Activity activity, PlayerListCallback callback) {
