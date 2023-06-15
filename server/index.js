@@ -22,7 +22,6 @@ const storeGameData = require('./utils/storeGameData.js');
 const fetchGameDataInstance = require('./utils/fetchGame.js');
 const fetchLobbyGameData = require('./utils/fetchLobbyGame.js');
 const positionAvail = require('./utils/positionUpdate.js');
-const { log, Console } = require('console');
 // Print a message to the console indicating that the gerver is running
 console.log('Server is running');
 
@@ -385,11 +384,6 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('hostTurn', args => {
-        console.log("[SERVER] Host has turned");
-        setTurn();
-    })
-
 
     //Cheating, remark someone has cheated
     socket.on('cheat', args => {
@@ -400,13 +394,6 @@ io.on('connection', (socket) => {
         io.to(lobbycode).emit('cheat', socket.id);
     });
 
- //Cheating, remark someone has cheated
-    socket.on('isTurnOf', args => {
-
-        console.log('Turn of: ', args);
-
-        io.to(lobbycode).emit('isTurnOf', args);
-    });
     socket.on('checkifplayercheated', args => {
         var playerExists = false;
         var cheated = false;

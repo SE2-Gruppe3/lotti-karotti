@@ -407,6 +407,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
         socket.on("getMutator", args -> {
             Log.d(TAG, "Mutator saved locally: " + args[0].toString());
             activemutator = args[0].toString();
+            if (activemutator.equals("specialCard")) maxCase = 5;
         });
 
     }
@@ -1232,13 +1233,11 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             throw new RuntimeException(e);
         }
     }
-
+    private int maxCase = 4;
     /**
      * Button Listeners
      */
     public void drawButtonListener(View view){
-        int maxCase = 4;
-        if (activemutator.equals("specialCard")) maxCase = 5;
         Random rand = new Random();
         int random = rand.nextInt(maxCase);
         cardView.setImageResource(cards[random]);
