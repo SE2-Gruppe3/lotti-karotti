@@ -50,6 +50,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.lottikarotti.GameLogic.PlayerMove;
 import com.example.lottikarotti.Listeners.IOnDataSentListener;
+import com.example.lottikarotti.Network.CheckConnectionHandler;
+import com.example.lottikarotti.Network.InitializeConnectionHandler;
 import com.example.lottikarotti.Network.ServerConnection;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -170,37 +172,14 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     private void checkServerConnected(){
         // Test if server has connection, finish activity if not
-        int countConn = 0;
-        do {
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            countConn++;
-        }while (!socket.connected() && countConn <=10);
-        if (!socket.connected()) finish();
+        if (CheckConnectionHandler.check(socket) == false) finish();
     }
     /**
      * This method is called when the activity is created.
      */
     private void initializeServerConnection() {
-        try {
-            socket = ServerConnection.getInstance(URI);
-            ServerConnection.connect();
-            Log.d(TAG, "onCreate: Connected to server");
-        } catch (URISyntaxException e) {
-            throw new RuntimeException(e);
-        }
-
         players = new ArrayList<>();
-        /// Example of getting server response using callbacks - We get here online player count back
-        ServerConnection.getNumberOfConnectedPlayers(this, new ServerConnection.PlayerCountCallback() {
-            @Override
-            public void onPlayerCountReceived(int count) {
-                Toast.makeText(getApplicationContext(), "Online players: " + count, Toast.LENGTH_SHORT).show();
-            }
-        });
+        socket = InitializeConnectionHandler.initialize(socket, URI, this);
     }
 
     /**
@@ -228,7 +207,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
             Log.d(TAG, "Joined lobby" + lobbyId);
         }
-    }
+            }
 
     /**
      * This method is called when the activity is created.
@@ -800,7 +779,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      */
     private void handleCarrotspin(String holeIndex) throws JsonProcessingException {
         try {
-            putHolesOnBoard(Integer.parseInt(holeIndex), -1);  // SHITCODE, why not put in renderboard?
+            putHolesOnBoard(Integer.parseInt(holeIndex), -1);
             ServerConnection.move(0,0);
         }catch (Exception ex){
             //TODO: handle exception
@@ -811,7 +790,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     private void handleSpicyCarrotspin(String holeOneIndex, String holeTwoIndex) {
         try {
-            putHolesOnBoard(Integer.parseInt(holeOneIndex), Integer.parseInt(holeTwoIndex));  // SHITCODE, why not put in renderboard?
+            putHolesOnBoard(Integer.parseInt(holeOneIndex), Integer.parseInt(holeTwoIndex));
             ServerConnection.move(0,0);
         }catch (Exception ex){
             //TODO: handle exception
@@ -1141,12 +1120,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
 
     @Override
     public void onRestartGame() {
-        Intent intent = new Intent(this, MainActivity.class);
-        int lobbyCode = new Random().nextInt(900000) + 100000;
-        intent.putExtra("lobbyId", String.valueOf(lobbyCode+1));
-        intent.putExtra("username", String.valueOf(username));
-        intent.putExtra("info", String.valueOf(info));
-        startActivity(intent);
         finish();
     }
 
