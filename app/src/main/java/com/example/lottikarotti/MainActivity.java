@@ -124,11 +124,12 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     public boolean gameStarted;
     private int hole;
     public List<Player> players;
-    private String sid;
+    private ImageButton rotateTurnButton;
+
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
 
-    private static final String URI = "http://192.168.68.52:3000";
+    private static final String URI = "http://192.168.178.22:3000";
 
 
     PointF[] rabbitStartPos = new PointF[8];
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             R.id.buttonField21, R.id.buttonField22, R.id.buttonField23, R.id.buttonField24,R.id.buttonField25,R.id.buttonField26,R.id.buttonField27, R.id.buttonField28,R.id.buttonField29};
 
     public Socket socket;
-
+    private String activemutator;
     public void MainActivity() {
         onCreate(null);
     }
@@ -266,6 +267,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * This method is called when the activity is created.
      */
     public void initializeButtons() {
+        rotateTurnButton = findViewById(R.id.button_rotateturn);
         carrotButton = findViewById(R.id.carrotButton);
         cardView = (ImageView) findViewById(R.id.imageViewCard);
         settingsButton = (ImageButton) findViewById(R.id.settings);
@@ -407,6 +409,10 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             }
         });
 
+        socket.on("getMutator", args -> {
+            Log.d(TAG, "Mutator saved locally: " + args[0].toString());
+            activemutator = args[0].toString();
+        });
 
     }
 
@@ -462,6 +468,19 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
      * This method is called when the activity is created.
      */
     public void initializeButtonLogic() {
+
+        if (info.equals("start")){
+            Log.d(TAG, "initializeButtonLogic: Rotate turn button visible for host");
+            rotateTurnButton.setVisibility(View.VISIBLE);
+            rotateTurnButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    runOnUiThread(() -> {
+                        socket.emit("hostTurn", 1);
+                    });
+                }
+            });
+        }
         rabbit1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1183,8 +1202,8 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                 Toast.makeText(MainActivity.this, "Spicy Carrot selected!", Toast.LENGTH_SHORT).show();
                 break;
             case 2:
-                ServerConnection.setMutator("mutator2"); //yet to be decided
-                Toast.makeText(MainActivity.this, "Mutator 2 selected!", Toast.LENGTH_SHORT).show();
+                ServerConnection.setMutator("specialCard"); //yet to be decided
+                Toast.makeText(MainActivity.this, "Special Card selected!", Toast.LENGTH_SHORT).show();
                 break;
         }
 
@@ -1257,7 +1276,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
                     drawButton.setEnabled(false);
                     instructions.setText("Instructions: Your rabbit moves, but you don't control where!");
                     carrotButton.setEnabled(false);
-                    playerMove(rand.nextInt(6), currRabbit);
+                    playerMove(rand.nextInt(6)+1, currRabbit);
                     break;
             }
     }
