@@ -106,17 +106,27 @@ public class PlayerListFragment extends Fragment {
         });
 
         TableLayout tableLayout = view.findViewById(R.id.tblayout_players);
+        int count = 0;
         if (names == null){
             do {
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(500);
+                    Log.w(TAG, "Error waiting for server response "+count);
 
                 } catch (Exception ex) {
                     Log.w(TAG, "Threading Error");
                     break;
                 }
+                if (count >= 10) break;
+                count++;
             }while (names == null);
+            if (count >= 10){
+                names = new String[1];
+                names[0] = "Error fetching names from Server!";
+            }
+
         }
+
 // Loop through the array
         for (String name : names) {
             // Create a new TableRow

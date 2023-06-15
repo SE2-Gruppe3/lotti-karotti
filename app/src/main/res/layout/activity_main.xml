@@ -40,10 +40,10 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.712"
+        app:layout_constraintHorizontal_bias="0.704"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintVertical_bias="0.011"
         app:srcCompat="@drawable/hole1" />
 
     <Button
@@ -79,6 +79,7 @@
         android:id="@+id/drawCard"
         android:layout_width="110dp"
         android:layout_height="39dp"
+        android:onClick="drawButtonListener"
         android:text="Draw card"
         app:layout_constraintBottom_toTopOf="@+id/imageViewCard"
         app:layout_constraintEnd_toStartOf="@+id/textViewAvailableRabbits"
@@ -88,42 +89,42 @@
         app:layout_constraintVertical_bias="0.328" />
 
 
-
     <ImageView
         android:id="@+id/hole3"
-        android:layout_width="54dp"
-        android:layout_height="34dp"
+        android:layout_width="57dp"
+        android:layout_height="40dp"
         android:layout_marginStart="108dp"
         android:layout_marginEnd="248dp"
         android:layout_marginBottom="364dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
+        app:layout_constraintHorizontal_bias="0.75"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.915"
+        app:layout_constraintVertical_bias="0.92"
         app:srcCompat="@drawable/hole2" />
 
     <ImageView
         android:id="@+id/hole22"
-        android:layout_width="73dp"
-        android:layout_height="35dp"
+        android:layout_width="58dp"
+        android:layout_height="38dp"
         android:layout_marginStart="76dp"
         android:layout_marginEnd="201dp"
         android:layout_marginBottom="291dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintHorizontal_bias="0.225"
+        app:layout_constraintHorizontal_bias="0.151"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.953"
+        app:layout_constraintVertical_bias="0.992"
         app:srcCompat="@drawable/hole2" />
 
     <ImageView
         android:id="@+id/hole5"
-        android:layout_width="65dp"
-        android:layout_height="41dp"
+        android:layout_width="57dp"
+        android:layout_height="40dp"
         android:layout_marginStart="226dp"
         android:layout_marginTop="42dp"
         android:layout_marginEnd="128dp"
@@ -131,7 +132,7 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
         app:layout_constraintVertical_bias="1.0"
@@ -139,15 +140,15 @@
 
     <ImageView
         android:id="@+id/hole25"
-        android:layout_width="44dp"
-        android:layout_height="40dp"
+        android:layout_width="36dp"
+        android:layout_height="35dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.708"
+        app:layout_constraintHorizontal_bias="0.706"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.192"
+        app:layout_constraintVertical_bias="0.16"
         app:srcCompat="@drawable/hole" />
 
     <ImageView
@@ -170,24 +171,24 @@
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintHorizontal_bias="0.901"
+        app:layout_constraintHorizontal_bias="0.896"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.861"
+        app:layout_constraintVertical_bias="0.876"
         app:srcCompat="@drawable/hole" />
 
     <ImageView
         android:id="@+id/hole7"
-        android:layout_width="41dp"
-        android:layout_height="45dp"
+        android:layout_width="39dp"
+        android:layout_height="39dp"
         android:layout_marginBottom="358dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.918"
+        app:layout_constraintHorizontal_bias="0.913"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.859"
+        app:layout_constraintVertical_bias="0.857"
         app:srcCompat="@drawable/hole" />
 
     <ImageButton
@@ -199,14 +200,14 @@
         android:layout_marginEnd="35dp"
         android:layout_marginBottom="373dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField8"
@@ -216,11 +217,11 @@
         android:layout_marginTop="87dp"
         android:layout_marginEnd="37dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintEnd_toEndOf="@+id/imageView"
+
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField9"
@@ -231,12 +232,12 @@
         android:layout_marginEnd="37dp"
         android:layout_marginBottom="235dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField10"
@@ -247,13 +248,13 @@
         android:layout_marginEnd="38dp"
         android:layout_marginBottom="168dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField11"
@@ -263,24 +264,24 @@
         android:layout_marginEnd="32dp"
         android:layout_marginBottom="106dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField12"
         android:layout_width="41dp"
         android:layout_height="49dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/buttonField13"
+
         app:layout_constraintEnd_toEndOf="@+id/buttonField11"
         app:layout_constraintStart_toStartOf="@+id/buttonField11"
-        app:layout_constraintTop_toTopOf="@+id/buttonField13" />
+        app:layout_constraintTop_toTopOf="@+id/buttonField13"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField13"
@@ -291,12 +292,12 @@
         android:layout_marginEnd="83dp"
         android:layout_marginBottom="52dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField14"
@@ -307,13 +308,13 @@
         android:layout_marginEnd="142dp"
         android:layout_marginBottom="52dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@null" />
 
 
     <ImageButton
@@ -325,12 +326,12 @@
         android:layout_marginEnd="334dp"
         android:layout_marginBottom="240dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField21"
@@ -341,67 +342,67 @@
         android:layout_marginEnd="333dp"
         android:layout_marginBottom="292dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField22"
-        android:layout_width="57dp"
-        android:layout_height="44dp"
+        android:layout_width="68dp"
+        android:layout_height="37dp"
         android:layout_marginStart="100dp"
         android:layout_marginTop="116dp"
         android:layout_marginEnd="263dp"
         android:layout_marginBottom="291dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.2" />
+        app:layout_constraintVertical_bias="0.6"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField23"
-        android:layout_width="53dp"
-        android:layout_height="44dp"
+        android:layout_width="52dp"
+        android:layout_height="38dp"
         android:layout_marginStart="167dp"
         android:layout_marginTop="112dp"
         android:layout_marginEnd="208dp"
         android:layout_marginBottom="293dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField24"
-        android:layout_width="40dp"
-        android:layout_height="43dp"
+        android:layout_width="53dp"
+        android:layout_height="34dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="114dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/buttonField23"
+
         app:layout_constraintEnd_toStartOf="@+id/buttonField25"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/buttonField23"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.8"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField29"
@@ -412,12 +413,12 @@
         android:layout_marginEnd="205dp"
         android:layout_marginBottom="124dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField25"
@@ -427,14 +428,14 @@
         android:layout_marginTop="114dp"
         android:layout_marginBottom="28dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toTopOf="@+id/carrotButton"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField26"
@@ -443,10 +444,10 @@
         android:layout_marginEnd="4dp"
         android:layout_marginBottom="244dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
-        app:layout_constraintEnd_toEndOf="@+id/hole25"></ImageButton>
+
+        app:layout_constraintEnd_toEndOf="@+id/hole25"
+        app:srcCompat="@null"></ImageButton>
 
 
     <ImageButton
@@ -455,12 +456,12 @@
         android:layout_height="77dp"
         android:layout_marginBottom="172dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="0.708"
-        app:layout_constraintStart_toStartOf="@+id/imageView"></ImageButton>
+        app:layout_constraintStart_toStartOf="@+id/imageView"
+        app:srcCompat="@null"></ImageButton>
 
     <ImageButton
         android:id="@+id/buttonField16"
@@ -471,12 +472,12 @@
         android:layout_marginEnd="263dp"
         android:layout_marginBottom="50dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField17"
@@ -487,12 +488,12 @@
         android:layout_marginEnd="332dp"
         android:layout_marginBottom="49dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField18"
@@ -503,12 +504,12 @@
         android:layout_marginEnd="335dp"
         android:layout_marginBottom="108dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField19"
@@ -519,14 +520,14 @@
         android:layout_marginEnd="332dp"
         android:layout_marginBottom="173dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField15"
@@ -537,17 +538,17 @@
         android:layout_marginEnd="205dp"
         android:layout_marginBottom="52dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageView
         android:id="@+id/hole9"
-        android:layout_width="40dp"
-        android:layout_height="56dp"
+        android:layout_width="38dp"
+        android:layout_height="62dp"
         android:layout_marginStart="344dp"
         android:layout_marginTop="159dp"
         android:layout_marginBottom="222dp"
@@ -561,16 +562,29 @@
         app:srcCompat="@drawable/hole1" />
 
     <ImageView
-        android:id="@+id/hole19"
-        android:layout_width="45dp"
-        android:layout_height="58dp"
+        android:id="@+id/hole0"
+        android:layout_width="37dp"
+        android:layout_height="34dp"
         android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.103"
+        app:layout_constraintHorizontal_bias="0.013"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:layout_constraintVertical_bias="0.105"
+        app:srcCompat="@null" />
+
+    <ImageView
+        android:id="@+id/hole19"
+        android:layout_width="40dp"
+        android:layout_height="54dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.107"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.581"
+        app:layout_constraintVertical_bias="0.585"
         app:srcCompat="@drawable/hole1" />
 
     <ImageButton
@@ -582,12 +596,12 @@
         android:layout_marginEnd="372dp"
         android:layout_marginBottom="368dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField2"
@@ -598,28 +612,28 @@
         android:layout_marginEnd="313dp"
         android:layout_marginBottom="361dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField5"
-        android:layout_width="46dp"
-        android:layout_height="42dp"
+        android:layout_width="48dp"
+        android:layout_height="36dp"
         android:layout_marginStart="234dp"
         android:layout_marginTop="41dp"
         android:layout_marginEnd="141dp"
         android:layout_marginBottom="368dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField4"
@@ -630,12 +644,12 @@
         android:layout_marginEnd="199dp"
         android:layout_marginBottom="363dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField3"
@@ -646,13 +660,13 @@
         android:layout_marginEnd="256dp"
         android:layout_marginBottom="199dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toTopOf="@+id/buttonField29"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.925" />
+        app:layout_constraintVertical_bias="0.925"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField6"
@@ -663,12 +677,12 @@
         android:layout_marginEnd="87dp"
         android:layout_marginBottom="366dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageButton
         android:id="@+id/buttonField28"
@@ -679,44 +693,45 @@
         android:layout_marginEnd="118dp"
         android:layout_marginBottom="128dp"
         android:background="@android:color/transparent"
-        app:srcCompat="@null"
-
         app:layout_constraintBottom_toBottomOf="@+id/imageView"
+
         app:layout_constraintEnd_toEndOf="@+id/imageView"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="@+id/imageView" />
+        app:layout_constraintTop_toTopOf="@+id/imageView"
+        app:srcCompat="@null" />
 
     <ImageView
         android:id="@+id/rabbit3"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:onClick="preventClicks"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/rabbit1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.822"
+        app:layout_constraintHorizontal_bias="0.776"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/rabbit1"
-        app:layout_constraintVertical_bias="0.522"
+        app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@null" />
 
     <ImageView
         android:id="@+id/rabbit1"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:onClick="preventClicks"
+        android:clickable="true"
+
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/rabbit2"
-        app:layout_constraintHorizontal_bias="0.555"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/rabbit2"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.522"
+        app:layout_constraintVertical_bias="0.575"
         app:srcCompat="@null" />
 
     <ImageView
         android:id="@+id/rabbit4"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:onClick="preventClicks"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/rabbit3"
         app:layout_constraintHorizontal_bias="0.822"
@@ -729,10 +744,10 @@
         android:id="@+id/rabbit2"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:onClick="preventClicks"
+        android:clickable="true"
         app:layout_constraintBottom_toBottomOf="@+id/rabbit4"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintHorizontal_bias="0.528"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/rabbit4"
         app:layout_constraintVertical_bias="0.0"
@@ -740,29 +755,33 @@
 
     <TextView
         android:id="@+id/textViewAvailableRabbits"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="36dp"
-        android:text="Available Rabbits"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_width="53dp"
+        android:layout_height="25dp"
+        android:text="Rabbits"
+        app:layout_constraintBottom_toTopOf="@+id/rabbit1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/imageViewCard"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.302" />
+        app:layout_constraintHorizontal_bias="0.548"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewInstructions"
+        app:layout_constraintVertical_bias="0.317" />
 
     <TextView
+
         android:id="@+id/textViewInstructions"
-        android:layout_width="244dp"
+        android:layout_width="206dp"
         android:layout_height="46dp"
-        android:layout_marginStart="48dp"
+        android:background="@drawable/border_fragment"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:scrollbars="vertical"
         android:text="Instruction:"
-        app:layout_constraintBottom_toTopOf="@+id/textViewAvailableRabbits"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+
+        app:layout_constraintHorizontal_bias="0.737"
         app:layout_constraintStart_toEndOf="@+id/drawCard"
         app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.071" />
 
     <ImageButton
         android:id="@+id/settings"
@@ -788,10 +807,24 @@
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@android:drawable/ic_menu_compass" />
 
+    <ImageButton
+        android:id="@+id/button_vote"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_marginEnd="37dp"
+        android:layout_marginBottom="428dp"
+        android:onClick="openFragmentPlayerList"
+        app:layout_constraintBottom_toBottomOf="@+id/imageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.896"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_sort_by_size" />
+
     <FrameLayout
         android:id="@+id/container_playerList"
         android:layout_width="332dp"
         android:layout_height="464dp"
+        android:elevation="10dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -799,6 +832,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.288">
+
 
     </FrameLayout>
 
@@ -822,6 +856,30 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.4"
         app:srcCompat="@drawable/cloudright" />
+
+    <TextView
+        android:id="@+id/turnInstruction"
+        android:layout_width="143dp"
+        android:layout_height="25dp"
+        android:text="TextView"
+        android:textColor="#FFA500"
+        app:layout_constraintBottom_toTopOf="@+id/rabbit3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.947"
+        app:layout_constraintStart_toEndOf="@+id/textViewAvailableRabbits"
+        app:layout_constraintTop_toBottomOf="@+id/textViewInstructions"
+        app:layout_constraintVertical_bias="0.317" />
+
+    <ImageButton
+        android:id="@+id/button_rotateturn"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_rotate" />
+
 
     <!--    <Button-->
     <!--        android:id="@+id/buttontest"-->

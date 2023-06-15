@@ -4,7 +4,7 @@
  * @param {*} socketID 
  * @returns game data
  */
-function fetchLobbyGameData(gameDataList, lobbycode){
+function fetchLobbyGameData(gameDataList, lobbycode) {
     const lobbygame = gameDataList.filter(game => game.lobbycode === lobbycode);
     return lobbygame;
 }

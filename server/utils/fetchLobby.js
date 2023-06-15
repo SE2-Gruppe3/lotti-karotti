@@ -4,10 +4,10 @@
  * @param {*} lobbyCode 
  * @returns lobby instance
  */
-function fetchLobbyInstance(lobbiesList, lobbyCode){
+function fetchLobbyInstance(lobbiesList, lobbyCode) {
     const lobby = lobbiesList.find(lobby => lobby.code === lobbyCode);
     return lobby;
 }
 
 
-module.exports= fetchLobbyInstance;
+module.exports = fetchLobbyInstance;

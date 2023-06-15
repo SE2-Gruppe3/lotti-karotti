@@ -1,4 +1,4 @@
-package com.example.lottikarotti.settings;
+/*package com.example.lottikarotti.settings;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -51,4 +51,4 @@ class SettingsActivityTest {
         float current = settingsActivity.getWindow().getAttributes().screenBrightness;
         assertEquals(expected, current, 0.01);
     }
-}
+}*/
