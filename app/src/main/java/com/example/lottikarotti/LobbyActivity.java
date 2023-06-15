@@ -68,7 +68,7 @@ public class LobbyActivity extends AppCompatActivity {
                     binding.btnJoinGame.setEnabled(false);
                 } else {
                     setUsername = true;
-                    if (setLobbyId && setUsername) {
+                    if (setLobbyId) {
                         binding.btnJoinGame.setEnabled(true);
                     }
                     binding.btnStartGame.setEnabled(true);
