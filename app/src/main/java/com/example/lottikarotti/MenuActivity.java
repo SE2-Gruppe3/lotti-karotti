@@ -1,5 +1,7 @@
 package com.example.lottikarotti;
 
+import static android.app.PendingIntent.getActivity;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.animation.Animator;
@@ -9,6 +11,7 @@ import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -38,11 +41,17 @@ public class MenuActivity extends AppCompatActivity {
         Intent intent = new Intent(this, BGMusic.class);
         startService(intent);
         playGame = findViewById(R.id.button_Play);
+
+
+
+
         playGame.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, LobbyActivity.class);
                 startActivity(intent);
+
+
             }
         });
         startShakeAnimation();
@@ -92,8 +101,8 @@ public class MenuActivity extends AppCompatActivity {
     }
     private AnimatorSet animatorSet;
     private void startShakeAnimation() {
-        float shakeDistance = 10f; // Adjust the shake distance as needed
-        long shakeDuration = 500; // Adjust the shake duration as needed
+        float shakeDistance = 20f; // Adjust the shake distance as needed
+        long shakeDuration = 800; // Adjust the shake duration as needed
         Random rand = new Random();
         int pauseDuration = rand.nextInt(10000); // Adjust the pause duration between shakes as needed
 
