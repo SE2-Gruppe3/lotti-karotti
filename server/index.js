@@ -89,7 +89,12 @@ io.on('connection', (socket) => {
         console.log('[Server] Sending player information!');
         io.emit('getplayers', playercounter);
     });
+  socket.on('isTurnOf', args => {
 
+        console.log('Turn of: ', args);
+
+        io.to(lobbycode).emit('isTurnOf', args);
+    });
     // Register with name for identification
     socket.on('register', args => {
         var taken = 0, loggedin = 0;

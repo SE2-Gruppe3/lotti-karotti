@@ -2,6 +2,7 @@ package com.example.lottikarotti;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -32,6 +33,11 @@ public class LobbyActivity extends AppCompatActivity {
         setLobbyId = false;
         setUsername = false;
 
+        binding.btnStartGame.setBackgroundColor(Color.parseColor("#FFA500"));
+        binding.btnStartGame.setTextColor(Color.WHITE);
+
+        binding.btnJoinGame.setBackgroundColor(Color.parseColor("#FFA500"));
+        binding.btnJoinGame.setTextColor(Color.WHITE);
         binding.etLobbyId.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -48,6 +54,10 @@ public class LobbyActivity extends AppCompatActivity {
                     binding.btnStartGame.setEnabled(false);
                 }else{
                     binding.btnStartGame.setEnabled(true);
+                    binding.btnStartGame.setBackgroundColor(Color.parseColor("#FFA500"));
+                    binding.btnStartGame.setTextColor(Color.WHITE);
+
+
                 }
                 if (s.toString().length() < 6) {
                     binding.btnJoinGame.setEnabled(false);
@@ -56,6 +66,8 @@ public class LobbyActivity extends AppCompatActivity {
                     setLobbyId = true;
                     if (setLobbyId && setUsername) {
                         binding.btnJoinGame.setEnabled(true);
+                        binding.btnJoinGame.setBackgroundColor(Color.parseColor("#FFA500"));
+                        binding.btnJoinGame.setTextColor(Color.WHITE);
                     }
                 }
             }
@@ -81,9 +93,13 @@ public class LobbyActivity extends AppCompatActivity {
                     if (binding.etLobbyId.getText().toString().length() ==6 && setUsername) {
 
                         binding.btnJoinGame.setEnabled(true);
+                        binding.btnJoinGame.setBackgroundColor(Color.parseColor("#FFA500"));
+                        binding.btnJoinGame.setTextColor(Color.WHITE);
                         binding.btnStartGame.setEnabled(false);
                     }else {
                         binding.btnStartGame.setEnabled(true);
+                        binding.btnStartGame.setBackgroundColor(Color.parseColor("#FFA500"));
+                        binding.btnStartGame.setTextColor(Color.WHITE);
                     }
                 }
             }

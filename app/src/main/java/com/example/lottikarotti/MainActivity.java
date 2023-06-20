@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
 
-    private static final String URI = "http://192.168.178.22:3000";
+    private static final String URI = "http://192.168.68.52:3000";
 
 
     PointF[] rabbitStartPos = new PointF[8];

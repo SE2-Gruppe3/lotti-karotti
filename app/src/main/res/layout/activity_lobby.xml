@@ -9,20 +9,25 @@
     tools:context=".LobbyActivity">
 
     <ImageView
+        android:id="@+id/imageView3"
         android:layout_width="match_parent"
-        android:layout_height="154dp"
+        android:layout_height="91dp"
+        android:layout_marginBottom="40dp"
+        android:layout_marginTop="20pt"
         android:layout_weight="0"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/logo"
-        app:srcCompat="@drawable/logo" />
+
+
+        app:srcCompat="@drawable/rabbitlovecarrot" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginStart="50dp"
         android:layout_marginLeft="50dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/listborder2"
         android:layout_marginEnd="50dp"
         android:layout_marginRight="50dp"
         android:layout_weight="5">
@@ -32,13 +37,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
-            android:background="@drawable/buttonstyle"
             android:onClick="onBtnStartGameClick"
+
             android:text="@string/start_game"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:background="#FFA500">
 
+        </Button>
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="0dp"
@@ -73,7 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="60dp"
             android:layout_weight="1"
-            android:background="@drawable/buttonstyle"
+            android:background="#FFA500"
             android:onClick="onBtnJoinGameClick"
             android:text="@string/join_game"
             app:layout_constraintBottom_toBottomOf="parent"
