@@ -97,7 +97,7 @@ public class Player {
         @JsonCreator
         public Rabbit(@JsonProperty("name") String name, @JsonProperty("position") int position) {
             this.name = name;
-            if (position >= 0 && position <= 27) this.position = position;
+            if (position >= 0 && position <= 29) this.position = position;
             else position = 0;
         }
 

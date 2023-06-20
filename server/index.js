@@ -323,6 +323,7 @@ io.on('connection', (socket) => {
     //Carrotspin, notifying Client the carrot has been spun
     socket.on('carrotspin', args => {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
+        if(lobby.players[lobby.socket_turn].clientId === socket.id) {
 
         if (lobby !== undefined) {
             if (!(lobby.mutator === "spicyCarrot")) {
@@ -352,6 +353,7 @@ io.on('connection', (socket) => {
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
+    }
     });
 
     //getHole. A method to receive the current hole on the Map for a specific server
