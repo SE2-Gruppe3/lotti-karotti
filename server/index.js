@@ -222,7 +222,11 @@ io.on('connection', (socket) => {
             console.error('[Server] Error while updating highscore list');
             socket.emit('saveJsonError', 'Invalid JSON array');
         }
-    });  
+    });
+    
+    socket.on('hostTurn', () => {
+        if(fetchLobbyInstance(lobbies, lobbycode).owner === socket.id) setTurn();
+    });
 
     //********************************************************************************************************** */
     //                          ***Game Logic handling below here***                                             */
