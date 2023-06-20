@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
     final int[] rabbits = {
             R.id.rabbit1, R.id.rabbit2, R.id.rabbit3, R.id.rabbit4};
 
-    private static final String URI = "http://192.168.68.52:3000";
+    private static final String URI = "http://10.0.0.6:3000";
 
 
     PointF[] rabbitStartPos = new PointF[8];
@@ -206,8 +206,6 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.d(TAG, "onCreate: Created new lobby" + lobbyId);
         } else {
             ServerConnection.joinLobby(lobbyId);
-            waitDialog = new WaitingDialog();
-            waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
             Log.d(TAG, "Joined lobby" + lobbyId);
         }
             }
@@ -408,6 +406,17 @@ public class MainActivity extends AppCompatActivity implements IOnDataSentListen
             Log.d(TAG, "Mutator saved locally: " + args[0].toString());
             activemutator = args[0].toString();
             if (activemutator.equals("specialCard")) maxCase = 5;
+        });
+
+        socket.on("joinlobby", args -> {
+            Log.println(Log.INFO, TAG, "Player Joined Lobby");
+            if (!(info.equals("start")) && waitDialog != null) {
+                Log.d(TAG, "onCreate: Creating dialog");
+                runOnUiThread(() -> {
+                    waitDialog = new WaitingDialog();
+                    waitDialog.show(getSupportFragmentManager(), "WaitingDialog");
+                });
+            }
         });
 
     }

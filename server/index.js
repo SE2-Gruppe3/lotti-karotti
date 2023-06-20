@@ -139,7 +139,7 @@ io.on('connection', (socket) => {
             console.error("[Server] Error while creating lobby (error 300)");
         } else {
             console.log("[Server] Lobby creation");
-            lobbies.push(storeLobbyInfo(code, socket.id, 0, "classic"));
+            lobbies.push(storeLobbyInfo(code, socket.id, 0, "none"));
             lobbies[lobbies.length - 1].players.push(fetchClientInstance(clientsList, socket.id));
 
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t" + JSON.stringify(lobbies));
