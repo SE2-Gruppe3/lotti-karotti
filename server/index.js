@@ -139,7 +139,7 @@ io.on('connection', (socket) => {
             console.error("[Server] Error while creating lobby (error 300)");
         } else {
             console.log("[Server] Lobby creation");
-            lobbies.push(storeLobbyInfo(code, socket.id, 0, "classic"));
+            lobbies.push(storeLobbyInfo(code, socket.id, 0, "none"));
             lobbies[lobbies.length - 1].players.push(fetchClientInstance(clientsList, socket.id));
 
             console.log("[Server] Lobby saved!\nALL LOBBIES\n\t" + JSON.stringify(lobbies));
@@ -162,19 +162,21 @@ io.on('connection', (socket) => {
             const playerExists = playerExist(lobby.players, socket.id);
             if (lobby.game_started == 1) io.to(socket.id).emit('error', 303);
             else {
-                playerExists ? (
-                    io.to(socket.id).emit('error', 302),
-                    console.error("[Server] Very funny... Player is already in the lobby can't join double!\nABORT JOINING")
-                ) : (
-                    lobby.players.push(fetchClientInstance(clientsList, socket.id)),
-                    console.log(JSON.stringify(lobbies[0])),
-                    socket.join(code),
-                    lobbycode = code,
-                    saveGameData(socket.id, lobbycode),
-                    console.log("[Server] Player " + socket.id + " joins lobby " + code)
-                );
+                if (playerExists == 1) {
+                    io.to(socket.id).emit('error', 302);
+                    console.error("[Server] Very funny... Player is already in the lobby can't join double!\nABORT JOINING");
+                } else if (playerExists == 0) {
+                    lobby.players.push(fetchClientInstance(clientsList, socket.id));
+                    console.log(JSON.stringify(lobbies[0]));
+                    socket.join(code);
+                    lobbycode = code;
+                    if (lobby.mutator == "none") io.to(socket.id).emit('waiting', 1);
+                    console.log("[Server] Gamemode is " + lobby.mutator);
+                    saveGameData(socket.id, lobbycode);
+                    console.log("[Server] Player " + socket.id + " joins lobby " + code);
             }
         }
+    }
     });
 
     // Function for clients to press the "Multiplayer" button and get a feedback if its even possible, ofcourse they will get the feedback anyway but this is faster
@@ -220,7 +222,11 @@ io.on('connection', (socket) => {
             console.error('[Server] Error while updating highscore list');
             socket.emit('saveJsonError', 'Invalid JSON array');
         }
-    });  
+    });
+    
+    socket.on('hostTurn', () => {
+        if(fetchLobbyInstance(lobbies, lobbycode).owner === socket.id) setTurn();
+    });
 
     //********************************************************************************************************** */
     //                          ***Game Logic handling below here***                                             */
@@ -317,6 +323,7 @@ io.on('connection', (socket) => {
     //Carrotspin, notifying Client the carrot has been spun
     socket.on('carrotspin', args => {
         var lobby = fetchLobbyInstance(lobbies, lobbycode);
+        if(lobby.players[lobby.socket_turn].clientId === socket.id) {
 
         if (lobby !== undefined) {
             if (!(lobby.mutator === "spicyCarrot")) {
@@ -346,6 +353,7 @@ io.on('connection', (socket) => {
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
+    }
     });
 
     //getHole. A method to receive the current hole on the Map for a specific server
@@ -381,9 +389,11 @@ io.on('connection', (socket) => {
                 io.to(lobbycode).emit('getMutator', "spicyCarrot");
             } else if (currMutator === "classic") { //if Mutator == classic
                 io.to(lobbycode).emit('getMutator', "classic");
-            } else {
+            } else if (currMutator === "specialCard") {
                 io.to(lobbycode).emit('getMutator', "specialCard");
-            } 
+            } else {
+                console.error(`[Server] Lobby with code ${lobbycode} seems to have an undefined Gamemode`);
+            }
         } else {
             console.error(`[Server] Lobby with code ${lobbycode} not found`);
         }
