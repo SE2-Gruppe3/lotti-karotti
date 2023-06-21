@@ -577,12 +577,17 @@ io.on('connection', (socket) => {
                 }
                 console.log('[Server] Owner disconnected, lobby deleted!\n\t' + JSON.stringify(lobbies));
             }
-        }
+        }else{
+            if(lobbycode.length === 6){
+                gameData.splice(gameData.findIndex(playerData => playerData.sid === socket.id));
+                setTurn();
+            }
         if (index !== -1) { // Remove client from clientsList
             clientsList.splice(index, 1);
             console.log('[Server] Player Unregistered, id: ' + socket.id);
         }
         console.log('[Server] A player disconnected!\nCurrently ' + playercounter + ' online!');
+    }
     });
 });
 
